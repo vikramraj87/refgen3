@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ContentFilters</key>
+	<dict/>
+	<key>auto_connect</key>
+	<true/>
+	<key>data</key>
+	<dict>
+		<key>connection</key>
+		<dict>
+			<key>database</key>
+			<string>RefgenTest</string>
+			<key>host</key>
+			<string>127.0.0.1</string>
+			<key>kcid</key>
+			<string>3502403626644375163</string>
+			<key>name</key>
+			<string>Root</string>
+			<key>rdbms_type</key>
+			<string>mysql</string>
+			<key>sslCACertFileLocation</key>
+			<string></string>
+			<key>sslCACertFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslCertificateFileLocation</key>
+			<string></string>
+			<key>sslCertificateFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslKeyFileLocation</key>
+			<string></string>
+			<key>sslKeyFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>type</key>
+			<string>SPTCPIPConnection</string>
+			<key>useSSL</key>
+			<integer>0</integer>
+			<key>user</key>
+			<string>root</string>
+		</dict>
+		<key>session</key>
+		<dict>
+			<key>connectionEncoding</key>
+			<string>latin1</string>
+			<key>contentPageNumber</key>
+			<integer>1</integer>
+			<key>contentSortColIsAsc</key>
+			<true/>
+			<key>contentViewport</key>
+			<string>{{0, 0}, {694, 456}}</string>
+			<key>isToolbarVisible</key>
+			<true/>
+			<key>queries</key>
+			<string>CREATE TABLE `journals` (
+	`id`    INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`issn`  VARCHAR(30)      NOT NULL DEFAULT '',
+	`title` VARCHAR(120)     NOT NULL DEFAULT '',
+	`abbr`  VARCHAR(100)     NOT NULL DEFAULT '',
+  	PRIMARY KEY (`id`),
+  	UNIQUE KEY `unq_issn` (`issn`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `articles` (
+	`id` 		 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+	`indexer_id` VARCHAR(16)      NOT NULL,
+	`volume`     VARCHAR(10)      NOT NULL DEFAULT '',
+	`issue`      VARCHAR(10)      NOT NULL DEFAULT '',
+	`pages`      VARCHAR(16)      NOT NULL DEFAULT '',
+	`year`       VARCHAR(10)      NOT NULL DEFAULT '',
+	`month`      VARCHAR(10)      NOT NULL DEFAULT '',
+	`day`        VARCHAR(8)       NOT NULL DEFAULT '',
+	`journal_id` INT UNSIGNED     NOT NULL DEFAULT 0,
+	`title`		 VARCHAR(500)     NOT NULL DEFAULT '',
+	`pub_status` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `unq_indexer_id` (`indexer_id`),
+	FOREIGN KEY (`journal_id`) 
+		REFERENCES `journals` (`id`)
+		ON UPDATE RESTRICT
+		ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `article_authors` (
+	`id`         BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+	`article_id` INT UNSIGNED     NOT NULL DEFAULT 0,
+	`position`   TINYINT UNSIGNED NOT NULL DEFAULT 0,
+	`last_name`  VARCHAR(80)      NOT NULL DEFAULT '',
+	`fore_name`  VARCHAR(80)      NOT NULL DEFAULT '',
+	`initials`  VARCHAR(8)        NOT NULL DEFAULT '',
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`article_id`)
+		REFERENCES `articles` (`id`)
+		ON UPDATE RESTRICT
+		ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `article_abstract_paras` (
+	`id`           BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+	`article_id`   INT UNSIGNED     NOT NULL DEFAULT 0,
+	`position`     TINYINT UNSIGNED NOT NULL DEFAULT 0,
+	`heading`      VARCHAR(80)      NOT NULL DEFAULT '',
+	`nlm_category` VARCHAR(80)      NOT NULL DEFAULT 0,
+	`para`         TEXT             NOT NULL,
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`article_id`)
+		REFERENCES `articles` (`id`)
+		ON UPDATE RESTRICT
+		ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;</string>
+			<key>view</key>
+			<string>SP_VIEW_CUSTOMQUERY</string>
+			<key>windowVerticalDividerPosition</key>
+			<real>214</real>
+		</dict>
+	</dict>
+	<key>encrypted</key>
+	<false/>
+	<key>format</key>
+	<string>connection</string>
+	<key>queryFavorites</key>
+	<array/>
+	<key>queryHistory</key>
+	<array>
+		<string>USE `RefgenTest`;
+CREATE TABLE `journals` (
+	`id`    INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`issn`  VARCHAR(30)      NOT NULL DEFAULT '',
+	`title` VARCHAR(120)     NOT NULL DEFAULT '',
+	`abbr`  VARCHAR(100)     NOT NULL DEFAULT '',
+  	PRIMARY KEY (`id`),
+  	UNIQUE KEY `unq_issn` (`issn`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+CREATE TABLE `articles` (
+	`id` 		 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+	`indexer_id` VARCHAR(16)      NOT NULL,
+	`volume`     VARCHAR(10)      NOT NULL DEFAULT '',
+	`issue`      VARCHAR(10)      NOT NULL DEFAULT '',
+	`pages`      VARCHAR(16)      NOT NULL DEFAULT '',
+	`year`       VARCHAR(10)      NOT NULL DEFAULT '',
+	`month`      VARCHAR(10)      NOT NULL DEFAULT '',
+	`day`        VARCHAR(8)       NOT NULL DEFAULT '',
+	`journal_id` INT UNSIGNED     NOT NULL DEFAULT 0,
+	`title`		 VARCHAR(500)     NOT NULL DEFAULT '',
+	`pub_status` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `unq_indexer_id` (`indexer_id`),
+	FOREIGN KEY (`journal_id`) 
+		REFERENCES `journals` (`id`)
+		ON UPDATE RESTRICT
+		ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+CREATE TABLE `article_authors` (
+	`id`         BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+	`article_id` INT UNSIGNED     NOT NULL DEFAULT 0,
+	`position`   TINYINT UNSIGNED NOT NULL DEFAULT 0,
+	`last_name`  VARCHAR(80)      NOT NULL DEFAULT '',
+	`fore_name`  VARCHAR(80)      NOT NULL DEFAULT '',
+	`initials`  VARCHAR(8)        NOT NULL DEFAULT '',
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`article_id`)
+		REFERENCES `articles` (`id`)
+		ON UPDATE RESTRICT
+		ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+CREATE TABLE `article_abstract_paras` (
+	`id`           BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+	`article_id`   INT UNSIGNED     NOT NULL DEFAULT 0,
+	`position`     TINYINT UNSIGNED NOT NULL DEFAULT 0,
+	`heading`      VARCHAR(80)      NOT NULL DEFAULT '',
+	`nlm_category` VARCHAR(80)      NOT NULL DEFAULT 0,
+	`para`         TEXT             NOT NULL,
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`article_id`)
+		REFERENCES `articles` (`id`)
+		ON UPDATE RESTRICT
+		ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1</string>
+		<string>CREATE DATABASE `RefgenTest`;
+CREATE TABLE `journals` (
+	`id`    INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`issn`  VARCHAR(30)      NOT NULL DEFAULT '',
+	`title` VARCHAR(120)     NOT NULL DEFAULT '',
+	`abbr`  VARCHAR(100)     NOT NULL DEFAULT '',
+  	PRIMARY KEY (`id`),
+  	UNIQUE KEY `unq_issn` (`issn`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1</string>
+		<string>CREATE TABLE `journals` (
+	`id`    INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`issn`  VARCHAR(30)      NOT NULL DEFAULT '',
+	`title` VARCHAR(120)     NOT NULL DEFAULT '',
+	`abbr`  VARCHAR(100)     NOT NULL DEFAULT '',
+  	PRIMARY KEY (`id`),
+  	UNIQUE KEY `unq_issn` (`issn`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+CREATE TABLE `articles` (
+	`id` 		 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+	`indexer_id` VARCHAR(16)      NOT NULL,
+	`volume`     VARCHAR(10)      NOT NULL DEFAULT '',
+	`issue`      VARCHAR(10)      NOT NULL DEFAULT '',
+	`pages`      VARCHAR(16)      NOT NULL DEFAULT '',
+	`year`       VARCHAR(10)      NOT NULL DEFAULT '',
+	`month`      VARCHAR(10)      NOT NULL DEFAULT '',
+	`day`        VARCHAR(8)       NOT NULL DEFAULT '',
+	`journal_id` INT UNSIGNED     NOT NULL DEFAULT 0,
+	`title`		 VARCHAR(500)     NOT NULL DEFAULT '',
+	`pub_status` TINYINT UNSIGNED
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `unq_indexer_id` (`indexer_id`),
+	FOREIGN KEY (`journal_id`) 
+		REFERENCES `journals` (`id`)
+		ON UPDATE RESTRICT
+		ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1</string>
+		<string>CREATE TABLE `article_abstract_paras` (
+	`id`           BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+	`article_id`   INT UNSIGNED     NOT NULL DEFAULT 0,
+	`position`     TINYINT UNSIGNED NOT NULL DEFAULT 0,
+	`heading`      VARCHAR(80)      NOT NULL DEFAULT '',
+	`nlm_category` VARCHAR(80)      NOT NULL DEFAULT 0,
+	`para`         TEXT             NOT NULL,
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`article_id`)
+		REFERENCES `articles` (`id`)
+		ON UPDATE RESTRICT
+		ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1</string>
+		<string>CREATE TABLE `article_abstract_paras` (
+	`id`           BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+	`article_id`   INT UNSIGNED     NOT NULL DEFAULT 0,
+	`position`     TINYINT UNSIGNED NOT NULL DEFAULT 0,
+	`heading`      VARCHAR(80)      NOT NULL DEFAULT '',
+	`nlm_category` VARCHAR(80)      NOT NULL DEFAULT 0,
+	`para`         TEXT             NOT NULL,
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`article_id`)
+		REFERENCES `articles` (`id`),
+		ON UPDATE RESTRICT
+		ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1</string>
+		<string>CREATE TABLE `article_abstract_paras` (
+	`id`           BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+	`article_id`   INT UNSIGNED     NOT NULL DEFAULT 0,
+	`position`     TINYINT UNSIGNED NOT NULL DEFAULT 0,
+	`heading`      VARCHAR(80)      NOT NULL DEFAULT '',
+	`nlm_category` VARCHAR(80)      NOT NULL DEFAULT 0,
+	`para`         TEXT             NOT NULL DEFAULT '',
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`article_id`)
+		REFERENCES `articles` (`id`),
+		ON UPDATE RESTRICT
+		ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1</string>
+		<string>CREATE TABLE `article_authors` (
+	`id`         BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+	`article_id` INT UNSIGNED     NOT NULL DEFAULT 0,
+	`position`   TINYINT UNSIGNED NOT NULL DEFAULT 0,
+	`last_name`  VARCHAR(80)      NOT NULL DEFAULT '',
+	`fore_name`  VARCHAR(80)      NOT NULL DEFAULT '',
+	`initials`  VARCHAR(8)        NOT NULL DEFAULT '',
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`article_id`)
+		REFERENCES `articles` (`id`)
+		ON UPDATE RESTRICT
+		ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1</string>
+		<string>CREATE TABLE `articles` (
+	`id` 		 INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`indexer_id` VARCHAR(16)  NOT NULL,
+	`volume`     VARCHAR(10)  NOT NULL DEFAULT '',
+	`issue`      VARCHAR(10)  NOT NULL DEFAULT '',
+	`pages`      VARCHAR(16)  NOT NULL DEFAULT '',
+	`year`       VARCHAR(10)  NOT NULL DEFAULT '',
+	`month`      VARCHAR(10)  NOT NULL DEFAULT '',
+	`day`        VARCHAR(8)   NOT NULL DEFAULT '',
+	`journal_id` INT UNSIGNED NOT NULL DEFAULT 0,
+	`title`		 VARCHAR(500) NOT NULL DEFAULT '',
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `unq_indexer_id` (`indexer_id`),
+	FOREIGN KEY (`journal_id`) 
+		REFERENCES `journals` (`id`)
+		ON UPDATE RESTRICT
+		ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1</string>
+		<string>CREATE TABLE `articles` (
+	`id` 		 INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`indexer_id` VARCHAR(16)  NOT NULL,
+	`volume`     VARCHAR(10)  NOT NULL DEFAULT '',
+	`issue`      VARCHAR(10)  NOT NULL DEFAULT '',
+	`pages`      VARCHAR(16)  NOT NULL DEFAULT '',
+	`year`       VARCHAR(10)  NOT NULL DEFAULT '',
+	`month`      VARCHAR(10)  NOT NULL DEFAULT '',
+	`day`        VARCHAR(8)   NOT NULL DEFAULT '',
+	`journal_id` INT UNSIGNED NOT NULL DEFAULT 0,
+	`title`		 VARCHAR(500) NOT NULL DEFAULT '',
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `unq_indexer_id` (`indexer_id`),
+	FOREIGN KEY (`journal_id`) 
+		REFERENCES `journals` (`id`)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1</string>
+		<string>CREATE TABLE `journals` (
+	`id`    INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`issn`  VARCHAR(30)      NOT NULL DEFAULT '',
+	`title` VARCHAR(120)     NOT NULL DEFAULT '',
+	`abbr`  VARCHAR(100)     NOT NULL DEFAULT '',
+  	PRIMARY KEY (`id`),
+  	UNIQUE KEY `unq_issn` (`issn`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1</string>
+		<string>CREATE TABLE article_authors (
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`article_id` INT UNSIGNED NOT NULL,
+	`name` VARCHAR(80) NOT NULL
+)</string>
+		<string>CREATE TABLE `collections` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `articles` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id` (`user_id`,`name`),
+  KEY `user_id_2` (`user_id`)
+  
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1</string>
+		<string>CREATE TABLE `collections` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `articles` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id` (`user_id`,`name`),
+  KEY `user_id_2` (`user_id`),
+  CONSTRAINT `fk_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1</string>
+		<string>CREATE TABLE `users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) NOT NULL,
+  `password` binary(60) NOT NULL,
+  `first_name` varchar(100) NOT NULL,
+  `last_name` varchar(100) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1</string>
+		<string>CREATE TABLE oauth_clients (client_id TEXT, client_secret TEXT, redirect_uri TEXT);
+CREATE TABLE oauth_access_tokens (access_token TEXT, client_id TEXT, user_id TEXT, expires TIMESTAMP, scope TEXT);
+CREATE TABLE oauth_authorization_codes (authorization_code TEXT, client_id TEXT, user_id TEXT, redirect_uri TEXT, expires TIMESTAMP, scope TEXT);
+CREATE TABLE oauth_refresh_tokens (refresh_token TEXT, client_id TEXT, user_id TEXT, expires TIMESTAMP, scope TEXT)</string>
+		<string>use refgen_api</string>
+		<string>select * from session</string>
+		<string>truncate refgen.session</string>
+		<string>CREATE TABLE `session` (
+	`id` CHAR(32),
+	`name` CHAR(32),
+	`modified` INT,
+	`lifetime` INT,
+	`data` TEXT,
+	PRIMARY KEY (`id`, `name`)
+)</string>
+		<string>USE refgen</string>
+	</array>
+	<key>rdbms_type</key>
+	<string>mysql</string>
+	<key>rdbms_version</key>
+	<string>5.6.15</string>
+	<key>version</key>
+	<integer>1</integer>
+</dict>
+</plist>

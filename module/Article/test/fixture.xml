@@ -1,0 +1,368 @@
+<?xml version="1.0"?>
+<dataset>
+    <table name="journals">
+        <column>id</column>
+        <column>issn</column>
+        <column>title</column>
+        <column>abbr</column>
+        <row>
+            <value>1</value> <!-- id -->
+            <value>1526-0976</value> <!-- issn -->
+            <value>Journal of lower genital tract disease</value> <!-- title -->
+            <value>J Low Genit Tract Dis</value> <!-- abbr -->
+        </row>
+        <row>
+            <value>2</value> <!-- id -->
+            <value>1752-8062</value> <!-- issn -->
+            <value>Clinical and translational science</value> <!-- title -->
+            <value>Clin Transl Sci</value> <!-- abbr -->
+        </row>
+        <row>
+            <value>3</value> <!-- id -->
+            <value>1879-355X</value> <!-- issn -->
+            <value>International journal of radiation oncology, biology, physics</value> <!-- title -->
+            <value>Int J Radiat Oncol Biol Phys</value> <!-- abbr -->
+        </row>
+        <!--<row>
+            <value></value> &lt;!&ndash; id &ndash;&gt;
+            <value></value> &lt;!&ndash; issn &ndash;&gt;
+            <value></value> &lt;!&ndash; title &ndash;&gt;
+            <value></value> &lt;!&ndash; abbr &ndash;&gt;
+        </row>-->
+    </table>
+    <table name="articles">
+        <column>id</column>
+        <column>indexer_id</column>
+        <column>volume</column>
+        <column>issue</column>
+        <column>pages</column>
+        <column>year</column>
+        <column>month</column>
+        <column>day</column>
+        <column>journal_id</column>
+        <column>title</column>
+        <column>pub_status</column>
+        <row>
+            <value>1</value> <!-- id -->
+            <value>PMID24914885</value> <!-- indexer_id -->
+            <value></value> <!-- volume -->
+            <value></value> <!-- issue -->
+            <value></value> <!-- pages -->
+            <value>2014</value> <!-- year -->
+            <value>Jun</value> <!-- month -->
+            <value>9</value> <!-- day -->
+            <value>1</value> <!-- journal_id -->
+            <value>Variation in Apoptotic Gene Expression in Cervical Cancer Through Oligonucleotide Microarray Profiling.</value> <!-- title -->
+            <value>0</value> <!-- pub_status -->
+        </row>
+        <row>
+            <value>2</value> <!-- id -->
+            <value>PMID24914887</value> <!-- indexer_id -->
+            <value></value> <!-- volume -->
+            <value></value> <!-- issue -->
+            <value></value> <!-- pages -->
+            <value>2014</value> <!-- year -->
+            <value>Jun</value> <!-- month -->
+            <value>9</value> <!-- day -->
+            <value>1</value> <!-- journal_id -->
+            <value>Evaluation of a Cervicography-Based Program to Ensure Quality of Visual Inspection of the Cervix in HIV-Infected Women in Johannesburg, South Africa.</value> <!-- title -->
+            <value>0</value> <!-- pub_status -->
+        </row>
+        <row>
+            <value>3</value> <!-- id -->
+            <value>PMID24841923</value> <!-- indexer_id -->
+            <value></value> <!-- volume -->
+            <value></value> <!-- issue -->
+            <value></value> <!-- pages -->
+            <value>2014</value> <!-- year -->
+            <value>May</value> <!-- month -->
+            <value>19</value> <!-- day -->
+            <value>2</value> <!-- journal_id -->
+            <value>Human Papillomavirus Vaccination: A Case Study in Translational Science.</value> <!-- title -->
+            <value>0</value> <!-- pub_status -->
+        </row>
+        <row>
+            <value>4</value> <!-- id -->
+            <value>PMID24837888</value> <!-- indexer_id -->
+            <value>89</value> <!-- volume -->
+            <value>2</value> <!-- issue -->
+            <value>257-9</value> <!-- pages -->
+            <value>2014</value> <!-- year -->
+            <value>Jun</value> <!-- month -->
+            <value>1</value> <!-- day -->
+            <value>3</value> <!-- journal_id -->
+            <value>Better radiation therapy for cervix cancer would save lives.</value> <!-- title -->
+            <value>1</value> <!-- pub_status -->
+        </row>
+        <!--<row>
+            <value></value> &lt;!&ndash; id &ndash;&gt;
+            <value></value> &lt;!&ndash; indexer_id &ndash;&gt;
+            <value></value> &lt;!&ndash; volume &ndash;&gt;
+            <value></value> &lt;!&ndash; issue &ndash;&gt;
+            <value></value> &lt;!&ndash; pages &ndash;&gt;
+            <value></value> &lt;!&ndash; year &ndash;&gt;
+            <value></value> &lt;!&ndash; month &ndash;&gt;
+            <value></value> &lt;!&ndash; day &ndash;&gt;
+            <value></value> &lt;!&ndash; journal_id &ndash;&gt;
+            <value></value> &lt;!&ndash; title &ndash;&gt;
+            <value></value> &lt;!&ndash; pub_status &ndash;&gt;
+        </row>-->
+    </table>
+    <table name="article_authors">
+        <column>id</column>
+        <column>article_id</column>
+        <column>position</column>
+        <column>last_name</column>
+        <column>fore_name</column>
+        <column>initials</column>
+        <row>
+            <value>1</value> <!-- id -->
+            <value>1</value> <!-- article_id -->
+            <value>1</value> <!-- position -->
+            <value>Zhu</value> <!-- last_name -->
+            <value>Ming-Yue</value> <!-- fore_name -->
+            <value>MY</value> <!-- initials -->
+        </row>
+        <row>
+            <value>2</value> <!-- id -->
+            <value>1</value> <!-- article_id -->
+            <value>2</value> <!-- position -->
+            <value>Chen</value> <!-- last_name -->
+            <value>Fan</value> <!-- fore_name -->
+            <value>F</value> <!-- initials -->
+        </row>
+        <row>
+            <value>3</value> <!-- id -->
+            <value>1</value> <!-- article_id -->
+            <value>3</value> <!-- position -->
+            <value>Niyazi</value> <!-- last_name -->
+            <value>Mayinuer</value> <!-- fore_name -->
+            <value>M</value> <!-- initials -->
+        </row>
+        <row>
+            <value>4</value> <!-- id -->
+            <value>1</value> <!-- article_id -->
+            <value>4</value> <!-- position -->
+            <value>Sui</value> <!-- last_name -->
+            <value>Shuang</value> <!-- fore_name -->
+            <value>S</value> <!-- initials -->
+        </row>
+        <row>
+            <value>5</value> <!-- id -->
+            <value>1</value> <!-- article_id -->
+            <value>5</value> <!-- position -->
+            <value>Gao</value> <!-- last_name -->
+            <value>Dong-Mei</value> <!-- fore_name -->
+            <value>DM</value> <!-- initials -->
+        </row>
+        <row>
+            <value>6</value> <!-- id -->
+            <value>2</value> <!-- article_id -->
+            <value>1</value> <!-- position -->
+            <value>Mao</value> <!-- last_name -->
+            <value>Lu</value> <!-- fore_name -->
+            <value>L</value> <!-- initials -->
+        </row>
+        <row>
+            <value>7</value> <!-- id -->
+            <value>2</value> <!-- article_id -->
+            <value>2</value> <!-- position -->
+            <value>Levin</value> <!-- last_name -->
+            <value>Simon</value> <!-- fore_name -->
+            <value>S</value> <!-- initials -->
+        </row>
+        <row>
+            <value>8</value> <!-- id -->
+            <value>2</value> <!-- article_id -->
+            <value>3</value> <!-- position -->
+            <value>Faesen</value> <!-- last_name -->
+            <value>Mark</value> <!-- fore_name -->
+            <value>M</value> <!-- initials -->
+        </row>
+        <row>
+            <value>9</value> <!-- id -->
+            <value>2</value> <!-- article_id -->
+            <value>4</value> <!-- position -->
+            <value>Lewis</value> <!-- last_name -->
+            <value>David A</value> <!-- fore_name -->
+            <value>DA</value> <!-- initials -->
+        </row>
+        <row>
+            <value>10</value> <!-- id -->
+            <value>2</value> <!-- article_id -->
+            <value>5</value> <!-- position -->
+            <value>Goeieman</value> <!-- last_name -->
+            <value>Bridgette J</value> <!-- fore_name -->
+            <value>BJ</value> <!-- initials -->
+        </row>
+        <row>
+            <value>11</value> <!-- id -->
+            <value>2</value> <!-- article_id -->
+            <value>6</value> <!-- position -->
+            <value>Swarts</value> <!-- last_name -->
+            <value>Avril J</value> <!-- fore_name -->
+            <value>AJ</value> <!-- initials -->
+        </row>
+        <row>
+            <value>12</value> <!-- id -->
+            <value>2</value> <!-- article_id -->
+            <value>7</value> <!-- position -->
+            <value>Rakhombe</value> <!-- last_name -->
+            <value>Ntombiyenkosi</value> <!-- fore_name -->
+            <value>N</value> <!-- initials -->
+        </row>
+        <row>
+            <value>13</value> <!-- id -->
+            <value>2</value> <!-- article_id -->
+            <value>8</value> <!-- position -->
+            <value>Michelow</value> <!-- last_name -->
+            <value>Pam M</value> <!-- fore_name -->
+            <value>PM</value> <!-- initials -->
+        </row>
+        <row>
+            <value>14</value> <!-- id -->
+            <value>2</value> <!-- article_id -->
+            <value>9</value> <!-- position -->
+            <value>Williams</value> <!-- last_name -->
+            <value>Sophie</value> <!-- fore_name -->
+            <value>S</value> <!-- initials -->
+        </row>
+        <row>
+            <value>15</value> <!-- id -->
+            <value>2</value> <!-- article_id -->
+            <value>10</value> <!-- position -->
+            <value>Smith</value> <!-- last_name -->
+            <value>Jennifer S</value> <!-- fore_name -->
+            <value>JS</value> <!-- initials -->
+        </row>
+        <row>
+            <value>16</value> <!-- id -->
+            <value>3</value> <!-- article_id -->
+            <value>1</value> <!-- position -->
+            <value>Palmer</value> <!-- last_name -->
+            <value>Allyson K</value> <!-- fore_name -->
+            <value>AK</value> <!-- initials -->
+        </row>
+        <row>
+            <value>17</value> <!-- id -->
+            <value>3</value> <!-- article_id -->
+            <value>2</value> <!-- position -->
+            <value>Harris</value> <!-- last_name -->
+            <value>Antoneicka L</value> <!-- fore_name -->
+            <value>AL</value> <!-- initials -->
+        </row>
+        <row>
+            <value>18</value> <!-- id -->
+            <value>3</value> <!-- article_id -->
+            <value>3</value> <!-- position -->
+            <value>Jacobson</value> <!-- last_name -->
+            <value>Robert M</value> <!-- fore_name -->
+            <value>RM</value> <!-- initials -->
+        </row>
+        <row>
+            <value>19</value> <!-- id -->
+            <value>4</value> <!-- article_id -->
+            <value>1</value> <!-- position -->
+            <value>Thomas</value> <!-- last_name -->
+            <value>Gillian M</value> <!-- fore_name -->
+            <value>GM</value> <!-- initials -->
+        </row>
+        <!--<row>
+            <value></value> &lt;!&ndash; id &ndash;&gt;
+            <value></value> &lt;!&ndash; article_id &ndash;&gt;
+            <value></value> &lt;!&ndash; position &ndash;&gt;
+            <value></value> &lt;!&ndash; last_name &ndash;&gt;
+            <value></value> &lt;!&ndash; fore_name &ndash;&gt;
+            <value></value> &lt;!&ndash; initials &ndash;&gt;
+        </row>-->
+    </table>
+    <table name="article_abstract_paras">
+        <column>id</column>
+        <column>article_id</column>
+        <column>position</column>
+        <column>heading</column>
+        <column>nlm_category</column>
+        <column>para</column>
+        <row>
+            <value>1</value> <!-- id -->
+            <value>1</value> <!-- article_id -->
+            <value>1</value> <!-- position -->
+            <value>Objective</value> <!-- heading -->
+            <value>Objective</value> <!-- nlm_category -->
+            <value>The current study aimed to investigate the molecular basis of cervical cancer development using a microarray to identify the differentially expressed genes. This study also aimed to detect apoptosis genes and proteins to find those genes most aberrantly expressed in cervical cancer and to explore the cause of Uighur cervical cancer.</value> <!-- para -->
+        </row>
+        <row>
+            <value>2</value> <!-- id -->
+            <value>1</value> <!-- article_id -->
+            <value>2</value> <!-- position -->
+            <value>Methods</value> <!-- heading -->
+            <value>Methods</value> <!-- nlm_category -->
+            <value>An analysis of gene expression profiles obtained from cervical cancer cases was performed. Total RNA was prepared from 10 samples of cervical carcinoma and normal cervix and was hybridized to Affymetrix oligonucleotide microarrays with probe sets complementary to more than 20,000 transcripts. Several genes of the apoptosis pathway, which were differentially regulated, included BCL2, BCLXL, and c-IAP1. These were validated by quantitative reverse transcription-polymerase chain reaction and immunohistochemical staining on an independent set of cancer and control specimens.</value> <!-- para -->
+        </row>
+        <row>
+            <value>3</value> <!-- id -->
+            <value>1</value> <!-- article_id -->
+            <value>3</value> <!-- position -->
+            <value>Results</value> <!-- heading -->
+            <value>Results</value> <!-- nlm_category -->
+            <value>Unsupervised hierarchical clustering of the expression data readily distinguished the normal cervix from cancer. Supervised analysis of gene expression data identified 1,326 and 1,432 genes that were upregulated and downregulated, respectively; a set of genes belonging to the apoptosis pathways were upregulated or downregulated in patients with cervical cancer. BCL2, BCLXL, and c-IAP1 were found to be upregulated in late-stage cancer compared to early-stage cancer.</value> <!-- para -->
+        </row>
+        <row>
+            <value>4</value> <!-- id -->
+            <value>1</value> <!-- article_id -->
+            <value>4</value> <!-- position -->
+            <value>Conclusions</value> <!-- heading -->
+            <value>Conclusions</value> <!-- nlm_category -->
+            <value>These findings provide a new understanding of the gene expression profile in cervical cancer. BCL2, BCLXL, and c-IAP1 might be involved in cancer progression. The pathway analysis of expression data showed that the BCL2, BCLXL, and c-IAP1 genes were coordinately differentially regulated between cancer and normal cases. Our results may serve as basis for further development of biomarkers for the diagnosis and treatment of cervical cancer.</value> <!-- para -->
+        </row>
+        <row>
+            <value>5</value> <!-- id -->
+            <value>2</value> <!-- article_id -->
+            <value>1</value> <!-- position -->
+            <value>Objective</value> <!-- heading -->
+            <value>Objective</value> <!-- nlm_category -->
+            <value>To determine whether a quality assurance (QA) program using digital cervicography improved the performance of a visual inspection with acetic acid (VIA) to detect cervical intraepithelial neoplasia grade 2 or worse (CIN 2+) in HIV-infected women in Johannesburg, South Africa.</value> <!-- para -->
+        </row>
+        <row>
+            <value>6</value> <!-- id -->
+            <value>2</value> <!-- article_id -->
+            <value>2</value> <!-- position -->
+            <value>Materials and methods</value> <!-- heading -->
+            <value>Methods</value> <!-- nlm_category -->
+            <value>Visual inspection with acetic acid was performed among HIV-infected women, aged 18 to 65 years, in Johannesburg, South Africa. Nurses received 2 weeks of training on the VIA procedure. The VIA interpretation was performed in real time. The VIA results were then photographed using a retail available digital camera. A gynecologist and medical officer reviewed the VIA digital images within 2 weeks of the procedure. Colposcopic biopsy was performed on all women with positive VIA and 25% negative VIA results. Sensitivity and specificity of VIA for the detection of CIN 2+ were compared between the nurses and physicians at the beginning and at the end of the study.</value> <!-- para -->
+        </row>
+        <row>
+            <value>7</value> <!-- id -->
+            <value>2</value> <!-- article_id -->
+            <value>3</value> <!-- position -->
+            <value>Results</value> <!-- heading -->
+            <value>Results</value> <!-- nlm_category -->
+            <value>Positive VIA results were found in 541 (45%) of the 1,202 participating women. The sensitivity of VIA to predict CIN 2+ was improved from 65% to 75% (p = .001) with the addition of digital cervicography and specialist review. There was no statistical difference in the sensitivity of the VIA readings when comparing the first 600 participants to the final 593 participants between the nurses (p = .613) and physicians (p = .624).</value> <!-- para -->
+        </row>
+        <row>
+            <value>8</value> <!-- id -->
+            <value>2</value> <!-- article_id -->
+            <value>4</value> <!-- position -->
+            <value>Conclusions</value> <!-- heading -->
+            <value>Conclusions</value> <!-- nlm_category -->
+            <value>Quality assurance performed by specialists using digital cervicography improved the sensitivity of VIA. There was no difference in sensitivity in interpreting VIA between the beginning and the end of the study. Quality assurance should form a cornerstone of any VIA program to improve sensitivity in detecting CIN 2+ lesions.</value> <!-- para -->
+        </row>
+        <row>
+            <value>9</value> <!-- id -->
+            <value>3</value> <!-- article_id -->
+            <value>1</value> <!-- position -->
+            <value></value> <!-- heading -->
+            <value>Unlabelled</value> <!-- nlm_category -->
+            <value>Each year 610,000 cases of anogenital and oropharyngeal cancers caused by human papillomavirus (HPV) occur worldwide. HPV vaccination represents a promising opportunity to prevent cancer on a global scale. The vaccine's story dates back to discoveries in chickens at the beginning of the 20th century with evidence that a cell-free filtrate could transmit the propensity to grow cancers. Later, studies with similarly derived filtrates from mammalian tumors showed that hosts could develop immunity to subsequent exposures. Epidemiologic studies linked cervical cancer to members of a family of viruses that cause papillomatosis and common warts. This led to work with DNA hybridization demonstrating a causal relationship. The formation of virus-like particles from viral capsid proteins led to the development of models for safe and effective vaccines. While much work remains with the acceptance of universal vaccination, the HPV vaccines Gardasil and Cervarix thus represent a century of successful translational research.</value> <!-- para -->
+        </row>
+        <!--<row>
+
+            <value></value> &lt;!&ndash; id &ndash;&gt;
+            <value></value> &lt;!&ndash; article_id &ndash;&gt;
+            <value></value> &lt;!&ndash; position &ndash;&gt;
+            <value></value> &lt;!&ndash; heading &ndash;&gt;
+            <value></value> &lt;!&ndash; nlm_category &ndash;&gt;
+            <value></value> &lt;!&ndash; para &ndash;&gt;
+        </row>-->
+    </table>
+</dataset>

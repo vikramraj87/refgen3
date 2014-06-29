@@ -143,39 +143,23 @@ class Article
         return $this->title;
     }
 
-    /**
-     * @param bool $isTruncated
-     * @return string
-     */
-    public function getTruncatedAbstract(&$isTruncated)
+    public function toArray()
     {
-        $isTruncated = false;
-        $abstract = $this->abstract;
-        if(count($abstract) === 0) {
-            return '';
-        }
-        if(count($abstract) === 1) {
-            $para = $abstract[0];
-            if($para->getHeading() != '') {
-                $isTruncated = true;
-            }
-            $text = $para->getPara();
-            if(strlen($text) <= 300) {
-                return $text;
-            }
-        }
-        $isTruncated = true;
-        $paras = array();
-        foreach($abstract as $para) {
-            $paras[] = $para->getPara();
-        }
-        $truncated = implode(" ", $paras);
-        if(strlen($truncated) > 300) {
-            $truncated = substr($truncated, 0, 299);
-            $bp = strrpos($truncated, ' ');
-            $truncated = substr($truncated, 0, $bp) . '...';
-        }
-        return $truncated;
+        $journalData = array(
+            'journalTitle' => $this->journal->getTitle(),
+            'journalAbbr'  => $this->journal->getAbbr(),
+            'journalIssn'  => $this->journal->getIssn()
+        );
+        return array_merge(array(
+                'id'        => $this->id,
+                'indexerId' => $this->indexerId,
+                'title'     => $this->title,
+                'abstract'  => $this->abstract,
+                'authors'   => $this->authors
+            ),
+            $journalData,
+            $this->journalIssue->toArray()
+        );
     }
 
     /**

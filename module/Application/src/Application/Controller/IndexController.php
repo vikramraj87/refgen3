@@ -26,7 +26,35 @@ class IndexController extends AbstractActionController
 
     public function searchAction()
     {
+        $term = $this->params()->fromQuery('term', '');
 
+        if($term === '') {
+            /** Handle empty term */
+        }
+        $ids = $this->pubmedService->search($term);
+        if(null === $ids) {
+            /** Manage connection problem. Null return by the service */
+            /** Separate view model for no results and null */
+        }
+        $incomplete = false;
+        $result = $this->pubmedService->fetchArticlesByIndexerIds($ids, $incomplete);
+        $viewModel = new ViewModel();
+        $viewModel->setVariable('result', $result);
+
+        if(null === $result) {
+            /** Manage connection problem. Null return by the service */
+            /** Separate view model for no results and null */
+        }
+        if(empty($result)) {
+            $viewModel->setTemplate('application/index/search-empty');
+        }
+        if($incomplete) {
+            /** Display results incomplete page */
+        }
+        if(count($result) === 1) {
+            $viewModel->setTemplate('application/index/search-single');
+        }
+        return $viewModel;
     }
 
     /**

@@ -11,7 +11,7 @@
 		<key>connection</key>
 		<dict>
 			<key>database</key>
-			<string>RefgenTest</string>
+			<string>refgen3</string>
 			<key>host</key>
 			<string>127.0.0.1</string>
 			<key>kcid</key>
@@ -43,12 +43,14 @@
 		<dict>
 			<key>connectionEncoding</key>
 			<string>latin1</string>
+			<key>contentFilter</key>
+			<dict/>
 			<key>contentPageNumber</key>
 			<integer>1</integer>
 			<key>contentSortColIsAsc</key>
 			<true/>
 			<key>contentViewport</key>
-			<string>{{0, 0}, {694, 456}}</string>
+			<string>{{0, 0}, {734, 481}}</string>
 			<key>isToolbarVisible</key>
 			<true/>
 			<key>queries</key>
@@ -107,7 +109,21 @@ CREATE TABLE `article_abstract_paras` (
 		REFERENCES `articles` (`id`)
 		ON UPDATE RESTRICT
 		ON DELETE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;</string>
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(256) NOT NULL DEFAULT '',
+  `name` varchar(160) NOT NULL DEFAULT '',
+  `facebook_id` varchar(30) DEFAULT NULL,
+  `created_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_logged_in` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `facebook_id` (`facebook_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;</string>
+			<key>table</key>
+			<string>journals</string>
 			<key>view</key>
 			<string>SP_VIEW_CUSTOMQUERY</string>
 			<key>windowVerticalDividerPosition</key>
@@ -122,6 +138,83 @@ CREATE TABLE `article_abstract_paras` (
 	<array/>
 	<key>queryHistory</key>
 	<array>
+		<string>SET FOREIGN_KEY_CHECKS=1</string>
+		<string>TRUNCATE articles</string>
+		<string>SET FOREIGN_KEY_CHECKS=0</string>
+		<string>USE refgen3;
+CREATE TABLE `journals` (
+	`id`    INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`issn`  VARCHAR(30)      NOT NULL DEFAULT '',
+	`title` VARCHAR(120)     NOT NULL DEFAULT '',
+	`abbr`  VARCHAR(100)     NOT NULL DEFAULT '',
+  	PRIMARY KEY (`id`),
+  	UNIQUE KEY `unq_issn` (`issn`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+CREATE TABLE `articles` (
+	`id` 		 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+	`indexer_id` VARCHAR(16)      NOT NULL,
+	`volume`     VARCHAR(10)      NOT NULL DEFAULT '',
+	`issue`      VARCHAR(10)      NOT NULL DEFAULT '',
+	`pages`      VARCHAR(16)      NOT NULL DEFAULT '',
+	`year`       VARCHAR(10)      NOT NULL DEFAULT '',
+	`month`      VARCHAR(10)      NOT NULL DEFAULT '',
+	`day`        VARCHAR(8)       NOT NULL DEFAULT '',
+	`journal_id` INT UNSIGNED     NOT NULL DEFAULT 0,
+	`title`		 VARCHAR(500)     NOT NULL DEFAULT '',
+	`pub_status` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `unq_indexer_id` (`indexer_id`),
+	FOREIGN KEY (`journal_id`) 
+		REFERENCES `journals` (`id`)
+		ON UPDATE RESTRICT
+		ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+CREATE TABLE `article_authors` (
+	`id`         BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+	`article_id` INT UNSIGNED     NOT NULL DEFAULT 0,
+	`position`   TINYINT UNSIGNED NOT NULL DEFAULT 0,
+	`last_name`  VARCHAR(80)      NOT NULL DEFAULT '',
+	`fore_name`  VARCHAR(80)      NOT NULL DEFAULT '',
+	`initials`  VARCHAR(8)        NOT NULL DEFAULT '',
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`article_id`)
+		REFERENCES `articles` (`id`)
+		ON UPDATE RESTRICT
+		ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+CREATE TABLE `article_abstract_paras` (
+	`id`           BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+	`article_id`   INT UNSIGNED     NOT NULL DEFAULT 0,
+	`position`     TINYINT UNSIGNED NOT NULL DEFAULT 0,
+	`heading`      VARCHAR(80)      NOT NULL DEFAULT '',
+	`nlm_category` VARCHAR(80)      NOT NULL DEFAULT 0,
+	`para`         TEXT             NOT NULL,
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`article_id`)
+		REFERENCES `articles` (`id`)
+		ON UPDATE RESTRICT
+		ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+CREATE TABLE `users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(256) NOT NULL DEFAULT '',
+  `name` varchar(160) NOT NULL DEFAULT '',
+  `facebook_id` varchar(30) DEFAULT NULL,
+  `created_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_logged_in` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `facebook_id` (`facebook_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1</string>
+		<string>CREATE TABLE `users` (
+	`id`	         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`email`          VARCHAR(256) NOT NULL DEFAULT '',
+	`name`           VARCHAR(160) NOT NULL DEFAULT '',
+	`created_on`     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`last_logged_in` DATETIME     NULL     DEFAULT NULL,
+	PRIMARY KEY(`id`),
+	UNIQUE KEY(`email`)
+) ENGINE=InnoDB</string>
 		<string>USE `RefgenTest`;
 CREATE TABLE `journals` (
 	`id`    INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -352,18 +445,6 @@ CREATE TABLE `articles` (
 CREATE TABLE oauth_access_tokens (access_token TEXT, client_id TEXT, user_id TEXT, expires TIMESTAMP, scope TEXT);
 CREATE TABLE oauth_authorization_codes (authorization_code TEXT, client_id TEXT, user_id TEXT, redirect_uri TEXT, expires TIMESTAMP, scope TEXT);
 CREATE TABLE oauth_refresh_tokens (refresh_token TEXT, client_id TEXT, user_id TEXT, expires TIMESTAMP, scope TEXT)</string>
-		<string>use refgen_api</string>
-		<string>select * from session</string>
-		<string>truncate refgen.session</string>
-		<string>CREATE TABLE `session` (
-	`id` CHAR(32),
-	`name` CHAR(32),
-	`modified` INT,
-	`lifetime` INT,
-	`data` TEXT,
-	PRIMARY KEY (`id`, `name`)
-)</string>
-		<string>USE refgen</string>
 	</array>
 	<key>rdbms_type</key>
 	<string>mysql</string>

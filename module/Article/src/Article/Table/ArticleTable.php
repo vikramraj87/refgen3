@@ -5,7 +5,8 @@ use Article\Entity\Article;
 use Zend\Db\Adapter\Adapter,
     Zend\Db\Adapter\AdapterAwareInterface,
     Zend\Db\TableGateway\AbstractTableGateway,
-    Zend\Db\Sql\Where;
+    Zend\Db\Sql\Where,
+    Zend\Db\ResultSet\ResultSet;
 
 class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
 {
@@ -81,45 +82,26 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
      */
     public function checkArticles(array $indexerIds = array())
     {
+        if(empty($indexerIds)) {
+            return array();
+        }
         $where = new Where();
         $where->in('indexer_id', $indexerIds);
         $rowset = $this->select($where);
-        $articles = array();
 
-        $journalIds = array();
-        $articleIds = array();
+        return $this->articlesFromRowset($rowset);
+    }
 
-        $map = array();
-        foreach($rowset as $row) {
-            $article = new Article();
-            $article->populateFromArray($row->getArrayCopy());
-            $articles[$article->getIndexerId()] = $article;
-            $journalIds[] = $row['journal_id'];
-            $articleIds[] = $row['id'];
-            $map[$row['id']] = $row['journal_id'];
+    public function fetchArticlesByIds($ids = array())
+    {
+        if(empty($ids)) {
+            return array();
         }
-        $journalIds = array_unique($journalIds);
-        $journals   = $this->getJournalTable()->fetchJournalsByIds($journalIds);
-        $authors    = $this->getAuthorTable()->fetchAuthorsByArticleIds($articleIds);
-        $abstracts  = $this->getAbstractParaTable()->fetchParasByAArticleIds($articleIds);
+        $where = new Where();
+        $where->in('id', $ids);
+        $rowset = $this->select($where);
 
-        foreach($articles as &$article) {
-            /** @var Article $article */
-
-            $article->setJournal($journals[$map[$article->getId()]]);
-            if(isset($authors[$article->getId()])) {
-                $article->setAuthors(array_values($authors[$article->getId()]));
-            } else {
-                $article->setAuthors(array());
-            }
-            if(isset($abstracts[$article->getId()])) {
-                $article->setAbstract(array_values($abstracts[$article->getId()]));
-            } else {
-                $article->setAbstract(array());
-            }
-        }
-
-        return $articles;
+        return $this->articlesFromRowset($rowset);
     }
 
     /**
@@ -260,5 +242,46 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
         $this->getAbstractParaTable()->deleteParasByArticleId($id);
         $this->delete(array('id' => $id));
         return true;
+    }
+
+    private function articlesFromRowset(ResultSet $rowset)
+    {
+        if(count($rowset) === 0) {
+            return array();
+        }
+
+        $articles = array();
+        $journalIds = array();
+        $articleIds = array();
+
+        $map = array();
+        foreach($rowset as $row) {
+            $article = new Article();
+            $article->populateFromArray($row->getArrayCopy());
+            $articles[$article->getIndexerId()] = $article;
+            $journalIds[] = $row['journal_id'];
+            $articleIds[] = $row['id'];
+            $map[$row['id']] = $row['journal_id'];
+        }
+        $journalIds = array_unique($journalIds);
+        $journals   = $this->getJournalTable()->fetchJournalsByIds($journalIds);
+        $authors    = $this->getAuthorTable()->fetchAuthorsByArticleIds($articleIds);
+        $abstracts  = $this->getAbstractParaTable()->fetchParasByAArticleIds($articleIds);
+
+        foreach($articles as &$article) {
+            /** @var Article $article */
+            $article->setJournal($journals[$map[$article->getId()]]);
+            if(isset($authors[$article->getId()])) {
+                $article->setAuthors(array_values($authors[$article->getId()]));
+            } else {
+                $article->setAuthors(array());
+            }
+            if(isset($abstracts[$article->getId()])) {
+                $article->setAbstract(array_values($abstracts[$article->getId()]));
+            } else {
+                $article->setAbstract(array());
+            }
+        }
+        return $articles;
     }
 } 

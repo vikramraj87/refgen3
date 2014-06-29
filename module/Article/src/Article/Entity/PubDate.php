@@ -68,5 +68,12 @@ class PubDate
         return $this->year;
     }
 
-
+    public function toArray()
+    {
+        return array(
+            'year'  => $this->year,
+            'month' => $this->month,
+            'day'   => $this->day
+        );
+    }
 } 

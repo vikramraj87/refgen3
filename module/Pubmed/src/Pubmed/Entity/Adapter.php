@@ -106,6 +106,8 @@ class Adapter
      */
     public function search($term = '', $page = 1)
     {
+        $term = (string) $term;
+        $term = urlencode($term);
         $start = 0;
         $page = (int) $page;
         if($page > 0) {

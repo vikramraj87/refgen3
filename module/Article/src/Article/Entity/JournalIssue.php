@@ -129,5 +129,14 @@ class JournalIssue
         return $this->pages;
     }
 
+    public function toArray()
+    {
+        return array_merge(array(
+            'volume' => $this->volume,
+            'issue'  => $this->issue,
+            'pages'  => $this->pages
+            ), $this->pubDate->toArray()
+        );
 
+    }
 } 

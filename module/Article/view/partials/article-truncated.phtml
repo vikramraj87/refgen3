@@ -1,0 +1,17 @@
+    <?php $article = $this->article; ?>
+    <article>
+        <header>
+            <h2><?php echo $article->getTitle(); ?></h2>
+            <h3><?php echo $this->authors($article->getAuthors())->render(); ?></h3>
+        </header>
+        <?php echo $this->abstract($article->getAbstract())->renderTruncated(); ?>
+        <footer>
+            <p><b>PMID:</b>
+               <?php $pmid = substr($article->getIndexerId(), 4); ?>
+               <a href="http://www.ncbi.nlm.nih.gov/pubmed/<?php echo $pmid; ?>" target="_blank">
+                    <?php echo $pmid; ?>
+               </a>
+            </p>
+            <p><b>Cite by:</b> <?php echo $this->citation($article); ?></p>
+        </footer>
+    </article>

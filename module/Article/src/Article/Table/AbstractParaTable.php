@@ -81,6 +81,7 @@ class AbstractParaTable extends AbstractTableGateway implements AdapterAwareInte
                  */
                 return false;
             }
+            $position++;
         }
         return true;
     }

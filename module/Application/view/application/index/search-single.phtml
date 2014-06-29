@@ -1,0 +1,7 @@
+<?php
+$result = $this->result;
+reset($result);
+$article = current($result);
+
+$this->partial()->setObjectKey('article');
+echo $this->partial('partials/article', $article);

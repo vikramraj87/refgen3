@@ -1,17 +1,11 @@
 <?php
 namespace User\Entity;
 
-
+use DateTime;
 class User
 {
     /** @var int */
     protected $id = 0;
-
-    /** @var string */
-    protected $firstName = '';
-
-    /** @var string */
-    protected $lastName = '';
 
     /** @var string */
     protected $name = '';
@@ -19,8 +13,14 @@ class User
     /** @var string */
     protected $email = '';
 
-    /** @var string  */
-    protected $facebookId = '';
+    /** @var string|null  */
+    protected $facebookId = null;
+
+    /** @var DateTime */
+    protected $createdOn;
+
+    /** @var DateTime */
+    protected $lastLoggedIn;
 
     /**
      * @param string $email
@@ -39,19 +39,19 @@ class User
     }
 
     /**
-     * @param string $firstName
+     * @param string|null $facebookId
      */
-    public function setFirstName($firstName)
+    public function setFacebookId($facebookId)
     {
-        $this->firstName = $firstName;
+        $this->facebookId = $facebookId;
     }
 
     /**
      * @return string
      */
-    public function getFirstName()
+    public function getFacebookId()
     {
-        return $this->firstName;
+        return $this->facebookId;
     }
 
     /**
@@ -71,22 +71,6 @@ class User
     }
 
     /**
-     * @param string $lastName
-     */
-    public function setLastName($lastName)
-    {
-        $this->lastName = $lastName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLastName()
-    {
-        return $this->lastName;
-    }
-
-    /**
      * @param string $name
      */
     public function setName($name)
@@ -103,20 +87,36 @@ class User
     }
 
     /**
-     * @param string $facebookId
+     * @param \DateTime $createdOn
      */
-    public function setFacebookId($facebookId)
+    public function setCreatedOn(DateTime $createdOn = null)
     {
-        $this->facebookId = $facebookId;
+        $this->createdOn = $createdOn;
     }
 
     /**
-     * @return string
+     * @return \DateTime
      */
-    public function getFacebookId()
+    public function getCreatedOn()
     {
-        return $this->facebookId;
+        return $this->createdOn;
+    }
+
+    /**
+     * @param \DateTime $lastLoggedIn
+     */
+    public function setLastLoggedIn(DateTime $lastLoggedIn = null)
+    {
+        $this->lastLoggedIn = $lastLoggedIn;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastLoggedIn()
+    {
+        return $this->lastLoggedIn;
     }
 
 
-} 
+}

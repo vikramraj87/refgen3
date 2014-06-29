@@ -1,29 +1,14 @@
 <?php
 use Zend\Mvc\Controller\ControllerManager,
     Zend\ServiceManager\ServiceManager;
-use User\Controller\UserController;
+use User\Controller\UserController,
+    User\Service\FacebookService;
 
 return array(
     'controllers' => array(
-        'factories'  => array(
-            'User\Controller\User' => function(ControllerManager $cm) {
-                /** @var \Zend\ServiceManager\ServiceManager $sm */
-                $sm = $cm->getServiceLocator();
-
-                include_once 'Google/Client.php';
-                $config = $sm->get('config');
-                $googleConfig = $config['google'];
-                $googleClient = new \Google_Client();
-                $googleClient->setClientId($googleConfig['client_id']);
-                $googleClient->setClientSecret($googleConfig['client_secret']);
-                $googleClient->setRedirectUri($googleConfig['redirect_uri']);
-                $googleClient->setScopes($googleConfig['scopes']);
-                $googleClient->setAccessType('online');
-                $googleClient->setApprovalPrompt('auto');
-                $controller = new UserController();
-                $controller->setGoogleClient($googleClient);
-                return $controller;
-            }
+        'invokables' => array(
+            'User\Controller\User' => 'User\Controller\UserController',
+            'User\Controller\Auth' => 'User\Controller\AuthController'
         )
     ),
     'router' => array(
@@ -48,24 +33,6 @@ return array(
                             )
                         )
                     ),
-                    'google' => array(
-                        'type'    => 'Zend\Mvc\Router\Http\Literal',
-                        'options' => array(
-                            'route' => '/google_auth',
-                            'defaults' => array(
-                                'action' => 'google-auth'
-                            )
-                        )
-                    ),
-                    'facebook' => array(
-                        'type'    => 'Zend\Mvc\Router\Http\Literal',
-                        'options' => array(
-                            'route'    => '/fb_auth',
-                            'defaults' => array(
-                                'action' => 'fb-auth'
-                            )
-                        )
-                    ),
                     'logout' => array(
                         'type'    => 'Zend\Mvc\Router\Http\Literal',
                         'options' => array(
@@ -76,7 +43,44 @@ return array(
                         )
                     )
                 )
+            ),
+            'auth' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route' => '/auth',
+                    'defaults' => array(
+                        'controller' => 'User\Controller\Auth'
+                    )
+                ),
+                'child_routes' => array(
+                    'facebook' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => array(
+                            'route' => '/facebook',
+                            'defaults' => array(
+                                'action' => 'facebook'
+                            )
+                        )
+                    )
+                )
             )
+        )
+    ),
+    'service_manager' => array(
+        'factories' => array(
+            'FacebookService' => function(ServiceManager $sm) {
+                $config = $sm->get('config');
+                $facebookConfig = $config['facebook'];
+
+                $service = new FacebookService(
+                    $facebookConfig['client_id'],
+                    $facebookConfig['client_secret'],
+                    $facebookConfig['redirect_url'],
+                    $facebookConfig['scopes']
+                );
+
+                return $service;
+            }
         )
     ),
     'view_manager' => array(

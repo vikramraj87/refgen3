@@ -88,6 +88,7 @@ class AuthorTable extends AbstractTableGateway implements AdapterAwareInterface
                  */
                 return false;
             }
+            $position++;
         }
         return true;
     }

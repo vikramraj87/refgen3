@@ -11,11 +11,14 @@ namespace Pubmed\Service;
 use Article\Entity\Article;
 use Article\Table\ArticleTable;
 use Pubmed\Entity\Adapter;
+use Zend\Session\Container;
 
 class PubmedService
 {
     /** @var ArticleTable */
     protected $table;
+
+    private $container;
 
     /**
      * @param \Article\Table\ArticleTable $table
@@ -27,8 +30,20 @@ class PubmedService
 
     public function search($term = '', $page = 1)
     {
+        $page = (int) $page;
+
+        $container = $this->container();
+        if($container->offsetGet('term') == $term && $container->offsetGet('page') == $page) {
+            return $container->offsetGet('indexerIds');
+        }
         $adapter = Adapter::getInstance();
         $indexerIds = $adapter->search($term, $page);
+
+        if(!empty($indexerIds)) {
+            $container->offsetSet('term', $term);
+            $container->offsetSet('page', $page);
+            $container->offsetSet('indexerIds', $indexerIds);
+        }
         return $indexerIds;
     }
 
@@ -82,5 +97,13 @@ class PubmedService
 
         // 7. Return the result
         return $output;
+    }
+
+    private function container()
+    {
+        if(null === $this->container) {
+            $this->container = new Container('searchCache');
+        }
+        return $this->container;
     }
 } 

@@ -1,2 +1,49 @@
-<h1>Login</h1>
-<p>Login using <a href="<?php echo $this->googleUrl; ?>">Google</a> or <a href="<?php echo $this->facebookLoginUrl; ?>">Facebook</a></p>
+            <div id="fb-root"></div>
+            <div class="large-4 medium-5 columns panel callout">
+                <h2>Login</h2>
+                <div id="login-button-container">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <a id="google-link" href="<?php echo $this->googleLoginUrl; ?>">With Google</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <a id="facebook-link" href="<?php echo $this->fbLoginUrl; ?>">With Facebook</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="large-8 medium-7 columns">
+                <aside><div class="row">
+                    <div class="large-12 columns">
+                        <h2>FAQs regarding login</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="large-6 columns">
+                        <h3>Why should I Login?</h3>
+                        <p>We require a way to uniquely identify you (with your email id). So, we can link all your article collections (you are about to create) in the database with your account.</p>
+                    </div>
+                    <div class="large-6 columns">
+                        <h3>Will i get spammed?</h3>
+                        <p>We will spam you only after the World stops spinning. Till then, we require your account information to identify you.</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="large-6 columns">
+                        <h3>Are you stealing my Google and Facebook passwords?</h3>
+                        <p>Google and Facebook won't allow anyone to store your password. Every thing happens through some thing called <a href="http://oauth.net/about" target="_blank"><i class="fa fa-external-link"></i>&nbsp; OAuth</a>. Google and Facebook gets your permission to share only the information you wish to share</p>
+                    </div>
+                    <div class="large-6 columns">
+                        <h3>Can you post on my Google+ or Facebook wall?</h3>
+                        <p>Google and Facebook let you know the information you are sharing with us. By any means, we don't ask for permission to post on your behalf.</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <h3>Still not able to decide?</h3>
+                        <p><a href="#"><i class="fa fa-mail-forward"></i> Contact us</a> and give us a chance to clarify your doubts.</p>
+                    </div>
+                </div></aside>
+            </div>

@@ -11,6 +11,9 @@ class UserTable extends AbstractTableGateway implements AdapterAwareInterface
 {
     protected $table = 'users';
 
+    /** @var UserSocialTable */
+    private $userSocialTable;
+
     /**
      * Set db adapter
      *
@@ -20,137 +23,101 @@ class UserTable extends AbstractTableGateway implements AdapterAwareInterface
     public function setDbAdapter(Adapter $adapter)
     {
         $this->adapter = $adapter;
+        $this->userSocialTable = new UserSocialTable();
+        $this->userSocialTable->setDbAdapter($adapter);
         $this->initialize();
     }
 
-    /**
-     * Checks for the existence of the user. If found, returns the user
-     * from the tale. Else, a new user entry is made in the table and the
-     * same is fetched back and returned. Returns null  if no user is
-     * found and the new user couldn't be saved
-     *
-     * @param User $user
-     * @return User|null
-     */
-    public function checkUser(User $user)
+    public function checkUser(User $user, $social = 0)
     {
-        $foundUser = null;
-        $facebookId = $user->getFacebookId();
-        $email = $user->getEmail();
-        $updateFlag = false;
+        $social = (int) $social;
 
-        if(!empty($facebookId)) {
-            $foundUser = $this->fetchUserByFacebookId($facebookId);
-            if($foundUser instanceof User) {
-                return $this->updateLastLoggedIn($foundUser);
+        // 1. User Id is provided
+        if($user->getId()) {
+            $userData = $this->select(array(
+                    'id' => $user->getId()
+                )
+            )->current();
+            if(false === $userData) {
+                return null;
             }
-            $updateFlag = true;
+            $socialData = $this->userSocialTable->checkUserIdAndSocial(
+                $userData['id'],
+                $social,
+                $user->getSocialId(),
+                $user->getPictureLink()
+            );
+            $user = $this->userFromData($userData, $socialData);
+            $this->updateLastLoggedIn($user);
+            return $user;
         }
-        $foundUser = $this->fetchUserByEmail($email);
-        if($foundUser instanceof User) {
-            if($updateFlag) {
-                $foundUser->setFacebookId($facebookId);
-                $foundUser = $this->updateFacebookId($foundUser);
-            }
-            return $this->updateLastLoggedIn($foundUser);
-        }
-        $foundUser = $this->saveUser($user);
-        return $foundUser;
-    }
 
-    /**
-     * Fetches user by id
-     *
-     * @param int $id
-     * @return null|User
-     */
-    public function fetchUserById($id = 0)
-    {
-        $id = (int) $id;
-        $rowset = $this->select(array(
-            'id' => $id
-        ));
-        $data = $rowset->current();
-        if(false === $data) {
-            return null;
+        // 2. Social Id and User Id already there in the User Social Table
+        $socialData = $this->userSocialTable->fetchBySocialAndSocialId($social, $user->getSocialId());
+        if($socialData) {
+            $userData = $this->select(array(
+                    'id' => $socialData['userId']
+                )
+            )->current();
+            $user = $this->userFromData($userData, $socialData);
+            $this->updateLastLoggedIn($user);
+            return $user;
         }
-        return $this->userFromData($data);
-    }
 
-    private function fetchUserByEmail($email = '')
-    {
-        $rowset = $this->select(array(
-            'email' => $email
-        ));
-        $data = $rowset->current();
-        if(false === $data) {
-            return null;
+        // 3. Email is already registered but the social data is new
+        $userData = $this->select(
+            array(
+                'email' => $user->getEmail()
+            )
+        )->current();
+        if($userData) {
+            $socialData = $this->userSocialTable->checkUserIdAndSocial(
+                $userData['id'],
+                $social,
+                $user->getSocialId(),
+                $user->getPictureLink()
+            );
+            $user = $this->userFromData($userData, $socialData);
+            $this->updateLastLoggedIn($user);
+            return $user;
         }
-        return $this->userFromData($data);
-    }
 
-    private function fetchUserByFacebookId($facebookId = '')
-    {
-        $rowset = $this->select(array(
-            'facebook_id' => $facebookId
-        ));
-        $data = $rowset->current();
-        if(false === $data) {
-            return null;
-        }
-        return $this->userFromData($data);
-    }
-
-    private function saveUser(User $user)
-    {
-        $now = new DateTime('now');
-        $data = array(
-            'email' => $user->getEmail(),
-            'name'  => $user->getName(),
-            'facebook_id' => $user->getFacebookId(),
-            'last_logged_in' => $now->format('Y-m-d H:i:s')
+        // 4. None of the entries found. Create new user
+        $data  = array(
+            'email'       => $user->getEmail(),
+            'first_name'  => $user->getFirstName(),
+            'middle_name' => $user->getMiddleName(),
+            'last_name'   => $user->getLastName(),
+            'name'        => $user->getName(),
         );
         $numRowsAffected = $this->insert($data);
-        return $this->fetchUserByEmail($user->getEmail());
-    }
-
-    private function updateFacebookId(User $user)
-    {
-        $this->update(array(
-                'facebook_id' => $user->getFacebookId()
-            ), array(
-                'id' => $user->getId()
-            )
-        );
-        return $this->fetchUserById($user->getId());
+        if(!$numRowsAffected) {
+            throw new \RuntimeException('Failed insertion in "user" Table');
+        }
+        return $this->checkUser($user, $social);
     }
 
     private function updateLastLoggedIn(User $user)
     {
-        $lastLoggedIn = new \DateTime('now');
-        $lastLoggedInStr = $lastLoggedIn->format('Y-m-d H:i:s');
         $this->update(array(
-                'last_logged_in' => $lastLoggedInStr
+                'last_logged_in' => date('Y-m-d H:i:s')
             ), array(
                 'id' => $user->getId()
             )
         );
-        $user->setLastLoggedIn($lastLoggedIn);
-        return $user;
     }
 
-    private function userFromData($data)
+    private function userFromData($userData, $socialData)
     {
-        $createdOn = null == $data['created_on']        ? null : new DateTime($data['created_on']);
-        $lastLoggedIn = null == $data['last_logged_in'] ? null : new DateTime($data['last_logged_in']);
-
-        $user = new User;
-        $user->setId($data['id']);
-        $user->setEmail($data['email']);
-        $user->setName($data['name']);
-        $user->setFacebookId($data['facebook_id']);
-        $user->setCreatedOn($createdOn);
-        $user->setLastLoggedIn($lastLoggedIn);
+        $user = new User();
+        $user->setId($userData['id'])
+             ->setEmail($userData['email'])
+             ->setFirstName($userData['first_name'])
+             ->setMiddleName($userData['middle_name'])
+             ->setLastName($userData['last_name'])
+             ->setName($userData['name'])
+             ->setSocialId($socialData['socialId'])
+             ->setPictureLink($socialData['picture']);
         return $user;
     }
 }

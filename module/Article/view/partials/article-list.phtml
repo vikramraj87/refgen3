@@ -1,0 +1,10 @@
+                                    <li>
+                                        <div class="row collapse">
+                                            <div class="small-11 columns">
+                                                <span><?php echo $article->getTitle(); ?> </span>
+                                            </div>
+                                            <div class="small-1 columns clearfix">
+                                                <a class="right" href="<?php echo $this->url('active-collection/remove', array('id' => $article->getId())) . '?redirect=' . urlencode($_SERVER['REQUEST_URI']); ?>">&#10006;</a>
+                                            </div>
+                                        </div>
+                                    </li>

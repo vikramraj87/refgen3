@@ -5,7 +5,10 @@ return array(
         'Application',
         'Article',
         'Pubmed',
-        'User'
+        'User',
+        'Collection',
+        'Authentication',
+        'Authorization'
     ),
 
     // These are various options for the listeners attached to the ModuleManager

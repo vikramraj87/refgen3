@@ -8,6 +8,7 @@
 
 namespace Collection\Table;
 
+use Zend\Db\Sql\Sql;
 use Zend\Db\TableGateway\AbstractTableGateway,
     Zend\Db\Adapter\Adapter,
     Zend\Db\Adapter\AdapterAwareInterface,
@@ -37,10 +38,10 @@ class CollectionArticleTable extends AbstractTableGateway implements AdapterAwar
     public function fetchArticlesByCollectionId($collectionId = 0)
     {
         $collectionId = (int) $collectionId;
-        $rowset = $this->select(array(
-                'collection_id' => $collectionId
-            )
-        );
+        $select = $this->getSql()->select()
+                                 ->where(array('collection_id' => $collectionId))
+                                 ->order('position');
+        $rowset = $this->selectWith($select);
         $articleIds = array();
         foreach($rowset as $row) {
             $articleIds[] = $row['article_id'];
@@ -75,19 +76,19 @@ class CollectionArticleTable extends AbstractTableGateway implements AdapterAwar
                 'article_id'    => $article->getId(),
                 'position'      => $pos
             );
-            try {
+           // try {
                 $this->insert($data);
-            } catch(InvalidQueryException $e) {
+            //} catch(InvalidQueryException $e) {
                 /**
                  * todo: raise an event for integrity constraint and log the error
                  */
-                return false;
-            } catch(\Exception $e) {
+              //  return false;
+            //} catch(\Exception $e) {
                 /**
                  * todo: raise an event and log the unknown error
                  */
-                return false;
-            }
+              //  return false;
+            //}
             $pos++;
         }
         return true;

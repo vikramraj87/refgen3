@@ -4,7 +4,7 @@ namespace Collection\Entity;
 use DateTime;
 use Article\Entity\Article;
 
-class Collection
+class Collection implements \Countable
 {
     /** @var int */
     private $id = 0;
@@ -23,6 +23,21 @@ class Collection
 
     /** @var int[] */
     private $position = array();
+
+    /**
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Count elements of an object
+     * @link http://php.net/manual/en/countable.count.php
+     * @return int The custom count as an integer.
+     * </p>
+     * <p>
+     * The return value is cast to an integer.
+     */
+    public function count()
+    {
+        return count($this->articles);
+    }
+
 
     /**
      * @param \Article\Entity\Article[] $articles

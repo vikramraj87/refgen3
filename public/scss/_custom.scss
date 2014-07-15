@@ -1,0 +1,119 @@
+$citation-bg-color: #eee;
+$citation-color:   #333;
+$author-color:     #666;
+
+@mixin login-button($image)
+{
+  @include button(
+      $button-med,
+      #fff,
+      true,
+      false,
+      false,
+      false
+  );
+  background: url($image);
+  background-color: #eee;
+  background-size: 3rem;
+  background-position: left;
+  background-repeat: no-repeat;
+  line-height: 3rem;
+  padding: 0 0 0 4rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+html, body {
+  height:100%;
+}
+
+.name {
+  h1 {
+    background: url('../img/Logo-small.png');
+    background-position: left 5px center;
+    background-repeat: no-repeat;
+    a {
+      margin-left: 37px;
+    }
+  }
+}
+
+#content {
+  margin-top: 2em;
+  min-height: 100%;
+  margin-bottom: -45px;
+  &:after {
+    content: "";
+    display: block;
+    height: 45px;
+  }
+}
+
+article {
+  border-top: 1px dotted $author-color;
+  &:first-child {
+    border:none;
+  }
+  h3 {
+    margin-bottom: 0;
+  }
+  h4 {
+    color: #666;
+    margin-bottom: 1em;
+  }
+  blockquote {
+    margin:  0 0 10px 0;
+    padding: 5px 10px;
+    color: $citation-color;
+    border:  none;
+    background-color: $citation-bg-color;
+    border-radius: 0 10px 0 10px;
+    text-align: justify;
+  }
+}
+
+aside {
+  margin-left:10px;
+  ul#collection {
+    margin:0;
+    padding:0;
+    font-size:0.9em;
+    list-style: none;
+    li {
+      margin-bottom:0.6em;
+      padding-left:0.3em;
+      padding-right:0.3em;
+      a {
+        display: none;
+      }
+      &:hover {
+        background-color: #e9e9e9;
+        a {
+          display: inline;
+        }
+      }
+    }
+  }
+}
+
+#page-footer {
+  background-color: $topbar-bg-color;
+  height:45px;
+  p {
+    padding: 0;
+    margin-bottom: 0;
+    line-height: 45px;
+    color: #fff;
+    text-align: center;
+  }
+}
+#login-button-container {
+  margin-top:2rem;
+}
+#google-link {
+  @include login-button('../img/g+64.png');
+}
+
+#facebook-link {
+  @include login-button('../img/FB-f-Logo__blue_58.png');
+}

@@ -43,43 +43,16 @@ return array(
                         )
                     )
                 )
-            ),
-            'auth' => array(
-                'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => array(
-                    'route' => '/auth',
-                    'defaults' => array(
-                        'controller' => 'User\Controller\Auth'
-                    )
-                ),
-                'child_routes' => array(
-                    'facebook' => array(
-                        'type' => 'Zend\Mvc\Router\Http\Literal',
-                        'options' => array(
-                            'route' => '/facebook',
-                            'defaults' => array(
-                                'action' => 'facebook'
-                            )
-                        )
-                    )
-                )
             )
         )
     ),
     'service_manager' => array(
         'factories' => array(
-            'FacebookService' => function(ServiceManager $sm) {
-                $config = $sm->get('config');
-                $facebookConfig = $config['facebook'];
-
-                $service = new FacebookService(
-                    $facebookConfig['client_id'],
-                    $facebookConfig['client_secret'],
-                    $facebookConfig['redirect_url'],
-                    $facebookConfig['scopes']
-                );
-
-                return $service;
+            'User\Table\User' => function(\Zend\ServiceManager\ServiceManager $sm) {
+                $adapter = $sm->get('Zend\Db\Adapter\Adapter');
+                $table = new \User\Table\UserTable();
+                $table->setDbAdapter($adapter);
+                return $table;
             }
         )
     ),

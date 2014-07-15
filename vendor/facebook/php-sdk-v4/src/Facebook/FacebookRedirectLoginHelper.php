@@ -130,6 +130,7 @@ class FacebookRedirectLoginHelper
   public function getSessionFromRedirect()
   {
     $this->loadState();
+
     if ($this->isValidRedirect()) {
       $params = array(
         'client_id' => FacebookSession::_getTargetAppId($this->appId),

@@ -101,7 +101,21 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
         $where->in('id', $ids);
         $rowset = $this->select($where);
 
-        return $this->articlesFromRowset($rowset);
+        $tmp = $this->articlesFromRowset($rowset);
+        $idMap  = array();
+        foreach($tmp as $article) {
+            /** @var \Article\Entity\Article $article */
+            $idMap[$article->getId()] = $article->getIndexerId();
+        }
+        $articles = array();
+        foreach($ids as $id) {
+            if(array_key_exists($id, $idMap)) {
+                $articleIndexerId = $idMap[$id];
+                $article = $tmp[$articleIndexerId];
+                $articles[$article->getIndexerId()] = $article;
+            }
+        }
+        return $articles;
     }
 
     /**

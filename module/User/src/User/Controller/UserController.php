@@ -1,14 +1,46 @@
 <?php
 namespace User\Controller;
 
-use User\Entity\User,
-    User\Service\FacebookService;
+use Authentication\Adapter\FacebookAdapter;
 use Zend\Mvc\Controller\AbstractActionController,
     Zend\Session\Container;
 
 class UserController extends AbstractActionController
 {
     public function indexAction()
+    {
+        /** @var \Authentication\Service\AuthenticationService $authService */
+        $authService = $this->getServiceLocator()->get('Authentication\Service\Authentication');
+        if($authService->hasIdentity()) {
+            var_dump($authService->getIdentity());
+        }
+    }
+
+    public function loginAction()
+    {
+        /** @var FacebookAdapter $facebookAdapter */
+        $facebookAdapter = $this->getServiceLocator()->get('Authentication\Adapter\Facebook');
+        $googleAdapter   = $this->getServiceLocator()->get('Authentication\Adapter\Google');
+        return array(
+            'fbLoginUrl'     => $facebookAdapter->getLoginUrl(),
+            'googleLoginUrl' => $googleAdapter->getLoginUrl()
+        );
+    }
+
+    public function logoutAction()
+    {
+        /** @var \Authentication\Service\AuthenticationService $service */
+        $service = $this->getServiceLocator()->get('Authentication\Service\Authentication');
+        $service->clearIdentity();
+
+        /** @var \Collection\Service\CollectionService $collectionService */
+        $collectionService = $this->getServiceLocator()->get('Collection\Service\Collection');
+        $collectionService->setCollection(null);
+
+        return $this->redirect()->toRoute('home');
+    }
+
+    /*public function indexAction()
     {
         $userContainer = new Container('user');
         if(!$userContainer->offsetExists('user')) {
@@ -21,7 +53,7 @@ class UserController extends AbstractActionController
 
     public function loginAction()
     {
-        /** @var FacebookService $facebookService */
+        /** @var FacebookService $facebookService *//*
         $facebookService = $this->getServiceLocator()->get('FacebookService');
         return array(
             'facebookLoginUrl' => $facebookService->getLoginUrl()
@@ -71,5 +103,5 @@ class UserController extends AbstractActionController
         $userContainer->user = $user;
         return $this->redirect()->toRoute('user');
 */
-    }
+    //}
 }

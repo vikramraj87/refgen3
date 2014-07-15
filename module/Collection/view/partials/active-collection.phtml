@@ -1,0 +1,65 @@
+<?php
+    /** @var \Collection\Service\CollectionService $service */
+    $service = $this->service;
+    $collection = $service->getActiveCollection();
+?>
+            <aside id="active-collection" class="clearfix">
+                <h3>Active Collection <?php if($service->isEdited()){ ?><span>*</span><?php } ?></h3>
+                <?php if($this->authService()->hasIdentity()): ?>
+                <form method="post" action="<?php echo $this->url('collection/save') . '?redirect=' . urlencode($_SERVER['REQUEST_URI']); ?>">
+                    <div class="row">
+                        <div class="large-3 small-3 columns">
+                            <label for="txt-collection-name" class="inline right">Name</label>
+                        </div>
+                        <div class="large-9 small-9 columns">
+                            <input type="text" name="txt-collection-name"
+                                   id="txt-collection-name" value="<?php echo $collection->getName(); ?>" style="margin-bottom: 0"/>
+
+                        </div>
+                    </div>
+                <?php endif; ?>
+                <?php if(!$this->authService()->hasIdentity() && $service->isEdited()): ?>
+                    <div class="row">
+                        <div class="alert-box info" data-alert>
+                            Please login, if you wish to save this collection permanently
+                            <a class="close" href="#">&times;</a>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                <?php if(!count($collection)): ?>
+                    <div data-alert class="alert-box info">
+                        Your active collection is empty.
+                        <a href="#" class="close">&times;</a>
+                    </div>
+                <?php endif; ?>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <ul id="collection">
+                                <?php
+                                $this->partialLoop()->setObjectKey('article');
+                                echo $this->partialLoop('partials/article-list', $collection->getArticles());
+                                ?>
+                            </ul>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <ul class="button-group right">
+                                <?php if(count($collection)): ?>
+                                <li><a class="button tiny" href="#"><i class="fa fa-list-ol"></i>&nbsp; Export</a></li>
+                                <?php endif; ?>
+                                <?php if($this->authService()->hasIdentity()): ?>
+                                <li><button type="submit" class="button tiny"><i class="fa fa-save"></i>&nbsp; Save</button></li>
+                                    <?php if($collection->getId()): ?>
+                                <li><a class="button tiny" href="#"><i class="fa fa-trash-o"></i>&nbsp; Delete</a></li>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </ul>
+                        </div>
+                    </div>
+                <?php if($this->authService()->hasIdentity()): ?>
+                </form>
+                <?php endif; ?>
+            </aside>

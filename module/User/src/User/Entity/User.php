@@ -5,29 +5,37 @@ use DateTime;
 class User
 {
     /** @var int */
-    protected $id = 0;
+    private $id = 0;
 
     /** @var string */
-    protected $name = '';
+    private $socialId = '';
 
     /** @var string */
-    protected $email = '';
+    private $email = '';
 
-    /** @var string|null  */
-    protected $facebookId = null;
+    /** @var string */
+    private $firstName = '';
 
-    /** @var DateTime */
-    protected $createdOn;
+    /** @var string */
+    private $middleName = '';
 
-    /** @var DateTime */
-    protected $lastLoggedIn;
+    /** @var string */
+    private $lastName = '';
+
+    /** @var string */
+    private $name = '';
+
+    /** @var string */
+    private $pictureLink = '';
 
     /**
      * @param string $email
+     * @return $this
      */
     public function setEmail($email)
     {
         $this->email = $email;
+        return $this;
     }
 
     /**
@@ -39,27 +47,31 @@ class User
     }
 
     /**
-     * @param string|null $facebookId
+     * @param string $firstName
+     * @return $this
      */
-    public function setFacebookId($facebookId)
+    public function setFirstName($firstName)
     {
-        $this->facebookId = $facebookId;
+        $this->firstName = $firstName;
+        return $this;
     }
 
     /**
      * @return string
      */
-    public function getFacebookId()
+    public function getFirstName()
     {
-        return $this->facebookId;
+        return $this->firstName;
     }
 
     /**
      * @param int $id
+     * @return $this
      */
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
     }
 
     /**
@@ -71,11 +83,49 @@ class User
     }
 
     /**
+     * @param string $lastName
+     * @return $this
+     */
+    public function setLastName($lastName)
+    {
+        $this->lastName = $lastName;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLastName()
+    {
+        return $this->lastName;
+    }
+
+    /**
+     * @param string $middleName
+     * @return $this
+     */
+    public function setMiddleName($middleName)
+    {
+        $this->middleName = $middleName;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMiddleName()
+    {
+        return $this->middleName;
+    }
+
+    /**
      * @param string $name
+     * @return $this
      */
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -87,35 +137,39 @@ class User
     }
 
     /**
-     * @param \DateTime $createdOn
+     * @param string $pictureLink
+     * @return $this
      */
-    public function setCreatedOn(DateTime $createdOn = null)
+    public function setPictureLink($pictureLink)
     {
-        $this->createdOn = $createdOn;
+        $this->pictureLink = $pictureLink;
+        return $this;
     }
 
     /**
-     * @return \DateTime
+     * @return string
      */
-    public function getCreatedOn()
+    public function getPictureLink()
     {
-        return $this->createdOn;
+        return $this->pictureLink;
     }
 
     /**
-     * @param \DateTime $lastLoggedIn
+     * @param string $socialId
+     * @return $this
      */
-    public function setLastLoggedIn(DateTime $lastLoggedIn = null)
+    public function setSocialId($socialId)
     {
-        $this->lastLoggedIn = $lastLoggedIn;
+        $this->socialId = $socialId;
+        return $this;
     }
 
     /**
-     * @return \DateTime
+     * @return string
      */
-    public function getLastLoggedIn()
+    public function getSocialId()
     {
-        return $this->lastLoggedIn;
+        return $this->socialId;
     }
 
 

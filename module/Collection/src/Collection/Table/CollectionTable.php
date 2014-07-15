@@ -54,6 +54,41 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
         return $collection;
     }
 
+    public function fetchRecentByUserId($userId = 0)
+    {
+        $select = $this->getSql()
+                       ->select()
+                       ->where(array('user_id' => $userId))
+                       ->order('updated_on DESC')
+                       ->limit(10);
+        $rowset = $this->selectWith($select);
+        $collections = array();
+        foreach($rowset as $row) {
+            $collections[] = array(
+                'id'   => $row['id'],
+                'name' => $row['name']
+            );
+        }
+        return $collections;
+    }
+
+    public function fetchEntireByUserId($userId = 0)
+    {
+        $select = $this->getSql()
+                       ->select()
+                       ->where(array('user_id' => $userId))
+                       ->order('updated_on DESC');
+        $rowset = $this->selectWith($select);
+        $collections = array();
+        foreach($rowset as $row) {
+            $collections = array(
+                'id' => $row['id'],
+                'name' => $row['name']
+            );
+        }
+        return $collections;
+    }
+
     /**
      * @param \Collection\Table\CollectionArticleTable $collectionArticleTable
      */
@@ -65,13 +100,72 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
     public function saveCollection(Collection $collection, $userId = 0)
     {
         $userId = (int) $userId;
+
+        if(0 == $userId) {
+            throw new \InvalidArgumentException('User Id required to create a new collection');
+        }
+
         $data = array(
-            'id'       => $collection->getId(),
             'name'     => $collection->getName(),
-            'user_id'  => $userId,
-            'articles' => $collection->getArticles()
+            'user_id'  => $userId
         );
-        return $this->save($data);
+
+        $result = (bool) $this->insert($data);
+        if(!$result) {
+            return false;
+        }
+        $id = $this->getLastInsertValue();
+        $collection->setId($id);
+
+        $articles = $collection->getArticles();
+
+        $result = $this->collectionArticleTable()->saveArticles($articles, $id);
+        if(!$result) {
+            /*
+             * Todo: Check deleting collection to check for integrity constraints.
+             * Todo: Potential problem. If not deleted properly, won't allow people to
+             * Todo: use the same name when they retry
+             */
+            $this->delete(array('id' => $id));
+            return false;
+        }
+        return $this->fetchCollectionById($id);
+    }
+
+    public function updateCollection(Collection $collection)
+    {
+        $id = $collection->getId();
+
+        $savedCollection = $this->select(array(
+                'id' => $id
+            )
+        )->current();
+        if(!$savedCollection) {
+            throw new \InvalidArgumentException(
+                'The collection to update identified by id: ' . $id . 'doesn\'t exist'
+            );
+        }
+
+        $data = array(
+            'name' => $collection->getName(),
+            'updated_on' => date('Y-m-d H:i:s')
+        );
+        $result = (bool) $this->update($data, array('id' => $id));
+        if(!$result) {
+            return false;
+        }
+
+        $result = $this->collectionArticleTable()->saveArticles($collection->getArticles(), $id);
+        if(!$result) {
+            /*
+             * Todo: Potential problem. If not deleted properly, won't allow people to
+             * Todo: use the same name when they retry
+             */
+            // $this->delete(array('id' => $id));
+            return false;
+        }
+        return $this->fetchCollectionById($id);
+
     }
 
     private function collectionArticleTable()
@@ -82,47 +176,4 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
         }
         return $this->collectionArticleTable;
     }
-
-    private function save(array $data)
-    {
-        $id       = $data['id'];
-        $articles = $data['articles'];
-
-        unset($data['id']);
-        unset($data['articles']);
-
-        if($id < 1) {
-            if($data['user_id'] < 1) {
-                throw new \InvalidArgumentException(
-                    'User Id required to create a new collection'
-                );
-            }
-            $result =  (bool) $this->insert($data);
-            if(!$result) {
-                return false;
-            }
-            $id = $this->getLastInsertValue();
-        } else {
-            $savedCollection = $this->select(array(
-                    'id' => $id
-                )
-            )->current();
-            if(!$savedCollection) {
-                throw new \InvalidArgumentException(
-                    'The collection to update identified by id: ' . $id . 'doesn\'t exist'
-                );
-            }
-            $now = (new \DateTime())->format('Y-m-d H:i:s');
-            $data['updated_on'] = $now;
-            $data['user_id']    = $savedCollection['user_id'];
-            $result = $this->update($data, array(
-                    'id' => $id
-                )
-            );
-            if(!$result) {
-                return false;
-            }
-        }
-        return $this->collectionArticleTable()->saveArticles($articles, $id);
-    }
-} 
+}

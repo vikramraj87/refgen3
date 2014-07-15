@@ -4586,25 +4586,31 @@
     <table name="users">
         <column>id</column>
         <column>email</column>
+        <column>first_name</column>
+        <column>middle_name</column>
+        <column>last_name</column>
         <column>name</column>
-        <column>facebook_id</column>
         <column>created_on</column>
         <column>last_logged_in</column>
         <row>
             <value>1</value> <!-- id -->
             <value>dr.vikramraj87@gmail.com</value> <!-- email -->
+            <value>Vikram Raj</value> <!-- first_name -->
+            <value></value> <!-- middle_name -->
+            <value>Gopinathan</value> <!-- last_name -->
             <value>Vikram Raj Gopinathan</value> <!-- name -->
-            <value>688970634489822</value> <!-- facebook_id -->
             <value>2014-06-15 10:15:00</value> <!-- created_on -->
             <value>2014-06-17 02:35:00</value> <!-- last_logged_in -->
         </row>
         <row>
             <value>2</value> <!-- id -->
             <value>kirthiviswanath@gmail.com</value> <!-- email -->
-            <value>Kirthika Vikram</value> <!-- name -->
-            <null/> <!-- facebook_id -->
-            <value>2014-06-16 20:15:00</value> <!-- created_on -->
-            <value>2014-06-17 21:00:00</value> <!-- last_logged_in -->
+            <value>Kirthika</value> <!-- first_name -->
+            <value></value> <!-- middle_name -->
+            <value>Viswanathan</value> <!-- last_name -->
+            <value>Kirthika Viswanathan</value> <!-- name -->
+            <value>2014-06-15 10:15:00</value> <!-- created_on -->
+            <value>2014-06-17 02:35:00</value> <!-- last_logged_in -->
         </row>
     </table>
     <table name="collections">

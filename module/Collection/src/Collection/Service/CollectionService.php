@@ -20,14 +20,50 @@ class CollectionService
     /** @var CollectionTable */
     private $table;
 
-    public function addArticle()
-    {
+    /** @var bool */
+    private $edited = false;
 
+    public function addArticle($articleId = 0)
+    {
+        $articleId = (int) $articleId;
+
+        if(!$articleId) {
+            return false;
+        }
+
+        $article = $this->articleTable->fetchArticleById($articleId);
+        if(null == $article) {
+            return false;
+        }
+
+        $preCount = count($this->activeCollection);
+        $this->activeCollection->addArticle($article);
+        $postCount = count($this->activeCollection);
+
+        if($postCount > $preCount) {
+            $this->edited = true;
+        }
+        $this->serialize();
+        return true;
     }
 
-    public function removeArticle()
+    public function removeArticle($articleId = 0)
     {
+        $articleId = (int) $articleId;
 
+        if(!$articleId) {
+            return false;
+        }
+
+        $preCount = count($this->activeCollection);
+        $this->activeCollection->removeArticle($articleId);
+        $postCount = count($this->activeCollection);
+
+        if($preCount > $postCount) {
+            $this->edited = true;
+        }
+        $this->serialize();
+        return true;
     }
 
 
@@ -35,6 +71,8 @@ class CollectionService
     {
         $container = $this->container();
         if(!$container->offsetExists('data')) {
+            $this->activeCollection = new Collection();
+            $this->edited = false;
             return;
         }
         $data = $container->offsetGet('data');
@@ -64,12 +102,12 @@ class CollectionService
 
     private function deSerialize(array $data = array())
     {
-
         $articles = $this->articleTable->fetchArticlesByIds($data['articleIds']);
         $collection = new Collection();
         $collection->setId($data['id']);
         $collection->setName($data['name']);
         $collection->setArticles($articles);
+        $this->edited = $data['edited'];
         $this->activeCollection = $collection;
     }
 
@@ -84,7 +122,8 @@ class CollectionService
         $data = array(
             'id'         => $collection->getId(),
             'name'       => $collection->getName(),
-            'articleIds' => $articleIds
+            'articleIds' => $articleIds,
+            'edited'     => $this->edited
         );
         $this->container()->offsetSet('data', $data);
     }
@@ -93,4 +132,33 @@ class CollectionService
     {
         return $this->activeCollection;
     }
+
+    public function setCollection(Collection $collection = null)
+    {
+        if(null == $collection) {
+            $collection = new Collection();
+        }
+        $this->activeCollection = $collection;
+        $this->edited = false;
+        $this->serialize();
+    }
+
+    public function isEdited()
+    {
+        return $this->edited;
+    }
+
+    /*
+    public function saveChanges($name)
+    {
+        $this->getActiveCollection()->setName($name);
+        $result = (bool) $this->table->saveCollection($this->getActiveCollection());
+        if(!$result) {
+            throw new \RuntimeException('Error saving collection');
+        }
+        $collection = $this->table->fetchCollectionById($result);
+        $this->setCollection($collection);
+        return $result;
+
+    } */
 } 

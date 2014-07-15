@@ -3,25 +3,61 @@
     <table name="users">
         <column>id</column>
         <column>email</column>
+        <column>first_name</column>
+        <column>middle_name</column>
+        <column>last_name</column>
         <column>name</column>
-        <column>facebook_id</column>
         <column>created_on</column>
         <column>last_logged_in</column>
         <row>
             <value>1</value> <!-- id -->
             <value>dr.vikramraj87@gmail.com</value> <!-- email -->
-            <value>Vikram Raj Gopinathan</value> <!-- name -->
-            <value>688970634489822</value> <!-- facebook_id -->
+            <value>Vikram Raj</value> <!-- first_name -->
+            <value></value> <!-- middle_name -->
+            <value>Gopinathan</value> <!-- last_name -->
+            <value>Vikram Raj Gopinathan</value>
             <value>2014-06-15 10:15:00</value> <!-- created_on -->
             <value>2014-06-17 02:35:00</value> <!-- last_logged_in -->
         </row>
         <row>
             <value>2</value> <!-- id -->
             <value>kirthiviswanath@gmail.com</value> <!-- email -->
-            <value>Kirthika Vikram</value> <!-- name -->
-            <null/> <!-- facebook_id -->
+            <value>Kirthika</value> <!-- first_name -->
+            <value></value> <!-- middle_name -->
+            <value>Viswanathan</value> <!-- last_name -->
+            <value>Kirthika Viswanathan</value> <!-- name -->
             <value>2014-06-16 20:15:00</value> <!-- created_on -->
             <value>2014-06-17 21:00:00</value> <!-- last_logged_in -->
+        </row>
+    </table>
+    <table name="socials">
+        <column>id</column>
+        <column>name</column>
+        <row>
+            <value>1</value>
+            <value>Facebook</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>Google</value>
+        </row>
+    </table>
+    <table name="user_socials">
+        <column>user_id</column>
+        <column>social_id</column>
+        <column>social</column>
+        <column>picture</column>
+        <row>
+            <value>1</value>
+            <value>109671001037346774242</value>
+            <value>2</value>
+            <value>https://lh6.googleusercontent.com/-huEFicSGyKU/AAAAAAAAAAI/AAAAAAAAA4I/m0PFsWD8QFg/photo.jpg</value> <!-- picture -->
+        </row>
+        <row>
+            <value>2</value>
+            <value>10201408667538595</value>
+            <value>1</value>
+            <value>https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xpa1/t1.0-1/c0.0.50.50/p50x50/31568_10200644901964933_969761106_n.jpg</value> <!-- picture -->
         </row>
     </table>
 </dataset>

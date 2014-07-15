@@ -3,6 +3,7 @@ namespace UserTest\Table;
 
 use UserTest\DbTestCase;
 use User\Table\UserTable,
+    User\Table\UserSocialTable,
     User\Entity\User;
 
 class UserTableTest extends DbTestCase
@@ -10,107 +11,147 @@ class UserTableTest extends DbTestCase
     /** @var \User\Table\UserTable */
     protected $table;
 
+    /** @var \User\Table\UserSocialTable */
+    protected $userSocialTable;
+
     protected function setUp()
     {
         $conn = $this->getConnection();
         $conn->getConnection()->query('set foreign_key_checks=0');
         $adapter = $this->getAdapter();
         $this->table = new UserTable();
+        $this->userSocialTable = new UserSocialTable();
         $this->table->setDbAdapter($adapter);
+        $this->userSocialTable->setDbAdapter($adapter);
         parent::setUp();
         $conn->getConnection()->query('set foreign_key_checks=1');
     }
-
-    public function testCheckUserWithFacebookId()
+    /*
+    public function testFetchBySocialIdAndSocial()
     {
         $expected = new User();
-        $expected->setId(1);
-        $expected->setEmail('dr.vikramraj87@gmail.com');
-        $expected->setFacebookId('688970634489822');
-        $expected->setName('Vikram Raj Gopinathan');
-        $expected->setCreatedOn(new \DateTime('2014-06-15 10:15:00'));
-        $expected->setLastLoggedIn(new \DateTime('2014-06-17 02:35:00'));
+        $expected->setId(1)
+                 ->setEmail('dr.vikramraj87@gmail.com')
+                 ->setFirstName('Vikram Raj')
+                 ->setMiddleName('')
+                 ->setLastName('Gopinathan')
+                 ->setName('Vikram Raj Gopinathan')
+                 ->setPictureLink('https://lh6.googleusercontent.com/-huEFicSGyKU/AAAAAAAAAAI/AAAAAAAAA4I/m0PFsWD8QFg/photo.jpg')
+                 ->setSocialId('109671001037346774242');
 
-        $user = new User();
-        $user->setFacebookId('688970634489822');
-        $user->setEmail('dr.vikramraj87@gmail.com');
-        $user->setName('Vikram Raj Gopinathan');
-
-        $result = $this->table->checkUser($user);
-        $this->assertEquals(1, $result->getId());
-        $this->assertEquals('dr.vikramraj87@gmail.com', $result->getEmail());
-        $this->assertEquals('688970634489822', $result->getFacebookId());
-        $this->assertEquals('Vikram Raj Gopinathan', $result->getName());
-        $this->assertEquals(new \DateTime('2014-06-15 10:15:00'), $result->getCreatedOn());
-        $this->assertTrue($result->getLastLoggedIn() instanceof \DateTime);
+        $user = $this->table->fetchUserByIdAndSocial(1,2);
+        $this->assertEquals($expected, $user);
     }
 
-    public function testCheckUserWithEmail()
+    public function testFetchByEmailAndExistingSocialData()
     {
-        $user = new User();
-        $user->setEmail('kirthiviswanath@gmail.com');
-        $user->setName('Kirthika Vikram');
-        $user->setFacebookId('');
-
-        $result = $this->table->checkUser($user);
-        $this->assertEquals(2, $result->getId());
-        $this->assertEquals('kirthiviswanath@gmail.com', $result->getEmail());
-        $this->assertEquals('Kirthika Vikram', $result->getName());
-        $this->assertNull($result->getFacebookId());
-        $this->assertTrue($result->getCreatedOn() instanceof \DateTime);
-        $this->assertTrue($result->getLastLoggedIn() instanceof \DateTime);
+        $expected = new User();
+        $expected->setId(1)
+                 ->setEmail('dr.vikramraj87@gmail.com')
+                 ->setFirstName('Vikram Raj')
+                 ->setMiddleName('')
+                 ->setLastName('Gopinathan')
+                 ->setName('Vikram Raj Gopinathan')
+                 ->setPictureLink('https://lh6.googleusercontent.com/-huEFicSGyKU/AAAAAAAAAAI/AAAAAAAAA4I/m0PFsWD8QFg/photo.jpg')
+                 ->setSocialId('109671001037346774242');
+        $user = $this->table->fetchUserByEmailAndSocial(
+            'dr.vikramraj87@gmail.com',
+            2,
+            '109671001037346774242',
+            'https://lh6.googleusercontent.com/-huEFicSGyKU/AAAAAAAAAAI/AAAAAAAAA4I/m0PFsWD8QFg/photo.jpg'
+        );
+        $this->assertEquals($expected, $user);
     }
 
-    public function testCheckUserWithFacebookDataPreviouslyRegisteredViaGmail()
+    public function testFetchByEmailAndNonExistingSocialData()
     {
+        $expected = new User();
+        $expected->setId(1)
+            ->setEmail('dr.vikramraj87@gmail.com')
+            ->setFirstName('Vikram Raj')
+            ->setMiddleName('')
+            ->setLastName('Gopinathan')
+            ->setName('Vikram Raj Gopinathan')
+            ->setPictureLink('https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xpa1/t1.0-1/c64.5.114.114/s50x50/1891165_635032089883677_31263367_n.jpg')
+            ->setSocialId('684982804888605');
+        $user = $this->table->fetchUserByEmailAndSocial(
+            'dr.vikramraj87@gmail.com',
+            1,
+            '684982804888605',
+            'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xpa1/t1.0-1/c64.5.114.114/s50x50/1891165_635032089883677_31263367_n.jpg'
+        );
+        $this->assertEquals($expected, $user);
+    }
+    */
+    public function testCheckUserWithNonExistingSocialData()
+    {
+        $expected = new User();
+        $expected->setId(1)
+                 ->setEmail('dr.vikramraj87@gmail.com')
+                 ->setFirstName('Vikram Raj')
+                 ->setMiddleName('')
+                 ->setLastName('Gopinathan')
+                 ->setName('Vikram Raj Gopinathan')
+                 ->setPictureLink('https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xpa1/t1.0-1/c64.5.114.114/s50x50/1891165_635032089883677_31263367_n.jpg')
+                 ->setSocialId('684982804888605');
         $user = new User();
-        $user->setEmail('kirthiviswanath@gmail.com');
-        $user->setName('Kirthika Vikram');
-        $user->setFacebookId('0123456789');
-
-        $result = $this->table->checkUser($user);
-        $this->assertEquals(2, $result->getId());
-        $this->assertEquals('kirthiviswanath@gmail.com', $result->getEmail());
-        $this->assertEquals('Kirthika Vikram', $result->getName());
-        $this->assertEquals('0123456789', $result->getFacebookId());
-        $this->assertTrue($result->getCreatedOn() instanceof \DateTime);
-        $this->assertTrue($result->getLastLoggedIn() instanceof \DateTime);
+        $user->setEmail('dr.vikramraj87@gmail.com')
+             ->setFirstName('Vikram Raj')
+             ->setMiddleName('')
+             ->setLastName('Gopinathan')
+             ->setName('Vikram Raj Gopinathan')
+             ->setPictureLink('https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xpa1/t1.0-1/c64.5.114.114/s50x50/1891165_635032089883677_31263367_n.jpg')
+             ->setSocialId('684982804888605');
+        $this->assertEquals($expected, $this->table->checkUser($user, 1));
     }
 
-    public function testCheckNewUser()
+    public function testCheckUserWithExistingSocialData()
     {
+        $expected = new User();
+        $expected->setId(1)
+            ->setEmail('dr.vikramraj87@gmail.com')
+            ->setFirstName('Vikram Raj')
+            ->setMiddleName('')
+            ->setLastName('Gopinathan')
+            ->setName('Vikram Raj Gopinathan')
+            ->setPictureLink('https://lh6.googleusercontent.com/-huEFicSGyKU/AAAAAAAAAAI/AAAAAAAAA4I/m0PFsWD8QFg/photo.jpg')
+            ->setSocialId('109671001037346774242');
         $user = new User();
-        $user->setEmail('nirmalraj78@gmail.com');
-        $user->setName('Nirmal Raj Gopinathan');
-        $user->setFacebookId('9876543210');
+        $user->setEmail('dr.vikramraj87@gmail.com')
+            ->setFirstName('Vikram Raj')
+            ->setMiddleName('')
+            ->setLastName('Gopinathan')
+            ->setName('Vikram Raj Gopinathan')
+            ->setPictureLink('https://lh6.googleusercontent.com/-huEFicSGyKU/AAAAAAAAAAI/AAAAAAAAA4I/m0PFsWD8QFg/photo.jpg')
+            ->setSocialId('109671001037346774242');
+        $this->assertEquals($expected, $this->table->checkUser($user, 2));
+    }
 
-        $result = $this->table->checkUser($user);
-        $this->assertEquals(3, $result->getId());
-        $this->assertEquals('nirmalraj78@gmail.com', $result->getEmail());
-        $this->assertEquals('Nirmal Raj Gopinathan', $result->getName());
-        $this->assertEquals('9876543210', $result->getFacebookId());
-        $this->assertTrue($result->getLastLoggedIn() instanceof \DateTime);
-        $this->assertTrue($result->getCreatedOn() instanceof \DateTime);
-
+    public function testCheckNonExistingUser()
+    {
+        $expected = new User();
+        $expected->setId(3)
+            ->setEmail('kirthika2203@gmail.com')
+            ->setFirstName('kirthika')
+            ->setMiddleName('')
+            ->setLastName('viswanathan')
+            ->setName('kirthika viswanathan')
+            ->setPictureLink('https://lh3.googleusercontent.com/-R-VrIwNVp6E/AAAAAAAAAAI/AAAAAAAAAB0/1nm_k5aGDh4/photo.jpg')
+            ->setSocialId('116662090606954236795');
         $user = new User();
-        $user->setEmail('naishadhanirmal@gmail.com');
-        $user->setName('Naishadha Nirmal');
+        $user->setEmail('kirthika2203@gmail.com')
+            ->setFirstName('kirthika')
+            ->setMiddleName('')
+            ->setLastName('viswanathan')
+            ->setName('kirthika viswanathan')
+            ->setPictureLink('https://lh3.googleusercontent.com/-R-VrIwNVp6E/AAAAAAAAAAI/AAAAAAAAAB0/1nm_k5aGDh4/photo.jpg')
+            ->setSocialId('116662090606954236795');
+        $this->assertEquals($expected, $this->table->checkUser($user, 2));
 
-        $result = $this->table->checkUser($user);
-        $this->assertEquals(4, $result->getId());
-        $this->assertEquals('naishadhanirmal@gmail.com', $result->getEmail());
-        $this->assertEquals('Naishadha Nirmal', $result->getName());
-        $this->assertNull($result->getFacebookId());
-        $this->assertTrue($result->getLastLoggedIn() instanceof \DateTime);
-        $this->assertTrue($result->getCreatedOn() instanceof \DateTime);
+        $socialData = $this->userSocialTable->fetchByUserIdAndSocial(3,2);
+        $this->assertEquals(3, $socialData['userId']);
+        $this->assertEquals('https://lh3.googleusercontent.com/-R-VrIwNVp6E/AAAAAAAAAAI/AAAAAAAAAB0/1nm_k5aGDh4/photo.jpg', $socialData['picture']);
+        $this->assertEquals('116662090606954236795', $socialData['socialId']);
 
-        $user->setFacebookId('4321098765');
-        $result = $this->table->checkUser($user);
-        $this->assertEquals(4, $result->getId());
-        $this->assertEquals('naishadhanirmal@gmail.com', $result->getEmail());
-        $this->assertEquals('Naishadha Nirmal', $result->getName());
-        $this->assertEquals('4321098765', $result->getFacebookId());
-        $this->assertTrue($result->getLastLoggedIn() instanceof \DateTime);
-        $this->assertTrue($result->getCreatedOn() instanceof \DateTime);
     }
 }

@@ -35,6 +35,9 @@ class IndexController extends AbstractActionController
         if(null === $ids) {
             /** Manage connection problem. Null return by the service */
             /** Separate view model for no results and null */
+            /** Or raises Catchable fatal error: Argument 1 passed to
+             * Pubmed\Service\PubmedService::fetchArticlesByIndexerIds() must be of the type array,
+             * null given */
         }
         $incomplete = false;
         $result = $this->pubmedService->fetchArticlesByIndexerIds($ids, $incomplete);

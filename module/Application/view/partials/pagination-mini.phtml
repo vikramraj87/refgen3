@@ -1,0 +1,32 @@
+    <ul class="pagination">
+       <!-- Current page links -->
+       <?php if($this->current > 2): ?>
+       <li class="arrow">
+           <a href="<?php echo str_replace('%page%', 1, $this->urlTemplate); ?>"><i class="fa fa-angle-double-left"></i></a>
+       </li>
+       <?php endif; ?>
+
+       <!-- Previous page links -->
+       <?php if(isset($this->previous)): ?>
+       <li class="arrow">
+           <a href="<?php echo str_replace('%page%', $this->current - 1, $this->urlTemplate); ?>"><i class="fa fa-angle-left"></i></a>
+       </li>
+       <?php endif; ?>
+
+        <!-- Numbered page links -->
+        <?php foreach($this->pagesInRange as $page): ?>
+            <?php if($page == $this->current) { ?>
+                <li class="current">
+            <?php } else { ?>
+                <li>
+            <?php } ?>
+            <a href="<?php echo str_replace('%page%', $page, $this->urlTemplate); ?>"><?php echo $page; ?></a></li>
+        <?php endforeach; ?>
+
+       <!-- Next page link -->
+       <?php if(isset($this->next)): ?>
+       <li class="arrow">
+           <a href="<?php echo str_replace('%page%', $this->current + 1, $this->urlTemplate); ?>"><i class="fa fa-angle-right"></i></a>
+       </li>
+       <?php endif; ?>
+   </ul>

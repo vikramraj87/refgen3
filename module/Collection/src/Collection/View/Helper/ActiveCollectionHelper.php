@@ -1,7 +1,8 @@
 <?php
 namespace Collection\View\Helper;
 
-use Zend\View\Helper\AbstractHelper;
+use Zend\View\Helper\AbstractHelper,
+    Zend\Paginator\Adapter\ArrayAdapter;
 use Collection\Service\CollectionService;
 class ActiveCollectionHelper extends AbstractHelper
 {
@@ -31,5 +32,20 @@ class ActiveCollectionHelper extends AbstractHelper
     public function getName()
     {
         return $this->service->getActiveCollection()->getName();
+    }
+
+    public function getId()
+    {
+        return $this->service->getActiveCollection()->getId();
+    }
+
+    public function hasArticle($id)
+    {
+        return $this->service->getActiveCollection()->hasArticle($id);
+    }
+
+    public function isEmpty()
+    {
+        return !count($this->service->getActiveCollection());
     }
 }

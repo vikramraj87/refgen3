@@ -1,6 +1,6 @@
 $citation-bg-color: #eee;
-$citation-color:   #333;
-$author-color:     #666;
+$citation-color:    #333;
+$author-color:      #666;
 
 @mixin login-button($image)
 {
@@ -26,7 +26,9 @@ $author-color:     #666;
 html, body {
   height:100%;
 }
-
+span.fa {
+  margin-right: 1em;
+}
 .name {
   h1 {
     background: url('../img/Logo-small.png');
@@ -34,6 +36,9 @@ html, body {
     background-repeat: no-repeat;
     a {
       margin-left: 37px;
+      small {
+        color:$primary-color;
+      }
     }
   }
 }

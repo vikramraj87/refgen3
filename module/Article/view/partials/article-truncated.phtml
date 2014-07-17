@@ -13,7 +13,9 @@
             <ul class="button-group right">
                 <li><a class="button tiny" target="_blank"
                        href="http://www.ncbi.nlm.nih.gov/pubmed/<?php echo $pmid; ?>"><i class="fa fa-external-link"></i>&nbsp; View in Pubmed</a></li>
+                <?php if(!$this->activeCollection()->hasArticle($article->getId())): ?>
                 <li><a class="button tiny" href="<?php echo $this->url('active-collection/add', array('id' => $article->getId())) . '?redirect=' . urlencode($_SERVER['REQUEST_URI']); ?>"><i class="fa fa-plus"></i>&nbsp; Add to collection</a></li>
+                <?php endif; ?>
 
             </ul>
         </footer>

@@ -37,13 +37,41 @@ class CollectionController extends AbstractActionController
         return $this->redirect()->toUrl($redirect);
     }
 
+    public function listAction()
+    {
+        $authService = $this->getServiceLocator()->get('Authentication\Service\Authentication');
+        $userId = $authService->getIdentity()->getId();
+        $redirect = $this->params()->fromQuery('redirect', '/');
+        return array(
+            'collections' => $this->collectionTable->fetchEntireByUserId($userId),
+            'redirect'    => $redirect
+        );
+    }
+
     public function openAction()
     {
-        $id = $this->params()->fromRoute('id', 0);
-        $redirect = urldecode($this->params()->fromQuery('redirect', '/'));
+        $request = $this->getRequest();
+        if($request->isPost()) {
+            $id = $this->params()->fromPost('id', 0);
+        } else {
+            $id = $this->params()->fromRoute('id', 0);
+        }
+
         $collection = $this->collectionTable->fetchCollectionById($id);
-        if($collection instanceof Collection) {
-            $this->collectionService->setCollection($collection);
+        return array(
+            'collection' => $collection
+        );
+    }
+
+    public function setActiveAction()
+    {
+        $redirect = urldecode($this->params()->fromQuery('redirect', '/'));
+        $id = $this->params()->fromRoute('id', 0);
+        if($id) {
+            $collection = $this->collectionTable->fetchCollectionById($id);
+            if($collection instanceof Collection) {
+                $this->collectionService->setCollection($collection);
+            }
         }
         return $this->redirect()->toUrl($redirect);
     }
@@ -127,7 +155,18 @@ class CollectionController extends AbstractActionController
             }
         }
         return $this->redirect()->toUrl($redirect);
+    }
 
+    public function deleteAction()
+    {
+        $redirect = urldecode($this->params()->fromQuery('redirect', '/'));
+        $authService = $this->getServiceLocator()->get('Authentication\Service\Authentication');
+        $this->collectionTable->deleteCollectionById(
+            $this->collectionService->getActiveCollection()->getId(),
+            $authService->getIdentity()->getId()
+        );
+        $this->collectionService->setCollection(null);
+        return $this->redirect()->toUrl($redirect);
     }
 
     public function setCollectionTable(CollectionTable $collectionTable)

@@ -4,20 +4,20 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "57f566d58b5cb09f92b8472839d7876e",
+    "hash": "75e53e227b37ec9b1c1b1ed9f4b21774",
     "packages": [
         {
             "name": "facebook/php-sdk-v4",
-            "version": "4.0.8",
+            "version": "4.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facebook/facebook-php-sdk-v4.git",
-                "reference": "4d77aa2fe57a3777040d6a60aa31fbe7465cb4ca"
+                "reference": "a20dc24e0536ba7332f79b74c5a4deb45fa998f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facebook/facebook-php-sdk-v4/zipball/4d77aa2fe57a3777040d6a60aa31fbe7465cb4ca",
-                "reference": "4d77aa2fe57a3777040d6a60aa31fbe7465cb4ca",
+                "url": "https://api.github.com/repos/facebook/facebook-php-sdk-v4/zipball/a20dc24e0536ba7332f79b74c5a4deb45fa998f8",
+                "reference": "a20dc24e0536ba7332f79b74c5a4deb45fa998f8",
                 "shasum": ""
             },
             "require": {
@@ -53,7 +53,7 @@
                 "facebook",
                 "sdk"
             ],
-            "time": "2014-06-10 20:42:16"
+            "time": "2014-06-27 11:59:52"
         },
         {
             "name": "google/apiclient",
@@ -91,6 +91,98 @@
                 "google"
             ],
             "time": "2014-03-07 17:54:19"
+        },
+        {
+            "name": "phpoffice/phpword",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHPOffice/PHPWord.git",
+                "reference": "d8fbac6407f109cf7fcea404fbc8ceb2dffee5ca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHPOffice/PHPWord/zipball/d8fbac6407f109cf7fcea404fbc8ceb2dffee5ca",
+                "reference": "d8fbac6407f109cf7fcea404fbc8ceb2dffee5ca",
+                "shasum": ""
+            },
+            "require": {
+                "ext-xml": "*",
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "dompdf/dompdf": "0.6.*",
+                "mpdf/mpdf": "5.*",
+                "phpdocumentor/phpdocumentor": "2.*",
+                "phpunit/phpunit": "3.7.*",
+                "squizlabs/php_codesniffer": "1.*",
+                "tecnick.com/tcpdf": "6.*"
+            },
+            "suggest": {
+                "dompdf/dompdf": "Used to write PDF",
+                "ext-gd2": "Used to add images",
+                "ext-xmlwriter": "Used to write DOCX and ODT",
+                "ext-xsl": "Used to apply XSL style sheet to template part",
+                "ext-zip": "Used to write DOCX and ODT"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpOffice\\PhpWord\\": "src/PhpWord"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Franck Lefevre",
+                    "homepage": "http://blog.rootslabs.net"
+                },
+                {
+                    "name": "Gabriel Bull",
+                    "email": "me@gabrielbull.com",
+                    "homepage": "http://gabrielbull.com/"
+                },
+                {
+                    "name": "Mark Baker"
+                },
+                {
+                    "name": "Ivan Lanin",
+                    "homepage": "http://ivan.lanin.org"
+                },
+                {
+                    "name": "Roman Syroeshko",
+                    "homepage": "http://ru.linkedin.com/pub/roman-syroeshko/34/a53/994/"
+                }
+            ],
+            "description": "PHPWord - A pure PHP library for reading and writing word processing documents (DOCX, ODT, RTF, HTML, PDF)",
+            "homepage": "http://phpoffice.github.io",
+            "keywords": [
+                "ISO IEC 29500",
+                "OOXML",
+                "Office Open XML",
+                "OpenDocument",
+                "OpenXML",
+                "PhpOffice",
+                "PhpWord",
+                "Rich Text Format",
+                "WordprocessingML",
+                "doc",
+                "docx",
+                "html",
+                "odt",
+                "office",
+                "pdf",
+                "php",
+                "reader",
+                "rtf",
+                "template",
+                "word",
+                "writer"
+            ],
+            "time": "2014-06-24 08:30:46"
         },
         {
             "name": "zendframework/zendframework",
@@ -684,17 +776,17 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.5.0",
+            "version": "v2.5.2",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "b4b09c68ec2f2727574544ef0173684281a5033c"
+                "reference": "f868ecdbcc0276b6158dfbf08b9e98ce07f014e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/b4b09c68ec2f2727574544ef0173684281a5033c",
-                "reference": "b4b09c68ec2f2727574544ef0173684281a5033c",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/f868ecdbcc0276b6158dfbf08b9e98ce07f014e1",
+                "reference": "f868ecdbcc0276b6158dfbf08b9e98ce07f014e1",
                 "shasum": ""
             },
             "require": {
@@ -729,7 +821,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2014-05-16 14:25:18"
+            "time": "2014-07-09 09:05:48"
         }
     ],
     "aliases": [
@@ -737,7 +829,8 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "google/apiclient": 10
+        "google/apiclient": 10,
+        "phpoffice/phpword": 20
     },
     "platform": {
         "php": ">=5.3.3"

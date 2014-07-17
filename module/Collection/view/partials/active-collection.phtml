@@ -32,9 +32,9 @@
                         <a href="#" class="close">&times;</a>
                     </div>
                 <?php endif; ?>
-                    <div class="row">
+                    <div class="row"  style="margin-bottom:2em;">
                         <div class="large-12 columns">
-                            <ul id="collection">
+                            <ul id="collection" style="max-height: 300px; overflow-y: scroll; border:1px solid #eee;" >
                                 <?php
                                 $this->partialLoop()->setObjectKey('article');
                                 echo $this->partialLoop('partials/article-list', $collection->getArticles());
@@ -42,8 +42,6 @@
                             </ul>
                         </div>
                     </div>
-
-
                     <div class="row">
                         <div class="large-12 columns">
                             <ul class="button-group right">
@@ -53,7 +51,16 @@
                                 <?php if($this->authService()->hasIdentity()): ?>
                                 <li><button type="submit" class="button tiny"><i class="fa fa-save"></i>&nbsp; Save</button></li>
                                     <?php if($collection->getId()): ?>
-                                <li><a class="button tiny" href="#"><i class="fa fa-trash-o"></i>&nbsp; Delete</a></li>
+                                <li><a class="button tiny" data-reveal-id="delete-modal" href="<?php echo $this->url('collection/delete') . '?redirect=' . $_SERVER['REQUEST_URI']; ?>"><i class="fa fa-trash-o"></i>&nbsp; Delete</a>
+                                    <div id="delete-modal" class="reveal-modal small" data-reveal>
+                                        <h2>Delete collection</h2>
+                                        <p>Are you sure? Do you want to delete the collection <?php echo $collection->getName(); ?>?</p>
+                                        <a href="<?php echo $this->url('collection/delete') . '?redirect=' . $_SERVER['REQUEST_URI']; ?>"
+                                           class="tiny button"><i class="fa fa-trash-o"></i>&nbsp; Delete <?php echo $collection->getName(); ?></a>
+                                        <a class="close-reveal-modal">&#215;</a>
+                                    </div>
+                                </li>
+
                                     <?php endif; ?>
                                 <?php endif; ?>
                             </ul>

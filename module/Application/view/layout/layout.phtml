@@ -15,61 +15,78 @@
                         ->prependStylesheet('http://fonts.googleapis.com/css?family=Open+Sans:400,700|Roboto+Slab:300')
         ; ?>
 
-
         <!-- Scripts -->
         <?php echo $this->headScript()
             ->prependFile($this->basePath() . '/bower_components/modernizr/modernizr.js');
         ?>
     </head>
     <body>
+    <?php
+    // Urls
+    $homeUrl = $this->url('home');
+    $standardRedirectUrl = '?redirect=' . urlencode($_SERVER['REQUEST_URI']);
+    ?>
         <nav class="top-bar" data-topbar>
             <ul class="title-area">
                 <li class="name">
-                    <h1><a href="<?php echo $this->basePath() . $this->url('home'); ?>">Refgen</a></h1>
+                    <h1>
+                        <a href="<?php echo $homeUrl; ?>">Refgen
+                            <small id="beta">Beta</small>
+                        </a>
+                    </h1>
                 </li>
                 <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
             </ul>
             <section class="top-bar-section">
+                <?php if($this->hasAccess('Collection\Controller\Collection', 'new')): ?>
                 <ul class="left">
+                    <?php //variables
+                        $newCollectionUrl = $this->url('collection/new') . $standardRedirectUrl;
+                        $openCollectionUrl = $this->url('collection/list') . $standardRedirectUrl;
+                        $recents = $this->collections()->recents();
+                    ?>
                     <li class="divider"></li>
-                    <li><a href="#"><i class="fa fa-info-circle"></i>&nbsp; About</a></li>
-                    <?php if($this->hasAccess('Collection\Controller\Collection', 'new')): ?>
-                    <li class="divider"></li>
-                    <li class="has-dropdown"><a href="#"><i class="fa fa-list"></i>&nbsp; Collections</a>
+                    <li class="has-dropdown"><a href="#"><span class="fa fa-list"></span> Collections</a>
                         <ul class="dropdown">
+                        <?php if($this->activeCollection()->isEdited()): ?>
                             <li>
-                            <?php if($this->activeCollection()->isEdited()): ?>
-                                <a href="<?php echo $this->url('collection/new') . '?redirect=' . urlencode($_SERVER['REQUEST_URI']); ?>" data-reveal-id="new-modal">
-                            <?php else: ?>
-                                <a href="<?php echo $this->url('collection/new') . '?redirect=' . urlencode($_SERVER['REQUEST_URI']); ?>">
-                            <?php endif; ?>
-                                    <i class="fa fa-file"></i>&nbsp; New
+                                <a href="<?php echo $newCollectionUrl; ?>" data-reveal-id="modal-new">
+                                    <span class="fa fa-file"></span> New
+                                </a>
+                                <div id="modal-new" class="reveal-modal small" data-reveal>
+                                    <h2>New collection</h2>
+                                    <p class="lead">Your active collection is edited . If you wish to continue, unsaved changes will be lost</p>
+                                    <a class="tiny button" href="<?php echo $this->url('collection/new'); ?>"><i class="fa fa-file"></i>&nbsp; New Collection</a>
+                                    <a class="close-reveal-modal">&#215;</a>
+                                </div>
+                            </li>
+                        <?php else: ?>
+                            <li>
+                                <a href="<?php echo $newCollectionUrl; ?>">
+                                    <span class="fa fa-file"></span> New
                                 </a>
                             </li>
-
-                            <?php $recents = $this->collections()->recents(); ?>
-                            <?php if(count($recents)): ?>
-                            <li><a href="#"><i class="fa fa-folder-open"></i>&nbsp; Open</a></li>
-                            <li class="divider"></li>
-                            <li class="has-dropdown"><a href="#"><i class="fa fa-history"></i>&nbsp; Recents</a>
-                            <ul class="dropdown">
-                                <?php foreach($recents as $collection): ?>
-                                <li>
-                                <?php if($this->activeCollection()->isEdited()): ?>
-                                    <a class="open-recent-modal" href="<?php echo $this->url('collection/open', array('id' => $collection['id'])) . '?redirect=' . urlencode($_SERVER['REQUEST_URI']); ?>">
-                                <?php else: ?>
-                                    <a href="<?php echo $this->url('collection/open', array('id' => $collection['id'])) . '?redirect=' . urlencode($_SERVER['REQUEST_URI']); ?>">
-                                <?php endif; ?>
-                                        <i class="fa fa-list-alt"></i>&nbsp; <?php echo $collection['name']; ?>
-                                    </a>
-                                </li>
-                                <?php endforeach; ?>
-                            </ul>
-                            <?php endif; ?>
+                        <?php endif; ?> <!-- New -->
+                        <?php if(count($recents)): ?>
+                            <li>
+                                <a href="<?php echo $openCollectionUrl; ?>">
+                                    <span class="fa fa-folder-open"></span> Open
+                                </a>
+                            </li> <!-- Open -->
+                            <li><label>Recents</label></li>
+                            <?php foreach($recents as $collection): ?>
+                                <?php $url = $this->url('collection/open', array('id' => $collection['id'])); ?>
+                            <li>
+                                <a href="<?php echo $url; ?>">
+                                    <span class="fa fa-list-alt"></span> <?php echo $collection['name']; ?>
+                                </a>
                             </li>
-                        </ul>
-                    </li>
-                    <?php endif; ?>
+                            <?php endforeach; ?> <!-- Recents -->
+                        <?php endif; ?> <!-- Open and Recents -->
+                        </ul> <!-- ul.dropdown for collection -->
+                    </li> <!-- li.has-dropdown for Collection Menu -->
+                </ul>
+                <?php endif; ?>
                 </ul>
                 <ul class="right">
                     <?php if($this->authService()->hasIdentity()): ?>
@@ -79,7 +96,6 @@
                             <span><?php echo $this->authService()->getIdentity()->getFirstName(); ?></span>
                         </a>
                         <ul class="dropdown">
-                            <li><a href="#"><i class="fa fa-user"></i>&nbsp; My Account</a></li>
                             <li>
                             <?php if($this->activeCollection()->isEdited()): ?>
                                 <a href="<?php echo $this->url('user/logout'); ?>" data-reveal-id="logout-modal">
@@ -134,14 +150,14 @@
                 </div>
             </div>
         </footer>
-        <div id="new-modal" class="reveal-modal small" data-reveal>
-            <h2>New Collection</h2>
+        <div id="open-modal" class="reveal-modal small" data-reveal>
+            <h2>Open collection</h2>
             <p class="lead">Your active collection is edited . If you wish to continue, unsaved changes will be lost</p>
-            <a class="tiny button" href="<?php echo $this->url('collection/new'); ?>"><i class="fa fa-file"></i>&nbsp; New Collection</a>
+            <a class="tiny button" href="<?php echo $this->url('collection/list'); ?>"><i class="fa fa-folder-open"></i>&nbsp; Open Collection</a>
             <a class="close-reveal-modal">&#215;</a>
         </div>
         <div id="recent-modal" class="reveal-modal small" data-reveal>
-            <h2>Open Collection</h2>
+            <h2>Open collection</h2>
             <p class="lead">Your active collection is edited . If you wish to continue, all unsaved changes will be lost</p>
             <a id='confirm-open-recent' class="tiny button" href=""><i class="fa fa-list-alt"></i>&nbsp; Open <span class="recent-collection-name"></span></a>
             <a class="close-reveal-modal">&#215;</a>

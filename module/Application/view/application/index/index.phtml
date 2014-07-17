@@ -1,1 +1,86 @@
-<h1>Index</h1>
+            <?php if($this->activeCollection()->isEdited() || !$this->activeCollection()->isEmpty()) : ?>
+            <div class="large-8 columns">
+                <div class="row">
+                    <div class="medium-6 columns">
+                        <h2 style="text-align: center;"><i class="fa fa-coffee" style="color: #faa900;"></i>&nbsp; One step less</h2>
+                        <p style="text-align: center;">Writing a research paper is skill. But, it also involves doing a technical work of bibliography where we have to take care of punctuations and stuff. Let Kivi Refgen do that task for you in your thesis, assessments and publications. Actually it does much more than just generating bibliography</p>
+                    </div>
+                    <div class="medium-6 columns">
+                        <h2 style="text-align: center;"><i class="fa fa-search" style="color: #faa900;"></i>&nbsp; Search</h2>
+                        <p style="text-align: center;">Search for articles related to your research via Pubmed. Each article will be accompanied by the correct format to cite it, in addition to other information You can easily copy and paste the citation information in your bibliography.</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="medium-6 columns">
+                        <h2 style="text-align: center;"><i class="fa fa-briefcase" style="color: #faa900;"></i>&nbsp; Organize</h2>
+                        <p style="text-align: center;">Kivi Refgen lets you organize your citations into collections. You can have as much collections as you want. So, you can work with multiple research papers at a time. You can add articles to your collection or remove from them without hassle.</p>
+                    </div>
+                    <div class="medium-6 columns">
+                        <h2 style="text-align: center;"><i class="fa fa-share" style="color: #faa900;"></i>&nbsp; Export</h2>
+                        <p style="text-align: center;">Once all the available citations are obtained, you can export your entire collection as bibliography easily by the click of a button.</p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="large-4 columns">
+                <?php echo $this->activeCollection()->render(); ?>
+            </div>
+            <?php else: ?>
+            <div class="large-12 columns">
+                <!--
+                <div class="row">
+                    <div class="medium-8 medium-offset-2 columns end callout panel">
+                        <ul data-orbit>
+                            <li data-orbit-slide="search">
+                                <div>
+                                    <h2 style="text-align: center;"><i class="fa fa-search" style="color: #faa900;"></i>&nbsp; Search</h2>
+                                    <p style="text-align: center;">Search for articles related to your research via Pubmed. Each article will be accompanied by the correct format to cite it, in addition to other information You can easily copy and paste the citation information in your bibliography.</p>
+                                </div>
+                            </li>
+                            <li data-orbit-slide="organize">
+                                <div>
+                                    <h2 style="text-align: center;"><i class="fa fa-briefcase" style="color: #faa900;"></i>&nbsp; Organize</h2>
+                                    <p style="text-align: center;">Kivi Refgen lets you organize your citations into collections. You can have as much collections as you want. So, you can work with multiple research papers at a time. You can add articles to your collection or remove from them without hassle.</p>
+                                </div>
+                            </li>
+                            <li data-orbit-slide="export">
+                                <div>
+                                    <h2 style="text-align: center;"><i class="fa fa-share" style="color: #faa900;"></i>&nbsp; Export</h2>
+                                    <p style="text-align: center;">Once all the available citations are obtained, you can export your entire collection as bibliography easily by the click of a button.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                -->
+                <div class="row">
+                    <div class="medium-8 medium-offset-2 columns end">
+                        <h1 style="text-align: center;">One step less</h1>
+                        <blockquote>In short, Kivi Refgen is based on Vancouver style, a primary referencing system used by many scientific and biomedical journals. Kivi Refgen can help you with your bibliography if you are writing a research paper based on articles indexed in Pubmed.</blockquote>
+                        <p style="text-align: center;">Writing a research paper is skill. But, it also involves doing a technical work of bibliography where we have to take care of punctuations and stuff. Let Kivi Refgen do that task for you in your thesis, assessments and publications. Actually it does much more than just generating bibliography</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="medium-4 columns">
+                        <h2 style="text-align: center;"><i class="fa fa-search" style="color: #faa900;"></i>&nbsp; Search</h2>
+                        <p style="text-align: center;">Search for articles related to your research via Pubmed. Each article will be accompanied by the correct format to cite it, in addition to other information You can easily copy and paste the citation information in your bibliography.</p>
+                    </div>
+                    <div class="medium-4 columns">
+                        <h2 style="text-align: center;"><i class="fa fa-briefcase" style="color: #faa900;"></i>&nbsp; Organize</h2>
+                        <p style="text-align: center;">Kivi Refgen lets you organize your citations into collections. You can have as much collections as you want. So, you can work with multiple research papers at a time. You can add articles to your collection or remove from them without hassle.</p>
+                    </div>
+                    <div class="medium-4 columns">
+                        <h2 style="text-align: center;"><i class="fa fa-share" style="color: #faa900;"></i>&nbsp; Export</h2>
+                        <p style="text-align: center;">Once all the available citations are obtained, you can export your entire collection as bibliography easily by the click of a button.</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="medium-6 medium-offset-3 columns end">
+                        <h3 style="text-align: center;">In the Future</h3>
+                        <p style="text-align: center;">We will extend the support for other databases in addition to Pubmed. Also we are working on including other reference styles apart from Vancouver.</p>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>

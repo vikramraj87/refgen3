@@ -1,0 +1,35 @@
+                <div class="large-8 columns">
+                    <?php
+                        $collections = $this->collections;
+                        if(count($collections)):
+                    ?>
+                    <h2>Open</h2>
+                    <form method="post" action="<?php echo $this->url('collection/open') . '?redirect=' . $redirect ?>">
+
+                        <div class="row">
+                            <div class="small-3 columns">
+                                <label class="right inline" for="select-id">Collection</label>
+                            </div>
+                            <div class="small-9 columns">
+                                <select name="id" id="select-id">
+                                <?php foreach($collections as $collection): ?>
+                                    <option value="<?php echo $collection['id']; ?>">
+                                        <?php echo $collection['name']; ?>
+                                    </option>
+                                <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-9 small-offset-3 columns">
+                                <button type="submit" name="open-submit" id="btn-submit" class="tiny button">Open collection</button>
+                            </div>
+                        </div>
+                    </form>
+                    <?php else: ?>
+                    <p>You don't have any saved collections to open.</p>
+                    <?php endif; ?>
+                </div>
+                <div class="large-4 columns">
+                    <?php echo $this->activeCollection()->render(); ?>
+                </div>

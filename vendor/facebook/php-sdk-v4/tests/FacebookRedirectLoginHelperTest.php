@@ -8,11 +8,6 @@ class FacebookRedirectLoginHelperTest extends PHPUnit_Framework_TestCase
 
   const REDIRECT_URL = 'http://invalid.zzz';
 
-  public static function setUpBeforeClass()
-  {
-    FacebookTestHelper::setUpBeforeClass();
-  }
-
   public function testLoginURL()
   {
     $helper = new FacebookRedirectLoginHelper(
@@ -61,6 +56,16 @@ class FacebookRedirectLoginHelperTest extends PHPUnit_Framework_TestCase
         strpos($logoutUrl, $key . '=' . urlencode($value)) !== false
       );
     }
+  }
+  
+  public function testCSPRNG()
+  {
+    $helper = new FacebookRedirectLoginHelper(
+      self::REDIRECT_URL,
+      FacebookTestCredentials::$appId,
+      FacebookTestCredentials::$appSecret
+    );
+	$this->assertTrue(preg_match('/^([0-9a-f]+)$/', $helper->random(32)));
   }
 
 }

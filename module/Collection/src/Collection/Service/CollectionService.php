@@ -1,7 +1,9 @@
 <?php
 namespace Collection\Service;
 
-use Zend\Session\Container;
+use Zend\Session\Container,
+    Zend\Paginator\Paginator,
+    Zend\Paginator\Adapter\ArrayAdapter;
 use Collection\Entity\Collection,
     Collection\Table\CollectionTable;
 use Article\Table\ArticleTable,

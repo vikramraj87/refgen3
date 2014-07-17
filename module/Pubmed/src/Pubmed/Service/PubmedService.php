@@ -20,6 +20,8 @@ class PubmedService
 
     private $container;
 
+    private $lastSearchCount;
+
     /**
      * @param \Article\Table\ArticleTable $table
      */
@@ -34,15 +36,18 @@ class PubmedService
 
         $container = $this->container();
         if($container->offsetGet('term') == $term && $container->offsetGet('page') == $page) {
+            $this->lastSearchCount = $container->offsetGet('count');
             return $container->offsetGet('indexerIds');
         }
         $adapter = Adapter::getInstance();
         $indexerIds = $adapter->search($term, $page);
+        $this->lastSearchCount = $adapter->getLastSearchCount();
 
         if(!empty($indexerIds)) {
             $container->offsetSet('term', $term);
             $container->offsetSet('page', $page);
             $container->offsetSet('indexerIds', $indexerIds);
+            $container->offsetSet('count', $this->lastSearchCount);
         }
         return $indexerIds;
     }
@@ -97,6 +102,11 @@ class PubmedService
 
         // 7. Return the result
         return $output;
+    }
+
+    public function getLastSearchCount()
+    {
+        return $this->lastSearchCount;
     }
 
     private function container()

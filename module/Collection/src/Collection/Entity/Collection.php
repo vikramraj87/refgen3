@@ -151,6 +151,12 @@ class Collection implements \Countable
         }
     }
 
+    public function hasArticle($id = 0)
+    {
+        $id = (int) $id;
+        return in_array($id, $this->position);
+    }
+
     public function serialize()
     {
         $articleIds = array();

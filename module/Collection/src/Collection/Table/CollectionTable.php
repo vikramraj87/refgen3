@@ -81,7 +81,7 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
         $rowset = $this->selectWith($select);
         $collections = array();
         foreach($rowset as $row) {
-            $collections = array(
+            $collections[] = array(
                 'id' => $row['id'],
                 'name' => $row['name']
             );
@@ -166,6 +166,27 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
         }
         return $this->fetchCollectionById($id);
 
+    }
+
+    public function deleteCollectionById($id = 0, $userId = 0)
+    {
+        $id = (int) $id;
+        $userId = (int) $userId;
+        $collectionData = $this->select(array(
+                'id' => $id,
+                'user_id' => $userId
+            )
+        )->current();
+        if($collectionData) {
+            $this->collectionArticleTable()->delete(array(
+                    'collection_id' => $collectionData['id']
+                )
+            );
+            $this->delete(array(
+                    'id' => $collectionData['id']
+                )
+            );
+        }
     }
 
     private function collectionArticleTable()

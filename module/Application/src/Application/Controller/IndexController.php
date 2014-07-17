@@ -10,8 +10,10 @@
 namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Pubmed\Service\PubmedService;
+use Zend\View\Model\ViewModel,
+    Zend\Paginator\Paginator;
+use Pubmed\Service\PubmedService,
+    Pubmed\Pagination\ArticlesAdapter as Adapter;
 
 
 class IndexController extends AbstractActionController
@@ -26,12 +28,15 @@ class IndexController extends AbstractActionController
 
     public function searchAction()
     {
-        $term = $this->params()->fromQuery('term', '');
-
+        $term = $this->params()->fromRoute('term', '');
+        if('' == $term) {
+            $term = $this->params()->fromQuery('term', '');
+        }
+        $page = $this->params('page', 1);
         if($term === '') {
             /** Handle empty term */
         }
-        $ids = $this->pubmedService->search($term);
+        $ids = $this->pubmedService->search($term, $page);
         if(null === $ids) {
             /** Manage connection problem. Null return by the service */
             /** Separate view model for no results and null */
@@ -39,10 +44,11 @@ class IndexController extends AbstractActionController
              * Pubmed\Service\PubmedService::fetchArticlesByIndexerIds() must be of the type array,
              * null given */
         }
+
         $incomplete = false;
         $result = $this->pubmedService->fetchArticlesByIndexerIds($ids, $incomplete);
         $viewModel = new ViewModel();
-        $viewModel->setVariable('result', $result);
+        $viewModel->setVariable('term', $term);
 
         if(null === $result) {
             /** Manage connection problem. Null return by the service */
@@ -56,6 +62,14 @@ class IndexController extends AbstractActionController
         }
         if(count($result) === 1) {
             $viewModel->setTemplate('application/index/search-single');
+            $viewModel->setVariable('result', $result);
+        }
+        if(count($result) > 1) {
+            $adapter = new Adapter($result, $this->pubmedService->getLastSearchCount());
+            $paginator = new Paginator($adapter);
+            $paginator->setCurrentPageNumber($page);
+            $paginator->setPageRange(10);
+            $viewModel->setVariable('paginator', $paginator);
         }
         return $viewModel;
     }

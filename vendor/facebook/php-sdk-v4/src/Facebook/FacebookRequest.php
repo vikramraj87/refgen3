@@ -39,7 +39,7 @@ class FacebookRequest
   /**
    * @const string Version number of the Facebook PHP SDK.
    */
-  const VERSION = '4.0.8';
+  const VERSION = '4.0.9';
 
   /**
    * @const string Default Graph API version for requests
@@ -85,6 +85,11 @@ class FacebookRequest
    * @var FacebookHttpable HTTP client handler
    */
   private static $httpClientHandler;
+
+  /**
+   * @var int The number of calls that have been made to Graph.
+   */
+  public static $requestCount = 0;
 
   /**
    * getSession - Returns the associated FacebookSession.
@@ -174,7 +179,7 @@ class FacebookRequest
    * @param string|null $etag
    */
   public function __construct(
-    $session, $method, $path, $parameters = null, $version = null, $etag = null
+    FacebookSession $session, $method, $path, $parameters = null, $version = null, $etag = null
   )
   {
     $this->session = $session;
@@ -242,6 +247,8 @@ class FacebookRequest
     // Don't catch to allow it to bubble up.
     $result = $connection->send($url, $this->method, $params);
 
+    static::$requestCount++;
+
     $etagHit = 304 == $connection->getResponseHttpStatusCode();
 
     $headers = $connection->getResponseHeaders();
@@ -291,7 +298,7 @@ class FacebookRequest
     }
 
     if (strpos($url, '?') === false) {
-      return $url . '?' . http_build_query($params);
+      return $url . '?' . http_build_query($params, null, '&');
     }
 
     list($path, $query_string) = explode('?', $url, 2);
@@ -300,7 +307,7 @@ class FacebookRequest
     // Favor params from the original URL over $params
     $params = array_merge($params, $query_array);
 
-    return $path . '?' . http_build_query($params);
+    return $path . '?' . http_build_query($params, null, '&');
   }
 
 }

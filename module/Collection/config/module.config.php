@@ -24,7 +24,7 @@ return array(
                     'open' => array(
                         'type' => 'Zend\Mvc\Router\Http\Segment',
                         'options' => array(
-                            'route' => '/open/[:id]',
+                            'route' => '/open[/:id]',
                             'constraints' => array(
                                 'id' => '\d+'
                             ),
@@ -40,6 +40,37 @@ return array(
                             'route' => '/save',
                             'defaults' => array(
                                 'action' => 'save'
+                            )
+                        )
+                    ),
+                    'delete' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => array(
+                            'route' => '/delete',
+                            'defaults' => array(
+                                'action' => 'delete'
+                            )
+                        )
+                    ),
+                    'list' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => array(
+                            'route' => '/list',
+                            'defaults' => array(
+                                'action' => 'list'
+                            )
+                        )
+                    ),
+                    'set-active' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Segment',
+                        'options' => array(
+                            'route' => '/set-active/[:id]',
+                            'constraints' => array(
+                                'id' => '\d+'
+                            ),
+                            'defaults' => array(
+                                'action' => 'set-active',
+                                'id' => 0
                             )
                         )
                     )
@@ -79,6 +110,15 @@ return array(
                             'defaults' => array(
                                 'id' => 0,
                                 'action' => 'remove'
+                            )
+                        )
+                    ),
+                    'export' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => array(
+                            'route' => '/export',
+                            'defaults' => array(
+                                'action' => 'export'
                             )
                         )
                     )

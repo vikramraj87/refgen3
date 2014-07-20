@@ -22,12 +22,14 @@ class CollectionHelper extends AbstractHelper
         return $this;
     }
 
-    public function recents()
+    public function recents($current = 0)
     {
         if(!$this->authService->hasIdentity()) {
             throw new \RuntimeException('No identity found');
         }
-        return $this->table->fetchRecentByUserId($this->authService->getIdentity()->getId());
+        return $this->table->fetchRecentByUserId(
+            $this->authService->getIdentity()->getId(), $current
+        );
     }
 
     public function allCollections()

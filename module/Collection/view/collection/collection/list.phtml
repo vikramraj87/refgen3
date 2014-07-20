@@ -1,10 +1,13 @@
+                <?php
+                    $this->headTitle()->prepend('Open collection');
+                ?>
                 <div class="large-8 columns">
                     <?php
                         $collections = $this->collections;
                         if(count($collections)):
                     ?>
                     <h2>Open</h2>
-                    <form method="post" action="<?php echo $this->url('collection/open') . '?redirect=' . $redirect ?>">
+                    <form method="get" action="<?php echo $this->url('collection/open'); ?>">
 
                         <div class="row">
                             <div class="small-3 columns">
@@ -22,7 +25,18 @@
                         </div>
                         <div class="row">
                             <div class="small-9 small-offset-3 columns">
-                                <button type="submit" name="open-submit" id="btn-submit" class="tiny button">Open collection</button>
+                                <ul class="button-group">
+                                    <li>
+                                        <button
+                                            type="submit"
+                                            name="open-submit"
+                                            id="btn-submit"
+                                            class="tiny button">
+                                            Open
+                                        </button>
+                                    </li>
+                                    <li><a href="<?php echo $redirect; ?>" class="button tiny">Cancel</a></li>
+                                </ul>
                             </div>
                         </div>
                     </form>

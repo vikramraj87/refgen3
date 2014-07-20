@@ -3,7 +3,8 @@ return array(
     'authorization' => array(
         'guest' => array(
             'User\Controller\User' => array(
-                'login'
+                'login',
+                'login-email-required'
             )
         ),
         'member' => array(

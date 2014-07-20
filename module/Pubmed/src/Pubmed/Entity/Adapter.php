@@ -37,21 +37,6 @@ class Adapter
     /** @var int */
     private $maxResultsPerPage = 10;
 
-    public static function getInstance()
-    {
-        static $instance = null;
-        if(null === $instance) {
-            $instance = new static();
-        }
-        return $instance;
-    }
-
-    private function __construct() {}
-
-    private function __clone()     {}
-
-    private function __wakeup()    {}
-
     /**
      * @return \Zend\EventManager\EventManager
      */

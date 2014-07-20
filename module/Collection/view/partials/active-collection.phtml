@@ -34,33 +34,67 @@
                 <?php endif; ?>
                     <div class="row"  style="margin-bottom:2em;">
                         <div class="large-12 columns">
-                            <ul id="collection" style="max-height: 300px; overflow-y: scroll; border:1px solid #eee;" >
+                            <ol id="collection">
                                 <?php
                                 $this->partialLoop()->setObjectKey('article');
                                 echo $this->partialLoop('partials/article-list', $collection->getArticles());
                                 ?>
-                            </ul>
+                            </ol>
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
                             <ul class="button-group right">
-                                <?php if(count($collection)): ?>
-                                <li><a class="button tiny" href="#"><i class="fa fa-list-ol"></i>&nbsp; Export</a></li>
-                                <?php endif; ?>
-                                <?php if($this->authService()->hasIdentity()): ?>
-                                <li><button type="submit" class="button tiny"><i class="fa fa-save"></i>&nbsp; Save</button></li>
-                                    <?php if($collection->getId()): ?>
-                                <li><a class="button tiny" data-reveal-id="delete-modal" href="<?php echo $this->url('collection/delete') . '?redirect=' . $_SERVER['REQUEST_URI']; ?>"><i class="fa fa-trash-o"></i>&nbsp; Delete</a>
-                                    <div id="delete-modal" class="reveal-modal small" data-reveal>
-                                        <h2>Delete collection</h2>
-                                        <p>Are you sure? Do you want to delete the collection <?php echo $collection->getName(); ?>?</p>
-                                        <a href="<?php echo $this->url('collection/delete') . '?redirect=' . $_SERVER['REQUEST_URI']; ?>"
-                                           class="tiny button"><i class="fa fa-trash-o"></i>&nbsp; Delete <?php echo $collection->getName(); ?></a>
+                            <?php
+                                if($this->activeCollection()->getId() > 0 &&
+                                    !$this->activeCollection()->isOpen($this->activeCollection()->getId())):
+                            ?>
+                                <?php $openUrl = $this->url('collection/open', array('id' => $this->activeCollection()->getId())); ?>
+                                <?php if($this->activeCollection()->isEdited()): ?>
+                                <li>
+                                    <a class="tiny button" href="<?php echo $openUrl; ?>"
+                                       data-reveal-id="modal-open-unedited">
+                                        <span class="fa fa-folder-open"></span> Open
+                                    </a>
+                                    <div id="modal-open-unedited" class="reveal-modal small" data-reveal>
+                                        <h2>Open collection</h2>
+                                        <p>The collection is not yet saved. The changes won't be reflected on opening the collection. Alternatively, you might save and continue.</p>
+                                        <a href="<?php echo $openUrl; ?>"
+                                           class="tiny button"><span class="fa fa-folder-open"></span> Open anyway</a>
                                         <a class="close-reveal-modal">&#215;</a>
                                     </div>
                                 </li>
-
+                                <?php else: ?>
+                                <li>
+                                    <a class="tiny button" href="<?php echo $openUrl; ?>">
+                                        <span class="fa fa-folder-open"></span> Open
+                                    </a>
+                                </li>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                                <?php if($this->authService()->hasIdentity()): ?>
+                                <li><button type="submit" class="button tiny"><span class="fa fa-save"></span> Save</button></li>
+                                    <?php if($collection->getId()): ?>
+                                <li>
+                                    <?php
+                                        $deleteUrl = $this->url('collection/delete');
+                                        if($collection->getId() != $this->activeCollection()->getOpenCollectionId()) {
+                                            $deleteUrl .= '?redirect=' . urlencode($_SERVER['REQUEST_URI']);
+                                        }
+                                    ?>
+                                    <a class="button tiny"
+                                       data-reveal-id="modal-delete"
+                                       href="<?php echo $deleteUrl; ?>">
+                                        <span class="fa fa-trash-o"></span> Delete
+                                    </a>
+                                    <div id="modal-delete" class="reveal-modal small" data-reveal>
+                                        <h2>Delete collection</h2>
+                                        <p>Are you sure? Do you want to delete the collection <?php echo $collection->getName(); ?> permanently?</p>
+                                        <a href="<?php echo $deleteUrl; ?>"
+                                           class="tiny button"><span class="fa fa-trash-o"></span> Delete <?php echo $collection->getName(); ?></a>
+                                        <a class="close-reveal-modal">&#215;</a>
+                                    </div>
+                                </li>
                                     <?php endif; ?>
                                 <?php endif; ?>
                             </ul>

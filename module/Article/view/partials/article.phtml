@@ -1,17 +1,29 @@
-    <?php $article = $this->article; ?>
-    <article>
-        <header>
-            <h2><?php echo $article->getTitle(); ?></h2>
-            <h3><?php echo $this->authors($article->getAuthors())->render(); ?></h3>
-        </header>
-        <?php echo $this->abstract($article->getAbstract())->render(); ?>
-        <footer>
-            <p><b>PMID:</b>
-               <?php $pmid = substr($article->getIndexerId(), 4); ?>
-               <a href="http://www.ncbi.nlm.nih.gov/pubmed/<?php echo $pmid; ?>" target="_blank">
-                    <?php echo $pmid; ?>
-               </a>
-            </p>
-            <p><b>Cite by:</b> <?php echo $this->citation($article); ?></p>
-        </footer>
-    </article>
+        <?php
+        /** @var \Article\Entity\Article $article */
+        $article = $this->article;
+        ?>
+                <article>
+                    <header>
+                        <h3><?php echo $article->getTitle(); ?></h3>
+                        <h4><?php echo $this->authors($article->getAuthors())->render(); ?></h4>
+                    </header>
+                    <p><?php echo $this->abstract($article->getAbstract())->render(); ?></p>
+                    <blockquote><?php echo $this->citation($article); ?></blockquote>
+                    <footer class="clearfix">
+                        <?php
+                        $pmid = substr($article->getIndexerId(), 4);
+                        ?>
+                        <ul class="button-group right">
+                            <li><a class="button tiny" target="_blank"
+                                   href="http://www.ncbi.nlm.nih.gov/pubmed/<?php echo $pmid; ?>"><i class="fa fa-external-link"></i>&nbsp; View in Pubmed</a></li>
+                            <?php if(!$this->activeCollection()->hasArticle($article->getId())): ?>
+                                <li><a class="button tiny" href="<?php echo $this->url('active-collection/add', array('id' => $article->getId())) . '?redirect=' . urlencode($_SERVER['REQUEST_URI']); ?>"><i class="fa fa-plus"></i>&nbsp; Add to collection</a></li>
+                            <?php endif; ?>
+
+                        </ul>
+                    </footer>
+                </article>
+
+
+
+

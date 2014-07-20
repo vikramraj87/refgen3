@@ -38,12 +38,12 @@
                 <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
             </ul>
             <section class="top-bar-section">
-                <?php if($this->hasAccess('Collection\Controller\Collection', 'new')): ?>
                 <ul class="left">
+                <?php if($this->hasAccess('Collection\Controller\Collection', 'new')): ?>
                     <?php //variables
                         $newCollectionUrl = $this->url('collection/new') . $standardRedirectUrl;
                         $openCollectionUrl = $this->url('collection/list') . $standardRedirectUrl;
-                        $recents = $this->collections()->recents();
+                        $recents = $this->collections()->recents($this->activeCollection()->getOpenCollectionId());
                     ?>
                     <li class="divider"></li>
                     <li class="has-dropdown"><a href="#"><span class="fa fa-list"></span> Collections</a>
@@ -56,7 +56,7 @@
                                 <div id="modal-new" class="reveal-modal small" data-reveal>
                                     <h2>New collection</h2>
                                     <p class="lead">Your active collection is edited . If you wish to continue, unsaved changes will be lost</p>
-                                    <a class="tiny button" href="<?php echo $this->url('collection/new'); ?>"><i class="fa fa-file"></i>&nbsp; New Collection</a>
+                                    <a class="tiny button" href="<?php echo $newCollectionUrl; ?>"><span class="fa fa-file"></span> New Collection</a>
                                     <a class="close-reveal-modal">&#215;</a>
                                 </div>
                             </li>
@@ -85,38 +85,61 @@
                         <?php endif; ?> <!-- Open and Recents -->
                         </ul> <!-- ul.dropdown for collection -->
                     </li> <!-- li.has-dropdown for Collection Menu -->
-                </ul>
                 <?php endif; ?>
                 </ul>
                 <ul class="right">
                     <?php if($this->authService()->hasIdentity()): ?>
+                        <?php
+                        /** @var \User\Entity\User $identity */
+                        $identity = $this->authService()->getIdentity();
+                        $logoutUrl = $this->url('user/logout');
+                        ?>
                     <li class="has-dropdown">
                         <a href="#">
-                            <img style="width:35px; height:35px; border:2px solid #fff; margin-right:10px;" src="<?php echo $this->authService()->getIdentity()->getPictureLink(); ?>"/>
-                            <span><?php echo $this->authService()->getIdentity()->getFirstName(); ?></span>
+                            <img id="profile-picture" src="<?php echo $identity->getPictureLink(); ?>"/>
+                            <span><?php echo $identity->getFirstName(); ?></span>
                         </a>
                         <ul class="dropdown">
-                            <li>
                             <?php if($this->activeCollection()->isEdited()): ?>
-                                <a href="<?php echo $this->url('user/logout'); ?>" data-reveal-id="logout-modal">
+                            <li>
+                                <a href="<?php echo $logoutUrl; ?>" data-reveal-id="modal-logout">
+                                    <span class="fa fa-sign-out"></span> Log out
+                                </a>
+                                <div id="modal-logout" class="reveal-modal small" data-reveal>
+                                    <h2>Logout</h2>
+                                    <p class="lead">Your active collection is edited . If you wish to continue, unsaved changes will be lost</p>
+                                    <a class="tiny button" href="<?php echo $logoutUrl; ?>"><span class="fa fa-sign-out"></span> Logout</a>
+                                    <a class="close-reveal-modal">&#215;</a>
+                                </div>
+                            </li>
                             <?php else: ?>
-                                <a href="<?php echo $this->url('user/logout'); ?>">
+                            <li>
+                                <a href="<?php echo $logoutUrl; ?>">
+                                    <span class="fa fa-sign-out"></span> Log out
+                                </a>
+                            </li>
                             <?php endif; ?>
-                                <i class="fa fa-sign-out"></i>&nbsp; Log out</a></li>
-                        </ul>
+                        </ul> <!-- ul.dropdown of profile -->
                     </li>
                     <?php else: ?>
-                    <li><a href="<?php echo $this->url('user/login') . '?redirect=' . urlencode($_SERVER['REQUEST_URI']); ?>"><i class="fa fa-sign-in"></i>&nbsp; Log in</a></li>
+                        <?php $loginUrl = $this->url('user/login') . $standardRedirectUrl; ?>
+                    <li>
+                        <a href="<?php echo $loginUrl; ?>">
+                            <span class="fa fa-sign-in"></span> Log in
+                        </a>
+                    </li>
                     <?php endif; ?>
                     <li class="divider"></li>
                     <li class="has-form">
                         <form method="get" action="<?php echo $this->url('search'); ?>">
                             <div class="row collapse">
                                 <div class="small-10 columns">
-                                    <input type="search" name="term" id="txt-search" placeholder="Search via pubmed"/>
+                                    <?php $term = isset($this->term) ? $this->term : ''; ?>
+                                    <input type="search" name="term" id="txt-search"
+                                           placeholder="Search via pubmed" value="<?php echo $term; ?>"/>
                                 </div>
                                 <div class="small-2 columns">
-                                    <button type="submit" class="tiny button"><span class="fa fa-search"></span></button>
+                                    <button type="submit" class="tiny button"><i class="fa fa-search"></i></button>
                                 </div>
                             </div>
 
@@ -145,44 +168,29 @@
         </div>
         <footer id="page-footer">
             <div class="row">
-                <div class="large-12 columns">
-                    <p>&copy; 2013 - <?php echo date('Y') ?> by Kivi Designers. <?php echo $this->translate('All rights reserved.') ?></p>
+                <div class="small-8 columns">
+                    <p>&copy; 2013 - <?php echo date('Y') ?> by Kivi Designers</p>
+                </div>
+                <div class="small-4 columns">
+                    <p><span class="hidden-for-medium-down">Follow us on </span><a href="https://plus.google.com/111116372537356525801" rel="publisher"><i class="fa fa-google-plus-square"></i></a> <a href="https://www.facebook.com/pages/Kivi-Refgen/266507806889448"><i class="fa fa-facebook-square"></i></a></p>
                 </div>
             </div>
         </footer>
-        <div id="open-modal" class="reveal-modal small" data-reveal>
-            <h2>Open collection</h2>
-            <p class="lead">Your active collection is edited . If you wish to continue, unsaved changes will be lost</p>
-            <a class="tiny button" href="<?php echo $this->url('collection/list'); ?>"><i class="fa fa-folder-open"></i>&nbsp; Open Collection</a>
-            <a class="close-reveal-modal">&#215;</a>
-        </div>
-        <div id="recent-modal" class="reveal-modal small" data-reveal>
-            <h2>Open collection</h2>
-            <p class="lead">Your active collection is edited . If you wish to continue, all unsaved changes will be lost</p>
-            <a id='confirm-open-recent' class="tiny button" href=""><i class="fa fa-list-alt"></i>&nbsp; Open <span class="recent-collection-name"></span></a>
-            <a class="close-reveal-modal">&#215;</a>
-        </div>
-        <div id="logout-modal" class="reveal-modal small" data-reveal>
-            <h2>Logout</h2>
-            <p class="lead">Your active collection is edited . If you wish to continue, unsaved changes will be lost</p>
-            <a class="tiny button" href="<?php echo $this->url('user/logout'); ?>"><i class="fa fa-sign-out"></i>&nbsp; Logout</a>
-            <a class="close-reveal-modal">&#215;</a>
-        </div>
         <?php
             echo $this->inlineScript()->prependFile($this->basePath() . '/js/app.js')
                                       ->prependFile($this->basePath() . '/bower_components/foundation/js/foundation.min.js')
-                                      ->prependFile($this->basePath() . '/bower_components/jquery/dist/jquery.min.js')
-        ;?>
-        <script type="text/javascript">
-            $(document).ready(function (){
-                $('.open-recent-modal').click(function(e) {
-                    e.preventDefault();
-                    var target = $(this).attr('href');
-                    $('.recent-collection-name').text($.trim($(this).text()));
-                    $('#confirm-open-recent').attr('href', target);
-                    $('#recent-modal').foundation('reveal', 'open');
-                });
-            });
-        </script>
+                                      ->prependFile($this->basePath() . '/bower_components/jquery/dist/jquery.min.js');
+        ?>
+    <!-- Uncomment during lauch
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-52996057-1', 'auto');
+            ga('send', 'pageview');
+
+        </script> -->
     </body>
 </html>

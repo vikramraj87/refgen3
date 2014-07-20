@@ -25,6 +25,9 @@ class CollectionService
     /** @var bool */
     private $edited = false;
 
+    /** @var int used in open collection page to make the recents list and redirect url in delete collection */
+    private $openCollectionId = 0;
+
     public function addArticle($articleId = 0)
     {
         $articleId = (int) $articleId;
@@ -150,17 +153,21 @@ class CollectionService
         return $this->edited;
     }
 
-    /*
-    public function saveChanges($name)
+    /**
+     * @param int $openCollectionId
+     */
+    public function setOpenCollectionId($openCollectionId)
     {
-        $this->getActiveCollection()->setName($name);
-        $result = (bool) $this->table->saveCollection($this->getActiveCollection());
-        if(!$result) {
-            throw new \RuntimeException('Error saving collection');
-        }
-        $collection = $this->table->fetchCollectionById($result);
-        $this->setCollection($collection);
-        return $result;
+        $this->openCollectionId = (int) $openCollectionId;
+    }
 
-    } */
+    /**
+     * @return int
+     */
+    public function getOpenCollectionId()
+    {
+        return $this->openCollectionId;
+    }
+
+
 } 

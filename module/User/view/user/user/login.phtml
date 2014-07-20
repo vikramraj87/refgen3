@@ -1,4 +1,12 @@
-            <div id="fb-root"></div>
+            <?php
+                $this->headTitle()->prepend('Log in');
+            ?>
+            <?php if(isset($this->emailRequired) && $this->emailRequired): ?>
+            <div class="alert-box alert" data-alert>
+                <a href="#" class="close">&times;</a>
+                Access to your email not provided. We require email to identify you. Read FAQs below
+            </div>
+            <?php endif; ?>
             <div class="large-4 medium-5 columns panel callout">
                 <h2>Login</h2>
                 <div id="login-button-container">
@@ -27,7 +35,7 @@
                     </div>
                     <div class="large-6 columns">
                         <h3>Will i get spammed?</h3>
-                        <p>We will spam you only after the World stops spinning. Till then, we require your account information to identify you.</p>
+                        <p>We will never spam you. We don't collect your email ids for that. We require your account information to identify you.</p>
                     </div>
                 </div>
                 <div class="row">

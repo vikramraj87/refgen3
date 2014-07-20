@@ -18,11 +18,10 @@ return array(
                 'options' => array(
                     'route'    => '/user',
                     'defaults' => array(
-                        'controller' => 'User\Controller\User',
-                        'action'     => 'index'
+                        'controller' => 'User\Controller\User'
                     )
                 ),
-                'may_terminate' => true,
+                'may_terminate' => false,
                 'child_routes'  => array(
                     'login' => array(
                         'type'    => 'Zend\Mvc\Router\Http\Literal',
@@ -30,6 +29,15 @@ return array(
                             'route'    => '/login',
                             'defaults' => array(
                                 'action' => 'login'
+                            )
+                        )
+                    ),
+                    'login-email-required' => array(
+                        'type'    => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => array(
+                            'route'    => '/login-email-required',
+                            'defaults' => array(
+                                'action' => 'login-email-required'
                             )
                         )
                     ),

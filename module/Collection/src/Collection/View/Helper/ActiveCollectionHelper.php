@@ -48,4 +48,14 @@ class ActiveCollectionHelper extends AbstractHelper
     {
         return !count($this->service->getActiveCollection());
     }
+
+    public function getOpenCollectionId()
+    {
+        return $this->service->getOpenCollectionId();
+    }
+
+    public function isOpen($collectionId = 0)
+    {
+        return $collectionId == $this->service->getOpenCollectionId();
+    }
 }

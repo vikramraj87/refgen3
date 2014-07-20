@@ -29,6 +29,42 @@ class Module
         $sessionConfig->setOptions($config['session']);
         $sessionManager = new SessionManager($sessionConfig);
         $sessionManager->start();
+
+        if(array_key_exists('php_settings', $config)) {
+            $phpSettings = $config['php_settings'];
+            foreach($phpSettings as $k => $v) {
+                ini_set($k, $v);
+            }
+        }
+
+        if(array_key_exists('error_handling', $config)) {
+            $errorSettings = $config['error_handling'];
+            $redirectUrl = '';
+            if(array_key_exists('recover_from_fatal', $errorSettings) &&
+                $errorSettings['recover_from_fatal']) {
+                $redirectUrl = $errorSettings['redirect_url'];
+            }
+
+            $callBack = null;
+            if(array_key_exists('fatal_errors_callback', $errorSettings)) {
+                $callBack = $errorSettings['fatal_errors_callback'];
+            }
+
+            register_shutdown_function(
+                array('Application\Module', 'handleFatalPhpErrors'),
+                $redirectUrl
+            );
+            set_error_handler(array('Application\Module', 'handlePhpErrors'));
+        }
+
+        $eventManager->attach('dispatch.error', function($event) use($serviceManager) {
+            $exception = $event->getResult()->exception;
+            if($exception) {
+                $service = $serviceManager->get('Application\Service\ErrorHandling');
+                $service->logException($exception);
+            }
+        });
+
     }
 
     public function getConfig()
@@ -45,5 +81,17 @@ class Module
                 ),
             ),
         );
+    }
+
+    public static function handlePhpErrors($i_type, $s_message, $s_file, $i_line)
+    {
+        if(!($i_type & error_reporting())) {return; }
+        throw new \Exception('Error: ' . $s_message . ' in file ' . $s_file . ' at line' . $i_line);
+    }
+
+    public static function handleFatalPhpErrors($redirect, $callBack = null)
+    {
+        header("location: ". $redirect);
+        return false;
     }
 }

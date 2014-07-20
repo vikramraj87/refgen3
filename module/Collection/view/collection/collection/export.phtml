@@ -1,0 +1,37 @@
+<?php
+/** @var \Collection\Entity\Collection $collection */
+$collection = $this->collection;
+$articles = $collection->getArticles();
+?>
+
+<div class="large-8 columns">
+    <section id="articles">
+        <header>
+            <h2>Export Collection <?php echo $this->collection->getName(); ?></h2>
+            <?php if(count($articles) > 0): ?>
+            <div class="alert-box info" data-alert>
+                <a class="close">&times;</a>
+                <p>Generation of word document is in the beta phase. While opening the document, you may receive some corrupt file format message. Ignore the message and open the document. It works fine. We are working on the issue</p>
+            </div>
+            <ul class="button-group">
+                <?php $downloadUrl = $this->url('collection/download', array('id' => $collection->getId())); ?>
+                <li><a href="<?php echo $downloadUrl; ?>" class="tiny button" title="Download citations as a word document">
+                        <span class="fa fa-download"></span> .docx
+                    </a></li>
+            </ul>
+            <?php endif; ?>
+        </header>
+        <?php if(count($articles) > 0): ?>
+            <ol>
+                <?php foreach($articles as $article): ?>
+                <li><?php echo $this->citation($article); ?></li>
+                <?php endforeach; ?>
+            </ol>
+        <?php else: ?>
+            <p>The collection is empty</p>
+        <?php endif; ?>
+    </section>
+</div>
+<div class="large-4 columns">
+    <?php echo $this->activeCollection()->render(); ?>
+</div>

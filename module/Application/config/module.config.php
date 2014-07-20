@@ -37,6 +37,20 @@ return array(
         'aliases' => array(
             'translator' => 'MvcTranslator',
         ),
+        'factories' => array(
+            'Application\Service\ErrorHandling' => function(\Zend\ServiceManager\ServiceManager $sm) {
+                    $logger = $sm->get('Application\Logger\Error');
+                    $service = new \Application\Service\ErrorHandlingService($logger);
+                    return $service;
+                },
+            'Application\Logger\Error' => function (\Zend\ServiceManager\ServiceManager $sm) {
+                $fileName = 'log_' . date('F_d') . '.log';
+                $log = new \Zend\Log\Logger();
+                $writer = new \Zend\Log\Writer\Stream('./data/logs/' . $fileName);
+                $log->addWriter($writer);
+                return $log;
+            }
+        )
     ),
     'translator' => array(
         'locale' => 'en_US',
@@ -57,11 +71,14 @@ return array(
                     $controller->setPubmedService($service);
                     return $controller;
                 }
+        ),
+        'invokables' => array(
+            'Application\Controller\Error' => 'Application\Controller\ErrorController'
         )
     ),
     'view_manager' => array(
-        'display_not_found_reason' => true,
-        'display_exceptions'       => true,
+        'display_not_found_reason' => true, //true
+        'display_exceptions'       => true, //true
         'doctype'                  => 'HTML5',
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',

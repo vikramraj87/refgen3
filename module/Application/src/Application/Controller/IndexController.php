@@ -23,7 +23,6 @@ class IndexController extends AbstractActionController
 
     public function indexAction()
     {
-
     }
 
     public function searchAction()
@@ -34,25 +33,21 @@ class IndexController extends AbstractActionController
         }
         $page = $this->params('page', 1);
         if($term === '') {
-            /** Handle empty term */
-        }
-        $ids = $this->pubmedService->search($term, $page);
-        if(null === $ids) {
-            /** Manage connection problem. Null return by the service */
-            /** Separate view model for no results and null */
-            /** Or raises Catchable fatal error: Argument 1 passed to
-             * Pubmed\Service\PubmedService::fetchArticlesByIndexerIds() must be of the type array,
-             * null given */
+            $this->redirect()->toRoute('home');
         }
 
+        $this->layout()->setVariable('term', $term);
+        $ids = $this->pubmedService->search($term, $page);
+        if(null === $ids) {
+            throw new \RuntimeException('Pubmed server error');
+        }
         $incomplete = false;
         $result = $this->pubmedService->fetchArticlesByIndexerIds($ids, $incomplete);
         $viewModel = new ViewModel();
         $viewModel->setVariable('term', $term);
 
         if(null === $result) {
-            /** Manage connection problem. Null return by the service */
-            /** Separate view model for no results and null */
+            throw new \RuntimeException('Pubmed server error');
         }
         if(empty($result)) {
             $viewModel->setTemplate('application/index/search-empty');
@@ -61,8 +56,9 @@ class IndexController extends AbstractActionController
             /** Display results incomplete page */
         }
         if(count($result) === 1) {
+            reset($result);
             $viewModel->setTemplate('application/index/search-single');
-            $viewModel->setVariable('result', $result);
+            $viewModel->setVariable('result', current($result));
         }
         if(count($result) > 1) {
             $adapter = new Adapter($result, $this->pubmedService->getLastSearchCount());

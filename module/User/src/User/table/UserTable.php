@@ -23,7 +23,7 @@ class UserTable extends AbstractTableGateway implements AdapterAwareInterface
     public function setDbAdapter(Adapter $adapter)
     {
         $this->adapter = $adapter;
-        $this->userSocialTable = new UserSocialTable();
+        $this->userSocialTable = new \User\Table\UserSocialTable();
         $this->userSocialTable->setDbAdapter($adapter);
         $this->initialize();
     }
@@ -89,6 +89,7 @@ class UserTable extends AbstractTableGateway implements AdapterAwareInterface
             'middle_name' => $user->getMiddleName(),
             'last_name'   => $user->getLastName(),
             'name'        => $user->getName(),
+            'created_on'  => date('Y-m-d H:i:s')
         );
         $numRowsAffected = $this->insert($data);
         if(!$numRowsAffected) {

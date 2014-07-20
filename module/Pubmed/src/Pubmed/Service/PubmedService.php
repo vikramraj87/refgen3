@@ -20,6 +20,9 @@ class PubmedService
 
     private $container;
 
+    /** @var Adapter */
+    private $adapter;
+
     private $lastSearchCount;
 
     /**
@@ -39,7 +42,7 @@ class PubmedService
             $this->lastSearchCount = $container->offsetGet('count');
             return $container->offsetGet('indexerIds');
         }
-        $adapter = Adapter::getInstance();
+        $adapter = $this->adapter;
         $indexerIds = $adapter->search($term, $page);
         $this->lastSearchCount = $adapter->getLastSearchCount();
 
@@ -72,13 +75,15 @@ class PubmedService
 
         // 3. Get the articles for those ids from Pubmed
         if(!empty($adapterIds)) {
-            $adapter = Adapter::getInstance();
+            $adapter = $this->adapter;
             $adapterResult = $adapter->fetchByIds($adapterIds);
             if($adapterResult === null) {
                 $incomplete = true;
             } else {
                 if($adapterResult instanceof Article) {
-                    $adapterResult = array($adapterResult);
+                    $adapterResult = array(
+                        $adapterResult->getIndexerId() => $adapterResult
+                    );
                 }
 
                 // 4. Save the articles in the database
@@ -116,4 +121,14 @@ class PubmedService
         }
         return $this->container;
     }
+
+    /**
+     * @param Adapter $adapter
+     */
+    public function setAdapter(Adapter $adapter)
+    {
+        $this->adapter = $adapter;
+    }
+
+
 } 

@@ -10,13 +10,16 @@ namespace Collection\Controller;
 
 use Collection\Table\CollectionTable,
     Collection\Entity\Collection,
-    Collection\Service\CollectionService;
-
+    Collection\Service\CollectionService,
+    Authentication\Service\AuthenticationService,
+    Article\View\Helper\VancouverHelper;
+use PhpOffice\PhpWord\PhpWord,
+    PhpOffice\PhpWord\IOFactory;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\InputFilter\InputFilter,
     Zend\InputFilter\Input,
     Zend\Validator\StringLength,
-    Zend\I18n\Validator\Alnum,
+    Zend\Validator\Regex,
     Zend\Filter\StringTrim,
     Zend\Filter\StripTags,
     Zend\Validator\NotEmpty;
@@ -30,6 +33,9 @@ class CollectionController extends AbstractActionController
     /** @var CollectionService */
     private $collectionService;
 
+    /** @var AuthenticationService */
+    private $authService;
+
     public function newAction()
     {
         $redirect = urldecode($this->params()->fromQuery('redirect', '/'));
@@ -41,7 +47,7 @@ class CollectionController extends AbstractActionController
     {
         $authService = $this->getServiceLocator()->get('Authentication\Service\Authentication');
         $userId = $authService->getIdentity()->getId();
-        $redirect = $this->params()->fromQuery('redirect', '/');
+        $redirect = urldecode($this->params()->fromQuery('redirect', '/'));
         return array(
             'collections' => $this->collectionTable->fetchEntireByUserId($userId),
             'redirect'    => $redirect
@@ -51,13 +57,19 @@ class CollectionController extends AbstractActionController
     public function openAction()
     {
         $request = $this->getRequest();
-        if($request->isPost()) {
-            $id = $this->params()->fromPost('id', 0);
-        } else {
-            $id = $this->params()->fromRoute('id', 0);
+        $id = $this->params()->fromRoute('id', 0);
+        if(0 == $id) {
+            $id = $this->params()->fromQuery('id');
         }
-
-        $collection = $this->collectionTable->fetchCollectionById($id);
+        $collection = $this->collectionTable->fetchCollectionById(
+            $id,
+            $this->authService->getIdentity()->getId()
+        );
+        if(null == $collection) {
+            $this->getResponse()->setStatusCode(404);
+            return;
+        }
+        $this->collectionService->setOpenCollectionId($collection->getId());
         return array(
             'collection' => $collection
         );
@@ -68,7 +80,10 @@ class CollectionController extends AbstractActionController
         $redirect = urldecode($this->params()->fromQuery('redirect', '/'));
         $id = $this->params()->fromRoute('id', 0);
         if($id) {
-            $collection = $this->collectionTable->fetchCollectionById($id);
+            $collection = $this->collectionTable->fetchCollectionById(
+                $id,
+                $this->authService->getIdentity()->getId()
+            );
             if($collection instanceof Collection) {
                 $this->collectionService->setCollection($collection);
             }
@@ -98,10 +113,10 @@ class CollectionController extends AbstractActionController
                     StringLength::TOO_LONG  => 'Collection name cannot be more than 60 characters long'
                 )
             );
-
-            $alnum = new Alnum();
-            $alnum->setAllowWhiteSpace(true);
-            $alnum->setMessage('Collection name can contain only alphabets, numbers and spaces.', Alnum::NOT_ALNUM);
+            $alnum = new Regex(
+                array('pattern' => '/^[a-zA-Z0-9 ]+$/')
+            );
+            $alnum->setMessage('Collection name contain only alphabets, numbers and spaces.', Regex::NOT_MATCH);
 
             $nameFilter->getValidatorChain()
                  ->attach($notEmpty, true)
@@ -160,13 +175,83 @@ class CollectionController extends AbstractActionController
     public function deleteAction()
     {
         $redirect = urldecode($this->params()->fromQuery('redirect', '/'));
-        $authService = $this->getServiceLocator()->get('Authentication\Service\Authentication');
         $this->collectionTable->deleteCollectionById(
             $this->collectionService->getActiveCollection()->getId(),
-            $authService->getIdentity()->getId()
+            $this->authService->getIdentity()->getId()
         );
         $this->collectionService->setCollection(null);
         return $this->redirect()->toUrl($redirect);
+    }
+
+    public function exportAction()
+    {
+        $id = (int) $this->params()->fromRoute('id', 0);
+        $collection = $this->collectionTable->fetchCollectionById(
+            $id,
+            $this->authService->getIdentity()->getId()
+        );
+        if(null === $collection) {
+            $this->getResponse()->setStatusCode(404);
+            return;
+        }
+        return array(
+            'collection' => $collection
+        );
+    }
+
+    public function downloadAction()
+    {
+        $id = (int) $this->params()->fromRoute('id', 0);
+
+        $collection = $this->collectionTable->fetchCollectionById(
+            $id,
+            $this->authService->getIdentity()->getId()
+        );
+        if(null === $collection) {
+            $this->getResponse()->setStatusCode(404);
+            return;
+        }
+        $word = new PhpWord();
+        $word->setDefaultFontName('Verdana');
+        $word->setDefaultFontSize(14);
+
+        $word->getDocumentProperties()
+             ->setCreator('Kivi Refgen')
+             ->setCompany('Kivi Refgen')
+             ->setTitle($collection->getName())
+             ->setCreated((new \DateTime())->getTimestamp());
+
+        $section = $word->addSection();
+        $section->getSettings()
+                ->setPortrait()
+                ->setMarginBottom(900)
+                ->setMarginTop(900)
+                ->setMarginRight(900)
+                ->setMarginLeft(900);
+        $headingStyle = array(
+            'color' => 'faa900',
+            'size'  => 20
+        );
+        $section->addText($collection->getName(), $headingStyle);
+
+        $vh = new VancouverHelper();
+
+        foreach($collection->getArticles() as $article) {
+            $section->addListItem($vh($article), 0, null, \PhpOffice\PhpWord\Style\ListItem::TYPE_NUMBER);
+        }
+
+
+        $file = $collection->getName() . '.docx';
+        header("Content-Description: File Transfer");
+        header('Content-Disposition: attachment; filename="' . $file . '"');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        header('Content-Transfer-Encoding: binary');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Expires: 0');
+        $xmlWriter = IOFactory::createWriter($word, 'Word2007');
+        ob_clean();
+        $xmlWriter->save("php://output");
+
     }
 
     public function setCollectionTable(CollectionTable $collectionTable)
@@ -180,6 +265,14 @@ class CollectionController extends AbstractActionController
     public function setCollectionService(CollectionService $collectionService)
     {
         $this->collectionService = $collectionService;
+    }
+
+    /**
+     * @param mixed $authService
+     */
+    public function setAuthService($authService)
+    {
+        $this->authService = $authService;
     }
 
 

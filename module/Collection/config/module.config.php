@@ -73,6 +73,32 @@ return array(
                                 'id' => 0
                             )
                         )
+                    ),
+                    'export' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Segment',
+                        'options' => array(
+                            'route' => '/export/[:id]',
+                            'constraints' => array(
+                                'id' => '\d+'
+                            ),
+                            'defaults' => array(
+                                'action' => 'export',
+                                'id' => 0
+                            )
+                        )
+                    ),
+                    'download' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Segment',
+                        'options' => array(
+                            'route' => '/download/[:id]',
+                            'constraints' => array(
+                                'id' => '\d+'
+                            ),
+                            'defaults' => array(
+                                'action' => 'download',
+                                'id' => 0
+                            )
+                        )
                     )
                 )
             ),
@@ -110,15 +136,6 @@ return array(
                             'defaults' => array(
                                 'id' => 0,
                                 'action' => 'remove'
-                            )
-                        )
-                    ),
-                    'export' => array(
-                        'type' => 'Zend\Mvc\Router\Http\Literal',
-                        'options' => array(
-                            'route' => '/export',
-                            'defaults' => array(
-                                'action' => 'export'
                             )
                         )
                     )
@@ -169,8 +186,10 @@ return array(
                 $table = $sm->get('Collection\Table\Collection');
                 $controller = new \Collection\Controller\CollectionController();
                 $service = $sm->get('Collection\Service\Collection');
+                $authService = $sm->get('Authentication\Service\Authentication');
                 $controller->setCollectionTable($table);
                 $controller->setCollectionService($service);
+                $controller->setAuthService($authService);
                 return $controller;
             }
         )

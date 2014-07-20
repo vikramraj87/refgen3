@@ -1,10 +1,16 @@
     <?php $article = $this->article; ?>
     <article>
         <header>
-            <h3><?php echo $article->getTitle(); ?></h2>
-            <h4><?php echo $this->authors($article->getAuthors())->render(); ?></h3>
+            <h3><?php echo $article->getTitle(); ?></h3>
+            <h4><?php echo $this->authors($article->getAuthors())->render(); ?></h4>
         </header>
         <p><?php echo $this->abstract($article->getAbstract())->renderTruncated(); ?></p>
+        <p class="clearfix">
+            <?php $fullLink = $this->url('article', array('id' => $article->getId())); ?>
+            <a class="right" href="<?php echo $fullLink; ?>">
+                <i class="fa fa-arrow-circle-o-right"></i> read more
+            </a>
+        </p>
         <blockquote><?php echo $this->citation($article); ?></blockquote>
         <footer class="clearfix">
             <?php

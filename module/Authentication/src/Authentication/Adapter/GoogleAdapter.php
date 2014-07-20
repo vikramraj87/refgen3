@@ -44,6 +44,7 @@ class GoogleAdapter extends AbstractAdapter
         $request->getHeaders()->addHeader(new Authorization('Bearer ' . $token));
 
         $httpClient = new Client();
+        $httpClient->setAdapter('Zend\Http\Client\Adapter\Curl');
         $httpClient->setMethod(Request::METHOD_GET);
         $httpClient->setRequest($request);
 

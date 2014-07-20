@@ -26,11 +26,12 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
         $this->initialize();
     }
 
-    public function fetchCollectionById($id = 0)
+    public function fetchCollectionById($id = 0, $userId = 0)
     {
         $id = (int) $id;
         $rowset = $this->select(array(
-                'id' => $id
+                'id' => $id,
+                'user_id' => $userId
             )
         );
         $data = $rowset->current();
@@ -54,11 +55,19 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
         return $collection;
     }
 
-    public function fetchRecentByUserId($userId = 0)
+    public function fetchRecentByUserId($userId = 0, $current = 0)
     {
+        $current = (int) $current;
+
+        $where = array();
+        $where['user_id'] = $userId;
+        if(0 != $current) {
+            $where['id != ?'] = $current;
+        }
+
         $select = $this->getSql()
                        ->select()
-                       ->where(array('user_id' => $userId))
+                       ->where($where)
                        ->order('updated_on DESC')
                        ->limit(10);
         $rowset = $this->selectWith($select);
@@ -107,7 +116,8 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
 
         $data = array(
             'name'     => $collection->getName(),
-            'user_id'  => $userId
+            'user_id'  => $userId,
+            'created_on' => date('Y-m-d H:i:s')
         );
 
         $result = (bool) $this->insert($data);
@@ -129,7 +139,7 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
             $this->delete(array('id' => $id));
             return false;
         }
-        return $this->fetchCollectionById($id);
+        return $this->fetchCollectionById($id, $userId);
     }
 
     public function updateCollection(Collection $collection)
@@ -164,7 +174,7 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
             // $this->delete(array('id' => $id));
             return false;
         }
-        return $this->fetchCollectionById($id);
+        return $this->fetchCollectionById($id, $savedCollection['user_id']);
 
     }
 

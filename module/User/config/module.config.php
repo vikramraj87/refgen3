@@ -50,8 +50,10 @@ return array(
         )
     ),
     'service_manager' => array(
+        'invokables' => array(
+            'User\Table\UserSocial' => 'User\Table\UserSocialTable'
+        ),
         'factories' => array(
-            'User\Table\UserSocial' => 'User\Table\UserSocialTableServiceFactory',
             'User\Table\User'       => 'User\Table\UserTableServiceFactory'
         )
     ),

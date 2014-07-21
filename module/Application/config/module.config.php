@@ -37,6 +37,15 @@ return array(
         'aliases' => array(
             'translator' => 'MvcTranslator',
         ),
+        'initializers' => array(
+            function($instance, \Zend\ServiceManager\ServiceManager $sm) {
+                if($instance instanceof \Zend\Db\Adapter\AdapterAwareInterface) {
+                    /** @var \Zend\Db\Adapter\Adapter $adapter */
+                    $adapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $instance->setDbAdapter($adapter);
+                }
+            }
+        ),
         'factories' => array(
             'Application\Service\ErrorHandling' => function(\Zend\ServiceManager\ServiceManager $sm) {
                     $logger = $sm->get('Application\Logger\Error');

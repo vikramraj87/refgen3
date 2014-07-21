@@ -38,10 +38,12 @@ return array(
         )
     ),
     'service_manager' => array(
+        'invokables' => array(
+            'Article\Table\Journal'      => 'Article\Table\JournalTable',
+            'Article\Table\Author'       => 'Article\Table\AuthorTable',
+            'Article\Table\AbstractPara' => 'Article\Table\AbstractParaTable',
+        ),
         'factories' => array(
-            'Article\Table\Journal'      => 'Article\Table\JournalTableServiceFactory',
-            'Article\Table\Author'       => 'Article\Table\AuthorTableServiceFactory',
-            'Article\Table\AbstractPara' => 'Article\Table\AbstractParaTableServiceFactory',
             'Article\Table\Article'      => 'Article\Table\ArticleTableServiceFactory'
         )
     )

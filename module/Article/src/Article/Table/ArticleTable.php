@@ -119,48 +119,6 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
     }
 
     /**
-     * Lazy loading of journal table
-     *
-     * @return JournalTable
-     */
-    private function getJournalTable()
-    {
-        if($this->journalTable == null) {
-            $this->journalTable = new JournalTable();
-            $this->journalTable->setDbAdapter($this->adapter);
-        }
-        return $this->journalTable;
-    }
-
-    /**
-     * Lazy loading of author table
-     *
-     * @return AuthorTable
-     */
-    private function getAuthorTable()
-    {
-        if($this->authorTable == null) {
-            $this->authorTable = new AuthorTable();
-            $this->authorTable->setDbAdapter($this->adapter);
-        }
-        return $this->authorTable;
-    }
-
-    /**
-     * Lazy loading of AbstractParaTable
-     *
-     * @return AbstractParaTable
-     */
-    private function getAbstractParaTable()
-    {
-        if($this->abstractParaTable == null) {
-            $this->abstractParaTable = new AbstractParaTable();
-            $this->abstractParaTable->setDbAdapter($this->adapter);
-        }
-        return $this->abstractParaTable;
-    }
-
-    /**
      * @param array $data
      * @return Article|null
      */
@@ -169,7 +127,7 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
         $article = new Article();
         $article->populateFromArray($data);
 
-        $journalTable = $this->getJournalTable();
+        $journalTable = $this->journalTable;
         $journal = $journalTable->fetchJournalById($data['journal_id']);
         if($journal === null) {
             /**
@@ -179,12 +137,10 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
         }
         $article->setJournal($journal);
 
-        $authorTable = $this->getAuthorTable();
-        $authors = $authorTable->fetchAuthorsByArticleId($article->getId());
+        $authors = $this->authorTable->fetchAuthorsByArticleId($article->getId());
         $article->setAuthors($authors);
 
-        $abstractParaTable = $this->getAbstractParaTable();
-        $abstract = $abstractParaTable->fetchParasByArticleId($article->getId());
+        $abstract = $this->abstractParaTable->fetchParasByArticleId($article->getId());
         $article->setAbstract($abstract);
 
         return $article;
@@ -199,7 +155,7 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
     private function saveArticle(Article $article)
     {
         $journal = $article->getJournal();
-        $result = $this->getJournalTable()->checkJournal($journal);
+        $result = $this->journalTable->checkJournal($journal);
         if($result === false) {
             return false;
         }
@@ -221,7 +177,7 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
         }
         $articleId = $this->getLastInsertValue();
         $authors = $article->getAuthors();
-        $result = $this->getAuthorTable()->createAuthors($authors, $articleId);
+        $result = $this->authorTable->createAuthors($authors, $articleId);
         if($result === false) {
             /**
              * todo: raise an event
@@ -231,7 +187,7 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
         }
 
         $abstract = $article->getAbstract();
-        $result = $this->getAbstractParaTable()->createAbstract($abstract, $articleId);
+        $result = $this->abstractParaTable->createAbstract($abstract, $articleId);
         if($result === false) {
             /**
              * todo: raise an event
@@ -252,8 +208,8 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
     private function deleteArticle($id = 0)
     {
         $id = (int) $id;
-        $this->getAuthorTable()->deleteAuthorsByArticleId($id);
-        $this->getAbstractParaTable()->deleteParasByArticleId($id);
+        $this->authorTable->deleteAuthorsByArticleId($id);
+        $this->abstractParaTable->deleteParasByArticleId($id);
         $this->delete(array('id' => $id));
         return true;
     }
@@ -278,9 +234,9 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
             $map[$row['id']] = $row['journal_id'];
         }
         $journalIds = array_unique($journalIds);
-        $journals   = $this->getJournalTable()->fetchJournalsByIds($journalIds);
-        $authors    = $this->getAuthorTable()->fetchAuthorsByArticleIds($articleIds);
-        $abstracts  = $this->getAbstractParaTable()->fetchParasByAArticleIds($articleIds);
+        $journals   = $this->journalTable->fetchJournalsByIds($journalIds);
+        $authors    = $this->authorTable->fetchAuthorsByArticleIds($articleIds);
+        $abstracts  = $this->abstractParaTable->fetchParasByAArticleIds($articleIds);
 
         foreach($articles as &$article) {
             /** @var Article $article */
@@ -298,4 +254,30 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
         }
         return $articles;
     }
+
+    /**
+     * @param \Article\Table\AbstractParaTable $abstractParaTable
+     */
+    public function setAbstractParaTable(AbstractParaTable $abstractParaTable)
+    {
+        $this->abstractParaTable = $abstractParaTable;
+    }
+
+    /**
+     * @param \Article\Table\AuthorTable $authorTable
+     */
+    public function setAuthorTable(AuthorTable $authorTable)
+    {
+        $this->authorTable = $authorTable;
+    }
+
+    /**
+     * @param \Article\Table\JournalTable $journalTable
+     */
+    public function setJournalTable(JournalTable $journalTable)
+    {
+        $this->journalTable = $journalTable;
+    }
+
+
 } 

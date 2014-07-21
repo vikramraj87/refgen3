@@ -68,19 +68,7 @@ class AbstractParaTable extends AbstractTableGateway implements AdapterAwareInte
             $data = $para->toArray();
             $data['position'] = $position;
             $data['article_id'] = $articleId;
-            try {
-                $this->insert($data);
-            } catch(InvalidQueryException $e) {
-                /**
-                 * todo: raise an event for integrity constraint and log the error
-                 */
-                return false;
-            } catch(\Exception $e) {
-                /**
-                 * todo: raise an event and log the unknown error
-                 */
-                return false;
-            }
+            $this->insert($data);
             $position++;
         }
         return true;

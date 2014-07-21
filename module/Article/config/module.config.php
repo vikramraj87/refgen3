@@ -39,12 +39,10 @@ return array(
     ),
     'service_manager' => array(
         'factories' => array(
-            'Article\Table\Article' => function(\Zend\ServiceManager\ServiceManager $sm) {
-                $adapter = $sm->get('Zend\Db\Adapter\Adapter');
-                $table   = new \Article\Table\ArticleTable();
-                $table->setDbAdapter($adapter);
-                return $table;
-            }
+            'Article\Table\Journal'      => 'Article\Table\JournalTableServiceFactory',
+            'Article\Table\Author'       => 'Article\Table\AuthorTableServiceFactory',
+            'Article\Table\AbstractPara' => 'Article\Table\AbstractParaTableServiceFactory',
+            'Article\Table\Article'      => 'Article\Table\ArticleTableServiceFactory'
         )
     )
 );

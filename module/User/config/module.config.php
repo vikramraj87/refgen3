@@ -1,9 +1,4 @@
 <?php
-use Zend\Mvc\Controller\ControllerManager,
-    Zend\ServiceManager\ServiceManager;
-use User\Controller\UserController,
-    User\Service\FacebookService;
-
 return array(
     'controllers' => array(
         'invokables' => array(
@@ -56,12 +51,8 @@ return array(
     ),
     'service_manager' => array(
         'factories' => array(
-            'User\Table\User' => function(\Zend\ServiceManager\ServiceManager $sm) {
-                $adapter = $sm->get('Zend\Db\Adapter\Adapter');
-                $table = new \User\Table\UserTable();
-                $table->setDbAdapter($adapter);
-                return $table;
-            }
+            'User\Table\UserSocial' => 'User\Table\UserSocialTableServiceFactory',
+            'User\Table\User'       => 'User\Table\UserTableServiceFactory'
         )
     ),
     'view_manager' => array(

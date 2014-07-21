@@ -23,8 +23,6 @@ class UserTable extends AbstractTableGateway implements AdapterAwareInterface
     public function setDbAdapter(Adapter $adapter)
     {
         $this->adapter = $adapter;
-        $this->userSocialTable = new \User\Table\UserSocialTable();
-        $this->userSocialTable->setDbAdapter($adapter);
         $this->initialize();
     }
 
@@ -121,4 +119,14 @@ class UserTable extends AbstractTableGateway implements AdapterAwareInterface
              ->setPictureLink($socialData['picture']);
         return $user;
     }
+
+    /**
+     * @param \User\table\UserSocialTable $userSocialTable
+     */
+    public function setUserSocialTable(UserSocialTable $userSocialTable)
+    {
+        $this->userSocialTable = $userSocialTable;
+    }
+
+
 }

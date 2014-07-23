@@ -38,13 +38,7 @@ return array(
             'translator' => 'MvcTranslator',
         ),
         'initializers' => array(
-            function($instance, \Zend\ServiceManager\ServiceManager $sm) {
-                if($instance instanceof \Zend\Db\Adapter\AdapterAwareInterface) {
-                    /** @var \Zend\Db\Adapter\Adapter $adapter */
-                    $adapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $instance->setDbAdapter($adapter);
-                }
-            }
+            'Application\Service\DbServiceInitializer'
         ),
         'factories' => array(
             'Application\Service\ErrorHandling' => function(\Zend\ServiceManager\ServiceManager $sm) {
@@ -73,21 +67,12 @@ return array(
     ),
     'controllers' => array(
         'factories' => array(
-            'Application\Controller\Index' => function (ControllerManager $cm) {
-                    $sm = $cm->getServiceLocator();
-                    $service = $sm->get('Pubmed\Service\Pubmed');
-                    $controller = new \Application\Controller\IndexController();
-                    $controller->setPubmedService($service);
-                    return $controller;
-                }
-        ),
-        'invokables' => array(
-            'Application\Controller\Error' => 'Application\Controller\ErrorController'
+            'Application\Controller\Index' => 'Application\Controller\IndexControllerServiceFactory'
         )
     ),
     'view_manager' => array(
-        'display_not_found_reason' => true, //true
-        'display_exceptions'       => true, //true
+        'display_not_found_reason' => false,
+        'display_exceptions'       => true,
         'doctype'                  => 'HTML5',
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',

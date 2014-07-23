@@ -4,6 +4,7 @@ namespace User\table;
 use Zend\ServiceManager\FactoryInterface,
     Zend\ServiceManager\ServiceLocatorInterface,
     Zend\Db\Adapter\Adapter;
+use User\Table\UserTable;
 
 class UserTableServiceFactory implements FactoryInterface
 {

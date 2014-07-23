@@ -28,13 +28,7 @@ return array(
     ),
     'controllers' => array(
         'factories' => array(
-            'Article\Controller\Article' => function(\Zend\Mvc\Controller\ControllerManager $cm) {
-                $sm = $cm->getServiceLocator();
-                $table = $sm->get('Article\Table\Article');
-                $controller = new \Article\Controller\ArticleController();
-                $controller->setTable($table);
-                return $controller;
-            }
+            'Article\Controller\Article' => 'Article\Controller\ArticleControllerServiceFactory'
         )
     ),
     'service_manager' => array(

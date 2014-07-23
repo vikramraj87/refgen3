@@ -115,6 +115,7 @@ class UserTable extends AbstractTableGateway implements AdapterAwareInterface
              ->setMiddleName($userData['middle_name'])
              ->setLastName($userData['last_name'])
              ->setName($userData['name'])
+             ->setRole($userData['role'])
              ->setSocialId($socialData['socialId'])
              ->setPictureLink($socialData['picture']);
         return $user;

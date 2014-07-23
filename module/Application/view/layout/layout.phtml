@@ -92,7 +92,7 @@
                         <?php
                         /** @var \User\Entity\User $identity */
                         $identity = $this->authService()->getIdentity();
-                        $logoutUrl = $this->url('user/logout');
+                        $logoutUrl = $this->url('auth/logout');
                         ?>
                     <li class="has-dropdown">
                         <a href="#">
@@ -122,7 +122,7 @@
                         </ul> <!-- ul.dropdown of profile -->
                     </li>
                     <?php else: ?>
-                        <?php $loginUrl = $this->url('user/login') . $standardRedirectUrl; ?>
+                        <?php $loginUrl = $this->url('auth/login'); ?>
                     <li>
                         <a href="<?php echo $loginUrl; ?>">
                             <span class="fa fa-sign-in"></span> Log in
@@ -172,7 +172,7 @@
                     <p>&copy; 2013 - <?php echo date('Y') ?> by Kivi Designers</p>
                 </div>
                 <div class="small-4 columns">
-                    <p><span class="hidden-for-medium-down">Follow us on </span><a href="https://plus.google.com/111116372537356525801" rel="publisher" target="_blank"><i class="fa fa-google-plus-square"></i></a> <a href="https://www.facebook.com/pages/Kivi-Refgen/266507806889448"><i class="fa fa-facebook-square"></i></a></p>
+                    <p><span class="hidden-for-medium-down">Follow us on </span><a href="https://plus.google.com/111116372537356525801" rel="publisher" target="_blank"><i class="fa fa-google-plus-square"></i></a> <a href="https://www.facebook.com/pages/Kivi-Refgen/266507806889448" target="_blank"><i class="fa fa-facebook-square"></i></a></p>
                 </div>
             </div>
         </footer>

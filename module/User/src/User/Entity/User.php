@@ -25,6 +25,9 @@ class User
     /** @var string */
     private $name = '';
 
+    /** @var int */
+    private $role = 1; // 1 - user 2 - moderator 3 - admin
+
     /** @var string */
     private $pictureLink = '';
 
@@ -172,5 +175,21 @@ class User
         return $this->socialId;
     }
 
+    /**
+     * @param int $role
+     * return $this
+     */
+    public function setRole($role)
+    {
+        $this->role = (int) $role;
+        return $this;
+    }
 
+    /**
+     * @return int
+     */
+    public function getRole()
+    {
+        return $this->role;
+    }
 }

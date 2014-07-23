@@ -10,7 +10,7 @@ namespace Authentication\View\Helper;
 
 use Authentication\Service\AuthenticationService;
 use Zend\View\Helper\AbstractHelper;
-class Authentication extends AbstractHelper
+class AuthenticationHelper extends AbstractHelper
 {
     private $service;
 
@@ -21,6 +21,16 @@ class Authentication extends AbstractHelper
 
     public function __invoke()
     {
-        return $this->service;
+        return $this;
+    }
+
+    public function hasIdentity()
+    {
+        return $this->service->hasIdentity();
+    }
+
+    public function getIdentity()
+    {
+        return $this->service->getIdentity();
     }
 } 

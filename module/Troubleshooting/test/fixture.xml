@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<dataset>
+    <table name="exceptions">
+        <column>id</column>
+        <column>class</column>
+        <column>code</column>
+        <column>message</column>
+        <column>file</column>
+        <column>line</column>
+        <column>raised_on</column>
+        <column>previous_of</column>
+        <row>
+            <value>1</value>
+            <value>RuntimeException</value>
+            <value>0</value>
+            <value>Pubmed server error</value>
+            <value>/Users/vikramraj/Sites/refgen3/module/Application/src/Application/Controller/IndexController.php</value>
+            <value>42</value>
+            <value>2014-07-20 14:20:00</value>
+            <null/>
+        </row>
+        <row>
+            <value>2</value>
+            <value>Exception</value>
+            <value>13</value>
+            <value></value>
+            <value>/Users/vikramraj/Sites/refgen3/module/Troubleshooting/test/TroubleshootingTest/Table/ExceptionTableTest.php</value>
+            <value>10</value>
+            <value>2014-07-20 14:20:22</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>Exception</value>
+            <value></value>
+            <value>Test Exception</value>
+            <value>/Users/vikramraj/Sites/refgen3/module/Troubleshooting/test/TroubleshootingTest/Table/ExceptionTraceTableTest.php</value>
+            <value>7</value>
+            <value>2014-07-20 14:20:23</value>
+            <value>2</value>
+        </row>
+    </table>
+    <table name="exception_traces">
+        <column>id</column>
+        <column>exception_id</column>
+        <column>position</column>
+        <column>trace</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>/Users/vikramraj/Sites/refgen3/vendor/zendframework/zendframework/library/Zend/Mvc/Controller/AbstractActionController.php(83): Application\Controller\IndexController->searchAction()</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>1</value>
+            <value>1</value>
+            <value>[internal function]: Zend\Mvc\Controller\AbstractActionController->onDispatch(Object(Zend\Mvc\MvcEvent))</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>1</value>
+            <value>2</value>
+            <value>/Users/vikramraj/Sites/refgen3/vendor/zendframework/zendframework/library/Zend/EventManager/EventManager.php(468): call_user_func(Array, Object(Zend\Mvc\MvcEvent))</value>
+        </row>
+        <row>
+            <value>4</value>
+            <value>1</value>
+            <value>3</value>
+            <value>/Users/vikramraj/Sites/refgen3/vendor/zendframework/zendframework/library/Zend/EventManager/EventManager.php(207): Zend\EventManager\EventManager->triggerListeners('dispatch', Object(Zend\Mvc\MvcEvent), Object(Closure))</value>
+        </row>
+        <row>
+            <value>5</value>
+            <value>1</value>
+            <value>4</value>
+            <value>/Users/vikramraj/Sites/refgen3/vendor/zendframework/zendframework/library/Zend/Mvc/Controller/AbstractController.php(117): Zend\EventManager\EventManager->trigger('dispatch', Object(Zend\Mvc\MvcEvent), Object(Closure))</value>
+        </row>
+        <row>
+            <value>6</value>
+            <value>1</value>
+            <value>5</value>
+            <value>/Users/vikramraj/Sites/refgen3/vendor/zendframework/zendframework/library/Zend/Mvc/DispatchListener.php(114): Zend\Mvc\Controller\AbstractController->dispatch(Object(Zend\Http\PhpEnvironment\Request), Object(Zend\Http\PhpEnvironment\Response))</value>
+        </row>
+        <row>
+            <value>7</value>
+            <value>1</value>
+            <value>6</value>
+            <value>[internal function]: Zend\Mvc\DispatchListener->onDispatch(Object(Zend\Mvc\MvcEvent))</value>
+        </row>
+        <row>
+            <value>8</value>
+            <value>1</value>
+            <value>7</value>
+            <value>/Users/vikramraj/Sites/refgen3/vendor/zendframework/zendframework/library/Zend/EventManager/EventManager.php(468): call_user_func(Array, Object(Zend\Mvc\MvcEvent))</value>
+        </row>
+        <row>
+            <value>9</value>
+            <value>1</value>
+            <value>8</value>
+            <value>/Users/vikramraj/Sites/refgen3/vendor/zendframework/zendframework/library/Zend/EventManager/EventManager.php(207): Zend\EventManager\EventManager->triggerListeners('dispatch', Object(Zend\Mvc\MvcEvent), Object(Closure))</value>
+        </row>
+        <row>
+            <value>10</value>
+            <value>1</value>
+            <value>9</value>
+            <value>/Users/vikramraj/Sites/refgen3/vendor/zendframework/zendframework/library/Zend/Mvc/Application.php(313): Zend\EventManager\EventManager->trigger('dispatch', Object(Zend\Mvc\MvcEvent), Object(Closure))</value>
+        </row>
+        <row>
+            <value>11</value>
+            <value>1</value>
+            <value>10</value>
+            <value>/Users/vikramraj/Sites/refgen3/public_html/index.php(17): Zend\Mvc\Application->run()</value>
+        </row>
+        <row>
+            <value>12</value>
+            <value>1</value>
+            <value>11</value>
+            <value>{main}</value>
+        </row>
+        <row>
+            <value>13</value>
+            <value>2</value>
+            <value>1</value>
+            <value>[internal function]: TroubleshootingTest\TroubleshootingTest\Table\ExceptionTableTest->testExceptionToArray()</value>
+        </row>
+        <row>
+            <value>14</value>
+            <value>2</value>
+            <value>2</value>
+            <value>/usr/local/php5-5.4.21-20131021-133854/lib/php/PHPUnit/Framework/TestCase.php(983): ReflectionMethod->invokeArgs(Object(TroubleshootingTest\TroubleshootingTest\Table\ExceptionTableTest), Array)</value>
+        </row>
+        <row>
+            <value>15</value>
+            <value>2</value>
+            <value>3</value>
+            <value>/usr/local/php5-5.4.21-20131021-133854/lib/php/PHPUnit/Framework/TestCase.php(838): PHPUnit_Framework_TestCase->runTest()</value>
+        </row>
+        <row>
+            <value>16</value>
+            <value>2</value>
+            <value>4</value>
+            <value>/usr/local/php5-5.4.21-20131021-133854/lib/php/PHPUnit/Framework/TestResult.php(648): PHPUnit_Framework_TestCase->runBare()</value>
+        </row>
+        <row>
+            <value>17</value>
+            <value>2</value>
+            <value>5</value>
+            <value>/usr/local/php5-5.4.21-20131021-133854/lib/php/PHPUnit/Framework/TestCase.php(783): PHPUnit_Framework_TestResult->run(Object(TroubleshootingTest\TroubleshootingTest\Table\ExceptionTableTest))</value>
+        </row>
+        <row>
+            <value>18</value>
+            <value>2</value>
+            <value>6</value>
+            <value>/usr/local/php5-5.4.21-20131021-133854/lib/php/PHPUnit/Framework/TestSuite.php(775): PHPUnit_Framework_TestCase->run(Object(PHPUnit_Framework_TestResult))</value>
+        </row>
+        <row>
+            <value>19</value>
+            <value>2</value>
+            <value>7</value>
+            <value>/usr/local/php5-5.4.21-20131021-133854/lib/php/PHPUnit/Framework/TestSuite.php(745): PHPUnit_Framework_TestSuite->runTest(Object(TroubleshootingTest\TroubleshootingTest\Table\ExceptionTableTest), Object(PHPUnit_Framework_TestResult))</value>
+        </row>
+        <row>
+            <value>20</value>
+            <value>2</value>
+            <value>8</value>
+            <value>/usr/local/php5-5.4.21-20131021-133854/lib/php/PHPUnit/Framework/TestSuite.php(705): PHPUnit_Framework_TestSuite->run(Object(PHPUnit_Framework_TestResult), false, Array, Array, false)</value>
+        </row>
+        <row>
+            <value>21</value>
+            <value>2</value>
+            <value>9</value>
+            <value>/usr/local/php5-5.4.21-20131021-133854/lib/php/PHPUnit/TextUI/TestRunner.php(349): PHPUnit_Framework_TestSuite->run(Object(PHPUnit_Framework_TestResult), false, Array, Array, false)</value>
+        </row>
+        <row>
+            <value>22</value>
+            <value>2</value>
+            <value>10</value>
+            <value>/usr/local/php5-5.4.21-20131021-133854/lib/php/PHPUnit/TextUI/Command.php(176): PHPUnit_TextUI_TestRunner->doRun(Object(PHPUnit_Framework_TestSuite), Array)</value>
+        </row>
+        <row>
+            <value>23</value>
+            <value>2</value>
+            <value>11</value>
+            <value>/usr/local/php5-5.4.21-20131021-133854/lib/php/PHPUnit/TextUI/Command.php(129): PHPUnit_TextUI_Command->run(Array, true)</value>
+        </row>
+        <row>
+            <value>24</value>
+            <value>2</value>
+            <value>12</value>
+            <value>/usr/local/php5-5.4.21-20131021-133854/bin/phpunit(46): PHPUnit_TextUI_Command::main()</value>
+        </row>
+        <row>
+            <value>25</value>
+            <value>2</value>
+            <value>13</value>
+            <value>{main}</value>
+        </row>
+    </table>
+</dataset>

@@ -3,7 +3,8 @@ namespace Collection\Table;
 
 use Zend\Db\TableGateway\AbstractTableGateway,
     Zend\Db\Adapter\Adapter,
-    Zend\Db\Adapter\AdapterAwareInterface;
+    Zend\Db\Adapter\AdapterAwareInterface,
+    Zend\Db\Sql\Expression;
 use Collection\Entity\Collection;
 use Collection\Table\CollectionArticleTable;
 
@@ -31,7 +32,8 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
         $id = (int) $id;
         $rowset = $this->select(array(
                 'id' => $id,
-                'user_id' => $userId
+                'user_id' => $userId,
+                'deleted' => 0
             )
         );
         $data = $rowset->current();
@@ -61,6 +63,7 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
 
         $where = array();
         $where['user_id'] = $userId;
+        $where['deleted'] = 0;
         if(0 != $current) {
             $where['id != ?'] = $current;
         }
@@ -85,7 +88,7 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
     {
         $select = $this->getSql()
                        ->select()
-                       ->where(array('user_id' => $userId))
+                       ->where(array('user_id' => $userId, 'deleted' => 0))
                        ->order('updated_on DESC');
         $rowset = $this->selectWith($select);
         $collections = array();
@@ -182,21 +185,29 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
     {
         $id = (int) $id;
         $userId = (int) $userId;
-        $collectionData = $this->select(array(
-                'id' => $id,
+        return (bool) $this->update(array(
+                'deleted' => 1
+            ), array(
+                'id'      => $id,
                 'user_id' => $userId
             )
-        )->current();
-        if($collectionData) {
-            $this->collectionArticleTable()->delete(array(
-                    'collection_id' => $collectionData['id']
-                )
-            );
-            $this->delete(array(
-                    'id' => $collectionData['id']
-                )
+        );
+    }
+
+    public function fetchCollectionCountsByUser()
+    {
+        $select = $this->getSql()
+                       ->select()
+                       ->columns(array('user_id', 'count' => new Expression('COUNT(*)')))
+                       ->group('user_id');
+        $rowset = $this->selectWith($select);
+        $collectionCounts = array();
+        foreach($rowset as $row) {
+            $collectionCounts[$row['user_id']] = array(
+                'collections' => $row['count']
             );
         }
+        return $collectionCounts;
     }
 
     private function collectionArticleTable()
@@ -206,5 +217,14 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
             $this->collectionArticleTable->setDbAdapter($this->adapter);
         }
         return $this->collectionArticleTable;
+    }
+
+    public function getTotalCount()
+    {
+        $select = $this->getSql()
+                       ->select()
+                       ->columns(array('count' => new Expression('COUNT(*)')));
+        $row = $this->selectWith($select)->current();
+        return $row['count'];
     }
 }

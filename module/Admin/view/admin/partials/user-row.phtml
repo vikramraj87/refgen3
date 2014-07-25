@@ -1,0 +1,42 @@
+<?php
+    $socialParams = array(
+        1 => array(
+            'name' => 'Facebook',
+            'url'  => 'https://www.facebook.com/app_scoped_user_id/'
+        ),
+        2 => array(
+            'name' => 'Google',
+            'url' => 'https://plus.google.com/'
+        )
+    );
+    $socials = $this->socials;
+    ksort($socials);
+    $pictureLink = current($socials)['picture'];
+    $collections = $this->collections ?: 0;
+
+?>
+
+            <tr>
+                <td><img width="40px" height="40px" src="<?php echo $pictureLink; ?>"/></td>
+                <!-- <td><?php // echo $this->email; ?></td> -->
+                <td><?php echo $this->name; ?></td>
+                <td><?php echo (new \DateTime($this->createdOn))->format('M j'); ?></td>
+                <td><?php echo (new \DateTime($this->lastLoggedIn))->format('M j'); ?></td>
+                <td>
+                    <?php
+                        $socialLinks = array();
+                        foreach($socials as $social => $data) {
+                            $link = $socialParams[$social]['url'];
+                            $link .= $data['socialId'];
+                            $text = $socialParams[$social]['name'];
+                            $socialLinks[] = sprintf(
+                                '<a href="%s" target="_blank">%s</a>',
+                                $link,
+                                $text
+                            );
+                        }
+                    ?>
+                    <?php echo implode(' | ', $socialLinks); ?>
+                </td>
+                <td><?php echo $collections; ?></td>
+            </tr>

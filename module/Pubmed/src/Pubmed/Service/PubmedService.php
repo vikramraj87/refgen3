@@ -91,6 +91,7 @@ class PubmedService
                     /** @var Article $article */
                     $article = $this->table->checkArticle($article);
                 }
+                unset($article);
 
                 // 5. Populate the result with the articles obtained
                 $result = array_merge($result, $adapterResult);

@@ -9,7 +9,9 @@ return array(
         'User',
         'Collection',
         'Authentication',
-        'Authorization'
+        'Authorization',
+        'Troubleshooting',
+        'Admin'
     ),
 
     // These are various options for the listeners attached to the ModuleManager

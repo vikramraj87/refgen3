@@ -214,6 +214,12 @@ class CollectionTableTest extends DbTestCase
         $this->assertEquals(0, count($rowset));
     }
 
+    public function testCount()
+    {
+        $count = $this->table->getTotalCount();
+        var_dump($count);
+    }
+
     private function articlesFromIds($ids = array())
     {
         $articles = array();

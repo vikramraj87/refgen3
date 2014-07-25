@@ -1,0 +1,27 @@
+            <div class="large-12 columns">
+                <div class="row">
+                    <div class="large-12 columns">
+                        <h2>Users</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th width="50">Profile picture</th>
+                                    <!-- <th>Email</th> -->
+                                    <th>Name</th>
+                                    <th>Member since</th>
+                                    <th>Last logged in</th>
+                                    <th width="160">Socials</th>
+                                    <th>Collections</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo $this->partialLoop('admin/partials/user-row', $this->data); ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>

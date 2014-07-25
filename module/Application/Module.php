@@ -56,15 +56,6 @@ class Module
             );
             set_error_handler(array('Application\Module', 'handlePhpErrors'));
         }
-
-        $eventManager->attach('dispatch.error', function($event) use($serviceManager) {
-            $exception = $event->getResult()->exception;
-            if($exception) {
-                $service = $serviceManager->get('Application\Service\ErrorHandling');
-                $service->logException($exception);
-            }
-        });
-
     }
 
     public function getConfig()

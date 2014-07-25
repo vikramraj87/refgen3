@@ -11,11 +11,14 @@ namespace Troubleshooting\Entity;
 
 class Exception
 {
-    /** @var int|mixed */
-    private $code;
+    /** @var int */
+    private $id;
 
     /** @var string */
     private $class;
+
+    /** @var int|mixed */
+    private $code;
 
     /** @var string */
     private $message;
@@ -32,12 +35,17 @@ class Exception
     /** @var Exception */
     private $previous;
 
+    /** @var \DateTime */
+    private $raisedOn;
+
     /**
      * @param int|mixed $code
+     * @return $this
      */
     public function setCode($code)
     {
         $this->code = $code;
+        return $this;
     }
 
     /**
@@ -50,10 +58,12 @@ class Exception
 
     /**
      * @param string $file
+     * @return $this
      */
     public function setFile($file)
     {
         $this->file = $file;
+        return $this;
     }
 
     /**
@@ -66,10 +76,12 @@ class Exception
 
     /**
      * @param int $line
+     * @return $this
      */
     public function setLine($line)
     {
         $this->line = $line;
+        return $this;
     }
 
     /**
@@ -82,10 +94,12 @@ class Exception
 
     /**
      * @param string $message
+     * @return $this
      */
     public function setMessage($message)
     {
         $this->message = $message;
+        return $this;
     }
 
     /**
@@ -98,10 +112,12 @@ class Exception
 
     /**
      * @param \Troubleshooting\Entity\Exception $previous
+     * @return $this
      */
     public function setPrevious(Exception $previous)
     {
         $this->previous = $previous;
+        return $this;
     }
 
     /**
@@ -114,10 +130,12 @@ class Exception
 
     /**
      * @param array $trace
+     * @return $this
      */
     public function setTrace($trace)
     {
         $this->trace = $trace;
+        return $this;
     }
 
     /**
@@ -130,10 +148,12 @@ class Exception
 
     /**
      * @param string $class
+     * @return $this
      */
     public function setClass($class)
     {
         $this->class = $class;
+        return $this;
     }
 
     /**
@@ -144,5 +164,39 @@ class Exception
         return $this->class;
     }
 
+    /**
+     * @param int $id
+     * @return $this;
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
 
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param \DateTime $raisedOn
+     * @return $this
+     */
+    public function setRaisedOn(\DateTime $raisedOn)
+    {
+        $this->raisedOn = $raisedOn;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getRaisedOn()
+    {
+        return $this->raisedOn;
+    }
 }

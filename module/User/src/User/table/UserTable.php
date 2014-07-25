@@ -3,7 +3,8 @@ namespace User\table;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\TableGateway\AbstractTableGateway,
-    Zend\Db\Adapter\AdapterAwareInterface;
+    Zend\Db\Adapter\AdapterAwareInterface,
+    Zend\Db\Sql\Expression;
 use User\Entity\User;
 use DateTime;
 
@@ -94,6 +95,48 @@ class UserTable extends AbstractTableGateway implements AdapterAwareInterface
             throw new \RuntimeException('Failed insertion in "user" Table');
         }
         return $this->checkUser($user, $social);
+    }
+
+    public function fetchAllUsers()
+    {
+        $select = $this->getSql()
+                       ->select()
+                       ->order('created_on DESC');
+        $rowset = $this->selectWith($select);
+
+        $users = array();
+        foreach($rowset as $row) {
+            $users[$row['id']] = array(
+                'email' => $row['email'],
+                'name'  => $row['name'],
+                'createdOn' => $row['created_on'],
+                'lastLoggedIn' => $row['last_logged_in']
+            );
+            $socialIds[] = $row['id'];
+        }
+
+        $socialData = $this->userSocialTable->select(array(
+                'user_id' => array_keys($users)
+            )
+        );
+
+        foreach($socialData as $data) {
+            $users[$data['user_id']]['socials'][$data['social']] = array(
+                'socialId' => $data['social_id'],
+                'picture'  => $data['picture']
+            );
+        }
+
+        return $users;
+    }
+
+    public function getTotalCount()
+    {
+        $select = $this->getSql()
+            ->select()
+            ->columns(array('count' => new Expression('COUNT(*)')));
+        $row = $this->selectWith($select)->current();
+        return $row['count'];
     }
 
     private function updateLastLoggedIn(User $user)

@@ -6,6 +6,7 @@ use Zend\Db\Adapter\Adapter,
     Zend\Db\Adapter\AdapterAwareInterface,
     Zend\Db\TableGateway\AbstractTableGateway,
     Zend\Db\Sql\Where,
+    Zend\Db\Sql\Expression,
     Zend\Db\ResultSet\ResultSet;
 
 class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
@@ -116,6 +117,15 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
             }
         }
         return $articles;
+    }
+
+    public function getTotalCount()
+    {
+        $select = $this->getSql()
+            ->select()
+            ->columns(array('count' => new Expression('COUNT(*)')));
+        $row = $this->selectWith($select)->current();
+        return $row['count'];
     }
 
     /**

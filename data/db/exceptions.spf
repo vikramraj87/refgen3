@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ContentFilters</key>
+	<dict/>
+	<key>auto_connect</key>
+	<true/>
+	<key>data</key>
+	<dict>
+		<key>connection</key>
+		<dict>
+			<key>database</key>
+			<string>RefgenTest</string>
+			<key>host</key>
+			<string>127.0.0.1</string>
+			<key>kcid</key>
+			<string>3502403626644375163</string>
+			<key>name</key>
+			<string>Root</string>
+			<key>rdbms_type</key>
+			<string>mysql</string>
+			<key>sslCACertFileLocation</key>
+			<string></string>
+			<key>sslCACertFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslCertificateFileLocation</key>
+			<string></string>
+			<key>sslCertificateFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslKeyFileLocation</key>
+			<string></string>
+			<key>sslKeyFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>type</key>
+			<string>SPTCPIPConnection</string>
+			<key>useSSL</key>
+			<integer>0</integer>
+			<key>user</key>
+			<string>root</string>
+		</dict>
+		<key>session</key>
+		<dict>
+			<key>connectionEncoding</key>
+			<string>utf8</string>
+			<key>contentPageNumber</key>
+			<integer>1</integer>
+			<key>contentSortColIsAsc</key>
+			<true/>
+			<key>contentViewport</key>
+			<string>{{0, 0}, {963, 648}}</string>
+			<key>isToolbarVisible</key>
+			<true/>
+			<key>queries</key>
+			<string>CREATE TABLE `exceptions` (
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`class` VARCHAR(120) NOT NULL,
+	`code`  VARCHAR(30) NOT NULL,
+	`message` VARCHAR(120) NOT NULL DEFAULT '',
+	`file` VARCHAR(500) NOT NULL DEFAULT '',
+	`line` INT NOT NULL DEFAULT 0,
+	`raised_on` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDb;</string>
+			<key>view</key>
+			<string>SP_VIEW_CUSTOMQUERY</string>
+			<key>windowVerticalDividerPosition</key>
+			<real>214</real>
+		</dict>
+	</dict>
+	<key>encrypted</key>
+	<false/>
+	<key>format</key>
+	<string>connection</string>
+	<key>queryFavorites</key>
+	<array/>
+	<key>queryHistory</key>
+	<array>
+		<string>CREATE TABLE `exception_traces` (
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`exception_id` INT UNSIGNED NOT NULL,
+	`position` TINYINT NOT NULL,
+	`trace` VARCHAR(550) NOT NULL DEFAULT '',
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`exception_id`) REFERENCES `exceptions` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDb</string>
+		<string>CREATE TABLE `exceptions` (
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`class` VARCHAR(120) NOT NULL,
+	`code`  VARCHAR(30) NOT NULL,
+	`message` VARCHAR(120) NOT NULL DEFAULT '',
+	`file` VARCHAR(500) NOT NULL DEFAULT '',
+	`line` INT NOT NULL DEFAULT 0,
+	`raised_on` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	`previous` INT UNSIGNED NULL,
+	FOREIGN KEY (`previous`) REFERENCES `exceptions` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
+	PRIMARY KEY (`id`)
+) ENGINE=InnoDb</string>
+		<string>CREATE TABLE `exceptions` (
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`class` VARCHAR(120) NOT NULL,
+	`code`  VARCHAR(30) NOT NULL,
+	`message` VARCHAR(120) NOT NULL DEFAULT '',
+	`file` VARCHAR(500) NOT NULL DEFAULT '',
+	`line` INT NOT NULL DEFAULT 0,
+	`raised_on` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	`previous` INT UNSIGNED NULL,
+	FOREIGN KEY (`previous`) REFERENCES `exceptions` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDb</string>
+		<string>CREATE TABLE `roles` (
+	`id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(20) NOT NULL,
+	PRIMARY KEY(`id`)
+) ENGINE = InnoDB</string>
+		<string>DELETE FROM `collections`
+WHERE `id` = 2</string>
+		<string>DELETE FROM `collections`
+WHERE `collection_id` = 2</string>
+		<string>DELETE FROM `collection`
+WHERE `collection_id` = 2</string>
+		<string>DELETE FROM `collection_articles`
+WHERE `collection_id` = 2</string>
+		<string>INSERT INTO `collection_articles`
+	(`collection_id`, `article_id`, `position`)
+	VALUES
+	(2, 4, 2),
+	(2, 8, 3),
+	(2, 16, 4),
+	(2, 32, 5),
+	(2, 64, 6)</string>
+		<string>INSERT INTO `collection_articles`
+	(`collection_id`, `article_id`, `position`)
+	VALUES
+	(2, 4, 2)
+)</string>
+		<string>INSERT INTO `collection_articles`
+	(`collection_id`, `article_id`, `position`)
+	VALUES
+	(2, 4, 2),
+	(2, 8, 3),
+	(2, 16, 4),
+	(2, 32, 5),
+	(2, 64, 6)
+)</string>
+		<string>INSERT INTO `collection_articles` (
+	`collection_id`, `article_id`, `position`
+	VALUES
+	(2, 4, 2),
+	(2, 8, 3),
+	(2, 16, 4),
+	(2, 32, 5),
+	(2, 64, 6)
+)</string>
+		<string>CREATE TABLE  `collection_articles` (
+	`collection_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`article_id`    INT UNSIGNED NOT NULL,
+	`position`      SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+	PRIMARY KEY (`collection_id`, `article_id`),
+	UNIQUE KEY (`collection_id`, `position`),
+	FOREIGN KEY (`collection_id`) REFERENCES `collections` (`id`),
+	FOREIGN KEY (`article_id`)    REFERENCES `articles` (`id`)
+) ENGINE=InnoDb</string>
+		<string>CREATE TABLE `collections` (
+	`id`      INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`user_id` INT UNSIGNED NOT NULL,
+	`name`    VARCHAR(60) NOT NULL,
+	`created_on` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`modified_on` DATETIME NULL DEFAULT NULL,
+	PRIMARY KEY(`id`),
+	UNIQUE KEY(`user_id`, `name`),
+	FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDb</string>
+		<string>CREATE TABLE  `collection_articles` (
+	`collection_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`article_id`    INT UNSIGNED NOT NULL,
+	`position`      SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+	PRIMARY KEY (`collection_id`, `article_id`),
+	UNIQUE KEY (`collection_id`, `position`),
+	FOREIGN KEY (`collection_id`) REFERENCES `collections` (`id`),
+	FOREIGN KEY (`user_id`)       REFERENCES `users` (`id`)
+) ENGINE=InnoDb</string>
+		<string>CREATE TABLE `collections` (
+	`id`      INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`user_id` INT UNSIGNED NOT NULL,
+	`name`    VARCHAR(60) NOT NULL,
+	`created_on` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`modified_on` DATETIME NULL DEFAULT NULL,
+	PRIMARY KEY(`id`),
+	UNIQUE KEY(`user_id`, `name`)
+) ENGINE=InnoDb</string>
+		<string>CREATE TABLE `collections` (
+	`id`      INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`user_id` INT UNSIGNED NOT NULL,
+	`name`    VARCHAR(60) NOT NULL,
+	`created_on` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`modified_on` DATETIME NULL DEFAULT NULL,
+) ENGINE=InnoDb</string>
+		<string>CREATE TABLE `collections` (
+	`id`      INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`user_id` INT UNSIGNED NOT NULL,
+	`name`    VARCHAR(60) MOT NULL,
+	`created_on` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`modified_on` DATETIME NULL DEFAULT NULL,
+) ENGINE=InnoDb</string>
+		<string>CREATE TABLE `user_socials` (
+  `user_id` int(10) unsigned NOT NULL,
+  `social_id` varchar(30) NOT NULL,
+  `social` tinyint(3) unsigned NOT NULL,
+  `picture` varchar(240) NOT NULL,
+  PRIMARY KEY (`user_id`,`social_id`),
+  UNIQUE KEY `social_id` (`social_id`,`social`),
+  KEY `social` (`social`),
+  CONSTRAINT `user_socials_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `user_socials_ibfk_2` FOREIGN KEY (`social`) REFERENCES `socials` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1</string>
+		<string>CREATE TABLE `user_socials` (
+	`user_id` INT UNSIGNED NOT NULL,
+	`social_id` VARCHAR(30) NOT NULL,
+	`social` TINYINT UNSIGNED NOT NULL,
+	PRIMARY KEY(`user_id`, `social_id`),
+	FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+	FOREIGN KEY (`social`)  REFERENCES `socials` (`id`),
+	UNIQUE KEY(`social_id`, `social`)
+) Engine=InnoDb</string>
+	</array>
+	<key>rdbms_type</key>
+	<string>mysql</string>
+	<key>rdbms_version</key>
+	<string>5.6.15</string>
+	<key>version</key>
+	<integer>1</integer>
+</dict>
+</plist>

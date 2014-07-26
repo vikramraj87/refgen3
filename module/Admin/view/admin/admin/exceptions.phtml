@@ -1,0 +1,17 @@
+            <div class="large-12 columns">
+                <div class="row">
+                    <div class="large-12 columns">
+                        <h2>Exceptions</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <dl class="accordion" data-accordion>
+                        <?php
+                            $this->partialLoop()->setObjectKey('exception');
+                            echo $this->partialLoop('admin/partials/exception', $this->exceptions);
+                        ?>
+                        </dl>
+                    </div>
+                </div>
+            </div>

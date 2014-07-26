@@ -48,5 +48,17 @@ class AuthenticationService extends ZendAuthenticationService
         $this->userTable = $userTable;
     }
 
-
+    public function getRoleId()
+    {
+        $roleId = 'guest';
+        if($this->hasIdentity()) {
+            $roles = array(
+                1 => 'user',
+                2 => 'moderator',
+                3 => 'admin'
+            );
+            $roleId = $roles[$this->getIdentity()->getRole()];
+        }
+        return $roleId;
+    }
 }

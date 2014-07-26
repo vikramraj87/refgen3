@@ -1,0 +1,30 @@
+<?php
+    /** @var \Troubleshooting\Entity\Exception $exception */
+    $exception = $this->exception;
+?>
+            <dd class="accordion-navigation">
+                <a href="#panel<?php echo $exception->getId(); ?>">
+                    <?php echo $exception->getClass(); ?>: <?php echo $exception->getMessage(); ?> (<?php echo $exception->getCode(); ?>)
+                </a>
+                <div id="panel<?php echo $exception->getId(); ?>" class="content">
+                    <p>Raised on <b><?php echo $exception->getRaisedOn()->format('M j'); ?></b> in file <b><?php echo $exception->getFile(); ?></b> at line <b><?php echo $exception->getLine(); ?></b></p>
+                    <?php $traces = $exception->getTrace(); ?>
+                    <?php if(count($traces) > 0): ?>
+                        <h4>Trace</h4>
+                        <ol>
+                            <?php foreach($traces as $trace): ?>
+                                <li><?php echo $trace; ?></li>
+                            <?php endforeach; ?>
+                        </ol>
+                    <?php endif; ?>
+                    <?php $previous = $exception->getPrevious(); ?>
+                    <?php if($previous): ?>
+                        <dl class="accordion" data-accordion>
+                            <?php echo $this->partial(
+                                    'admin/partials/exception',
+                                    array('exception' => $previous)
+                                ); ?>
+                        </dl>
+                    <?php endif; ?>
+                </div>
+            </dd>

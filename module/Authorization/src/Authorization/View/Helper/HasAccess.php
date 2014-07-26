@@ -13,7 +13,7 @@ class HasAccess extends AbstractHelper
         $this->service = $authService;
     }
 
-    public function __invoke($resource, $privilege)
+    public function __invoke($resource, $privilege = null)
     {
         return $this->service->hasAccess($resource, $privilege);
     }

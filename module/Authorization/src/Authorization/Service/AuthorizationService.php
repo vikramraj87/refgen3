@@ -1,14 +1,12 @@
 <?php
 namespace Authorization\Service;
 
-use Authorization\Role\Guest,
-    Authorization\Role\Member;
 use Authentication\Service\AuthenticationService;
 use Zend\Permissions\Acl\Acl,
-    Zend\Permissions\Acl\Role\RoleInterface;
+    Zend\Permissions\Acl\Role\GenericRole;
 
 class AuthorizationService {
-    /** @var RoleInterface[] */
+    /** @var GenericRole[] */
     private $roles;
 
     /** @var \Zend\Permissions\Acl\Acl */
@@ -17,12 +15,32 @@ class AuthorizationService {
     /** @var AuthenticationService */
     private $authService;
 
-    public function __construct(array $config = array(), AuthenticationService $authService)
+    public function __construct(AuthenticationService $authService)
     {
-        $this->roles = array(new Guest(), new Member());
         $this->acl = new Acl();
+
+        /** Roles */
+        $this->acl->addRole(new GenericRole('guest'));
+        $this->acl->addRole(new GenericRole('user'));
+        $this->acl->addRole(new GenericRole('moderator'), 'user');
+        $this->acl->addRole(new GenericRole('admin'), 'moderator');
+
+        /** Resources */
+        $this->acl->addResource('Authentication\Controller\Authentication');
+        $this->acl->addResource('Collection\Controller\Collection');
+        $this->acl->addResource('Admin\Controller\Admin');
+
+        /** Permissions */
+        $this->acl->allow(
+            'guest',
+            'Authentication\Controller\Authentication',
+            array('login', 'facebook', 'google')
+        );
+        $this->acl->allow('user', 'Authentication\Controller\Authentication', 'logout');
+        $this->acl->allow('user', 'Collection\Controller\Collection');
+        $this->acl->allow('moderator', 'Admin\Controller\Admin');
+
         $this->authService = $authService;
-        $this->init($config);
     }
 
     public function hasResource($resource)
@@ -32,44 +50,6 @@ class AuthorizationService {
 
     public function hasAccess($resource, $privilege = null)
     {
-        return $this->acl->isAllowed($this->getRole()->getRoleId(), $resource, $privilege);
+        return $this->acl->isAllowed($this->authService->getRoleId(), $resource, $privilege);
     }
-
-    private function getRole()
-    {
-        $role = new Guest();
-        if($this->authService->hasIdentity()) {
-            $role = new Member();
-        }
-        return $role;
-    }
-
-    private function init(array $config = array())
-    {
-        if(empty($config)) {
-            return;
-        }
-        $acl = $this->acl;
-        foreach($this->roles as $role) {
-            $acl->addRole($role);
-            /** @var RoleInterface $role */
-            if(array_key_exists($role->getRoleId(), $config)) {
-                foreach($config[$role->getRoleId()] as $resource => $privileges) {
-                    if(is_array($privileges)) {
-                        if(!$acl->hasResource($resource)) {
-                            $acl->addResource($resource);
-                        }
-                    } else {
-                        $resource = $privileges;
-                        $privileges = null;
-                        if(!$acl->hasResource($resource)) {
-                            $acl->addResource($resource);
-                        }
-                    }
-                    $acl->allow($role, $resource, $privileges);
-                }
-            }
-        }
-
-    }
-} 
+}

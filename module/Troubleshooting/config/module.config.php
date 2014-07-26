@@ -10,5 +10,10 @@ return array(
             'Troubleshooting\Service\Logger'        => 'Troubleshooting\Service\LoggerServiceFactory',
             'Troubleshooting\Service\ErrorHandling' => 'Troubleshooting\Service\ErrorHandlingServiceFactory'
         )
+    ),
+    'view_manager' => array(
+        'template_path_stack' => array(
+            __DIR__ . '/../view',
+        ),
     )
 );

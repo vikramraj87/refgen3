@@ -26,10 +26,12 @@ class AdminController extends AbstractActionController
         $totalUsers = $this->userTable->getTotalCount();
         $totalCollections = $this->collectionTable->getTotalCount();
         $totalArticles = $this->articleTable->getTotalCount();
+        $totalExceptions = $this->exceptionTable->getTotalCount();
         return array(
             'totalUsers' => $totalUsers,
             'totalCollections' => $totalCollections,
-            'totalArticles' => $totalArticles
+            'totalArticles' => $totalArticles,
+            'totalExceptions' => $totalExceptions
         );
     }
 
@@ -40,6 +42,14 @@ class AdminController extends AbstractActionController
         $data = \Zend\Stdlib\ArrayUtils::merge($users, $collectionCounts, true);
         return array(
             'data' => $data
+        );
+    }
+
+    public function exceptionsAction()
+    {
+        $exceptions = $this->exceptionTable->fetchAllExceptions();
+        return array(
+            'exceptions' => $exceptions
         );
     }
 

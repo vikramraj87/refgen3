@@ -86,6 +86,26 @@
                         </ul> <!-- ul.dropdown for collection -->
                     </li> <!-- li.has-dropdown for Collection Menu -->
                 <?php endif; ?>
+                <?php if($this->hasAccess('Admin\Controller\Admin')): ?>
+                    <li class="divider"></li>
+                    <li class="has-dropdown">
+                        <a href="<?php echo $this->url('admin'); ?>">
+                            <span class="fa fa-user"></span> Admin
+                        </a>
+                        <ul class="dropdown">
+                            <li>
+                                <a href="<?php echo $this->url('admin/users'); ?>">
+                                    <span class="fa fa-users"></span> Users
+                                </a>
+                            </li>
+                            <li>
+                                <a href="<?php echo $this->url('admin/exceptions'); ?>">
+                                    <span class="fa fa-warning"></span> Exceptions
+                                </a>
+                            </li>
+                        </ul>
+                    </li><!-- li.has-dropdown -->
+                <?php endif; ?>
                 </ul> <!-- ul.left -->
                 <ul class="right">
                     <?php if($this->authService()->hasIdentity()): ?>

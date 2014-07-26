@@ -31,6 +31,15 @@ return array(
                                 'action' => 'users'
                             )
                         )
+                    ),
+                    'exceptions' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => array(
+                            'route' => '/exceptions',
+                            'defaults' => array(
+                                'action' => 'exceptions'
+                            )
+                        )
                     )
                 )
             )

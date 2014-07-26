@@ -3,7 +3,8 @@ namespace Troubleshooting\Table;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\TableGateway\AbstractTableGateway,
-    Zend\Db\Adapter\AdapterAwareInterface;
+    Zend\Db\Adapter\AdapterAwareInterface,
+    Zend\Db\Sql\Expression;
 use Troubleshooting\Entity\Exception;
 
 class ExceptionTable extends AbstractTableGateway implements AdapterAwareInterface
@@ -31,6 +32,31 @@ class ExceptionTable extends AbstractTableGateway implements AdapterAwareInterfa
     public function setTraceTable(ExceptionTraceTable $traceTable)
     {
         $this->traceTable = $traceTable;
+    }
+
+    public function getTotalCount()
+    {
+        $select = $this->getSql()
+                       ->select()
+                       ->columns(array('count' => new Expression('COUNT(*)')))
+                       ->where(array('previous_of' => null));
+        $row = $this->selectWith($select)
+                    ->current();
+        return $row['count'];
+    }
+
+    public function fetchAllExceptions()
+    {
+        $select = $this->getSql()
+                       ->select()
+                       ->where(array('previous_of' => null))
+                       ->order('raised_on DESC');
+        $rowset = $this->selectWith($select);
+        $exceptions = array();
+        foreach($rowset as $row) {
+            $exceptions[] = $this->fetchExceptionById($row['id']);
+        }
+        return $exceptions;
     }
 
     public function fetchExceptionById($id)
@@ -61,6 +87,11 @@ class ExceptionTable extends AbstractTableGateway implements AdapterAwareInterfa
         }
 
         return $exception;
+    }
+
+    private function exceptionFromData()
+    {
+
     }
 
     public function saveException(\Exception $e, $previousOf = null)

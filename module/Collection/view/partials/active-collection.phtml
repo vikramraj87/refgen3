@@ -3,7 +3,7 @@
     $service = $this->service;
     $collection = $service->getActiveCollection();
 ?>
-            <aside id="active-collection" class="clearfix">
+            <aside id="active-collection" class="clearfix" data-edited="<?php echo $service->isEdited(); ?>">
                 <h3>Active Collection <?php if($service->isEdited()){ ?><span>*</span><?php } ?></h3>
                 <?php if($this->authService()->hasIdentity()): ?>
                 <form method="post" action="<?php echo $this->url('collection/save') . '?redirect=' . urlencode($_SERVER['REQUEST_URI']); ?>">

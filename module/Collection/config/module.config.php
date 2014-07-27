@@ -145,31 +145,9 @@ return array(
     ),
     'service_manager' => array(
         'factories' => array(
-            'Collection\Service\Collection' => function(\Zend\ServiceManager\ServiceManager $sm) {
-                $articleTable    = $sm->get('Article\Table\Article');
-                $collectionTable = $sm->get('Collection\Table\Collection');
-                $service = new \Collection\Service\CollectionService();
-                $service->setTable($collectionTable);
-                $service->setArticleTable($articleTable);
-                $service->init();
-                return $service;
-            },
-            'Collection\Table\CollectionArticle' => function(\Zend\ServiceManager\ServiceManager $sm) {
-                $adapter      = $sm->get('Zend\Db\Adapter\Adapter');
-                $articleTable = $sm->get('Article\Table\Article');
-                $table = new \Collection\Table\CollectionArticleTable();
-                $table->setDbAdapter($adapter);
-                $table->setArticleTable($articleTable);
-                return $table;
-            },
-            'Collection\Table\Collection' => function(\Zend\ServiceManager\ServiceManager $sm) {
-                $adapter                = $sm->get('Zend\Db\Adapter\Adapter');
-                $collectionArticleTable = $sm->get('Collection\Table\CollectionArticle');
-                $table = new \Collection\Table\CollectionTable();
-                $table->setDbAdapter($adapter);
-                $table->setCollectionArticleTable($collectionArticleTable);
-                return $table;
-            }
+            'Collection\Service\Collection'      => 'Collection\Service\CollectionServiceFactory',
+            'Collection\Table\CollectionArticle' => 'Collection\Table\CollectionArticleTableServiceFactory',
+            'Collection\Table\Collection'        => 'Collection\Table\CollectionTableServiceFactory'
         )
     ),
     'controllers' => array(
@@ -196,12 +174,7 @@ return array(
     ),
     'view_helpers' => array(
         'factories' => array(
-            'activeCollection' => function (\Zend\View\HelperPluginManager $vm) {
-                $sm = $vm->getServiceLocator();
-                $service = $sm->get('Collection\Service\Collection');
-                $helper = new \Collection\View\Helper\ActiveCollectionHelper($service);
-                return $helper;
-            },
+            'activeCollection' => 'Collection\View\Helper\ActiveCollectionHelperServiceFactory',
             'collections' => function(\Zend\View\HelperPluginManager $vm) {
                 $sm = $vm->getServiceLocator();
                 $service = $sm->get('Authentication\Service\Authentication');

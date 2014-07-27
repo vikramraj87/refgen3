@@ -1,11 +1,8 @@
 <?php
 namespace Collection\Service;
 
-use Zend\Session\Container,
-    Zend\Paginator\Paginator,
-    Zend\Paginator\Adapter\ArrayAdapter;
-use Collection\Entity\Collection,
-    Collection\Table\CollectionTable;
+use Zend\Session\Container;
+use Collection\Entity\Collection;
 use Article\Table\ArticleTable,
     Article\Entity\Article;
 class CollectionService
@@ -18,9 +15,6 @@ class CollectionService
 
     /** @var ArticleTable */
     private $articleTable;
-
-    /** @var CollectionTable */
-    private $table;
 
     /** @var bool */
     private $edited = false;
@@ -91,10 +85,6 @@ class CollectionService
 
     public function setArticleTable(ArticleTable $table) {
         $this->articleTable = $table;
-    }
-
-    public function setTable(CollectionTable $table) {
-        $this->table = $table;
     }
 
     private function container()

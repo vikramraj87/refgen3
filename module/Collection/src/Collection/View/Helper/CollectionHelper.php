@@ -7,8 +7,10 @@ use Authentication\Service\AuthenticationService;
 
 class CollectionHelper extends AbstractHelper
 {
+    /** @var CollectionTable */
     private $table;
 
+    /** @var AuthenticationService */
     private $authService;
 
     public function __construct(CollectionTable $table, AuthenticationService $authService)

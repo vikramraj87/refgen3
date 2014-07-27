@@ -32,8 +32,7 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
         $id = (int) $id;
         $rowset = $this->select(array(
                 'id' => $id,
-                'user_id' => $userId,
-                'deleted' => 0
+                'user_id' => $userId
             )
         );
         $data = $rowset->current();
@@ -51,7 +50,7 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
         $collection->setCreatedOn($createdOn);
         $collection->setUpdatedOn($updatedOn);
 
-        $articles = $this->collectionArticleTable()
+        $articles = $this->collectionArticleTable
                          ->fetchArticlesByCollectionId($collection->getId());
         $collection->setArticles($articles);
         return $collection;
@@ -63,7 +62,6 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
 
         $where = array();
         $where['user_id'] = $userId;
-        $where['deleted'] = 0;
         if(0 != $current) {
             $where['id != ?'] = $current;
         }
@@ -88,7 +86,7 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
     {
         $select = $this->getSql()
                        ->select()
-                       ->where(array('user_id' => $userId, 'deleted' => 0))
+                       ->where(array('user_id' => $userId))
                        ->order('updated_on DESC');
         $rowset = $this->selectWith($select);
         $collections = array();
@@ -132,7 +130,7 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
 
         $articles = $collection->getArticles();
 
-        $result = $this->collectionArticleTable()->saveArticles($articles, $id);
+        $result = $this->collectionArticleTable->saveArticles($articles, $id);
         if(!$result) {
             /*
              * Todo: Check deleting collection to check for integrity constraints.
@@ -168,7 +166,7 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
             return false;
         }
 
-        $result = $this->collectionArticleTable()->saveArticles($collection->getArticles(), $id);
+        $result = $this->collectionArticleTable->saveArticles($collection->getArticles(), $id);
         if(!$result) {
             /*
              * Todo: Potential problem. If not deleted properly, won't allow people to
@@ -185,13 +183,12 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
     {
         $id = (int) $id;
         $userId = (int) $userId;
-        return (bool) $this->update(array(
-                'deleted' => 1
-            ), array(
-                'id'      => $id,
-                'user_id' => $userId
-            )
-        );
+        $collection = $this->fetchCollectionById($id, $userId);
+        if($collection) {
+            $this->collectionArticleTable->delete(array('collection_id' => $collection->getId()));
+            return (bool) $this->delete(array('id' => $collection->getId()));
+        }
+        return false;
     }
 
     public function fetchCollectionCountsByUser()
@@ -208,15 +205,6 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
             );
         }
         return $collectionCounts;
-    }
-
-    private function collectionArticleTable()
-    {
-        if(null === $this->collectionArticleTable) {
-            $this->collectionArticleTable = new CollectionArticleTable();
-            $this->collectionArticleTable->setDbAdapter($this->adapter);
-        }
-        return $this->collectionArticleTable;
     }
 
     public function getTotalCount()

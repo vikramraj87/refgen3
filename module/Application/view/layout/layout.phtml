@@ -48,25 +48,11 @@
                     <li class="divider"></li>
                     <li class="has-dropdown"><a href="#"><span class="fa fa-list"></span> Collections</a>
                         <ul class="dropdown">
-                        <?php if($this->activeCollection()->isEdited()): ?>
                             <li>
-                                <a href="<?php echo $newCollectionUrl; ?>" data-reveal-id="modal-new">
-                                    <span class="fa fa-file"></span> New
-                                </a>
-                                <div id="modal-new" class="reveal-modal small" data-reveal>
-                                    <h2>New collection</h2>
-                                    <p class="lead">Your active collection is edited . If you wish to continue, unsaved changes will be lost</p>
-                                    <a class="tiny button" href="<?php echo $newCollectionUrl; ?>"><span class="fa fa-file"></span> New Collection</a>
-                                    <a class="close-reveal-modal">&#215;</a>
-                                </div>
-                            </li>
-                        <?php else: ?>
-                            <li>
-                                <a href="<?php echo $newCollectionUrl; ?>">
+                                <a href="<?php echo $newCollectionUrl; ?>" id="collection-new">
                                     <span class="fa fa-file"></span> New
                                 </a>
                             </li>
-                        <?php endif; ?> <!-- New -->
                         <?php if(count($recents)): ?>
                             <li>
                                 <a href="<?php echo $openCollectionUrl; ?>">
@@ -120,25 +106,11 @@
                             <span><?php echo $identity->getFirstName(); ?></span>
                         </a>
                         <ul class="dropdown">
-                            <?php if($this->activeCollection()->isEdited()): ?>
                             <li>
-                                <a href="<?php echo $logoutUrl; ?>" data-reveal-id="modal-logout">
-                                    <span class="fa fa-sign-out"></span> Log out
-                                </a>
-                                <div id="modal-logout" class="reveal-modal small" data-reveal>
-                                    <h2>Logout</h2>
-                                    <p class="lead">Your active collection is edited . If you wish to continue, unsaved changes will be lost</p>
-                                    <a class="tiny button" href="<?php echo $logoutUrl; ?>"><span class="fa fa-sign-out"></span> Logout</a>
-                                    <a class="close-reveal-modal">&#215;</a>
-                                </div>
-                            </li>
-                            <?php else: ?>
-                            <li>
-                                <a href="<?php echo $logoutUrl; ?>">
+                                <a href="<?php echo $logoutUrl; ?>" id="logout">
                                     <span class="fa fa-sign-out"></span> Log out
                                 </a>
                             </li>
-                            <?php endif; ?>
                         </ul> <!-- ul.dropdown of profile -->
                     </li>
                     <?php else: ?>
@@ -201,14 +173,6 @@
                                       ->prependFile($this->basePath() . '/bower_components/foundation/js/foundation.min.js')
                                       ->prependFile($this->basePath() . '/bower_components/jquery/dist/jquery.min.js');
         ?>
-        <script type="text/javascript">
-            $(document).ready(function(){
-                var edited = $('#active-collection').data('edited');
-                if(1 == edited) {
-
-                }
-            });
-        </script>
     <?php if(in_array(getenv('APP_ENV'), array('production', 'staging'))): ?>
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

@@ -152,36 +152,14 @@ return array(
     ),
     'controllers' => array(
         'factories' => array(
-            'Collection\Controller\ActiveCollection' => function(\Zend\Mvc\Controller\ControllerManager $cm) {
-                $sm = $cm->getServiceLocator();
-                $service = $sm->get('Collection\Service\Collection');
-                $controller = new \Collection\Controller\ActiveCollectionController();
-                $controller->setService($service);
-                return $controller;
-            },
-            'Collection\Controller\Collection' => function (\Zend\Mvc\Controller\ControllerManager $cm) {
-                $sm = $cm->getServiceLocator();
-                $table = $sm->get('Collection\Table\Collection');
-                $controller = new \Collection\Controller\CollectionController();
-                $service = $sm->get('Collection\Service\Collection');
-                $authService = $sm->get('Authentication\Service\Authentication');
-                $controller->setCollectionTable($table);
-                $controller->setCollectionService($service);
-                $controller->setAuthService($authService);
-                return $controller;
-            }
+            'Collection\Controller\ActiveCollection' => 'Collection\Controller\ActiveCollectionControllerServiceFactory',
+            'Collection\Controller\Collection'       => 'Collection\Controller\CollectionControllerServiceFactory'
         )
     ),
     'view_helpers' => array(
         'factories' => array(
             'activeCollection' => 'Collection\View\Helper\ActiveCollectionHelperServiceFactory',
-            'collections' => function(\Zend\View\HelperPluginManager $vm) {
-                $sm = $vm->getServiceLocator();
-                $service = $sm->get('Authentication\Service\Authentication');
-                $table = $sm->get('Collection\Table\Collection');
-                $helper = new \Collection\View\Helper\CollectionHelper($table, $service);
-                return $helper;
-            }
+            'collections'      => 'Collection\View\Helper\CollectionHelperServiceFactory'
         )
     ),
     'view_manager' => array(

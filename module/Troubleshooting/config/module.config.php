@@ -15,5 +15,24 @@ return array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
         ),
+    ),
+    'controllers' => array(
+        'invokables' => array(
+            'Troubleshooting\Controller\Test' => 'Troubleshooting\Controller\TestController'
+        )
+    ),
+    'router' => array(
+        'routes' => array(
+            'test_error' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route' => '/test/error',
+                    'defaults' => array(
+                        'controller' => 'Troubleshooting\Controller\Test',
+                        'action'     => 'error'
+                    )
+                )
+            )
+        )
     )
 );

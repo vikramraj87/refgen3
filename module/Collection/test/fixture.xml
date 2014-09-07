@@ -1,0 +1,1046 @@
+<?xml version="1.0"?>
+<dataset>
+    <table name="journals">
+        <column>id</column>
+        <column>issn</column>
+        <column>title</column>
+        <column>abbr</column>
+        <row>
+            <value>1</value>
+            <value>1932-6203</value>
+            <value>PloS one</value>
+            <value>PLoS ONE</value>
+        </row>
+        <row>
+            <value>194</value>
+            <value>0142-6338</value>
+            <value>Journal of tropical pediatrics</value>
+            <value>J Trop Pediatr</value>
+        </row>
+        <row>
+            <value>197</value>
+            <value>1022-386X</value>
+            <value>Journal of the College of Physicians and Surgeons--Pakistan : JCPSP</value>
+            <value>J Coll Physicians Surg Pak</value>
+        </row>
+        <row>
+            <value>199</value>
+            <value>0019-6061</value>
+            <value>Indian pediatrics</value>
+            <value>Indian Pediatr</value>
+        </row>
+        <row>
+            <value>239</value>
+            <value>1471-0528</value>
+            <value>BJOG : an international journal of obstetrics and gynaecology</value>
+            <value>BJOG</value>
+        </row>
+        <row>
+            <value>240</value>
+            <value>1873-1708</value>
+            <value>Reproductive toxicology (Elmsford, N.Y.)</value>
+            <value>Reprod Toxicol</value>
+        </row>
+        <row>
+            <value>241</value>
+            <value>1878-5867</value>
+            <value>Steroids</value>
+            <value>Steroids</value>
+        </row>
+        <row>
+            <value>242</value>
+            <value>1879-3231</value>
+            <value>Theriogenology</value>
+            <value>Theriogenology</value>
+        </row>
+    </table>
+    <table name="articles">
+        <column>id</column>
+        <column>indexer_id</column>
+        <column>volume</column>
+        <column>issue</column>
+        <column>pages</column>
+        <column>year</column>
+        <column>month</column>
+        <column>day</column>
+        <column>journal_id</column>
+        <column>title</column>
+        <column>pub_status</column>
+        <row>
+            <value>1</value>
+            <value>PMID25036370</value>
+            <value>9</value>
+            <value>7</value>
+            <value>e101200</value>
+            <value>2014</value>
+            <value></value>
+            <value></value>
+            <value>1</value>
+            <value>Production of the Escherichia coli Common Pilus by Uropathogenic E. coli Is Associated with Adherence
+                to HeLa and HTB-4 Cells and Invasion of Mouse Bladder Urothelium.
+            </value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>243</value>
+            <value>PMID16014764</value>
+            <value>51</value>
+            <value>4</value>
+            <value>236-9</value>
+            <value>2005</value>
+            <value>Aug</value>
+            <value></value>
+            <value>194</value>
+            <value>Pancytopenia in children: etiological profile.</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>246</value>
+            <value>PMID18460245</value>
+            <value>18</value>
+            <value>3</value>
+            <value>163-7</value>
+            <value>2008</value>
+            <value>Mar</value>
+            <value></value>
+            <value>197</value>
+            <value>Etiological spectrum of pancytopenia based on bone marrow examination in children.</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>248</value>
+            <value>PMID2055619</value>
+            <value>28</value>
+            <value>1</value>
+            <value>79-81</value>
+            <value>1991</value>
+            <value>Jan</value>
+            <value></value>
+            <value>199</value>
+            <value>Bone marrow necrosis and pancytopenia associated with gram negative septicemia.</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>306</value>
+            <value>PMID25088680</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>2014</value>
+            <value>Aug</value>
+            <value>4</value>
+            <value>239</value>
+            <value>The risk of uterine rupture is not increased with single- compared with double-layer closure: a
+                Swedish cohort study.
+            </value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>307</value>
+            <value>PMID25088246</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>2014</value>
+            <value>Jul</value>
+            <value>31</value>
+            <value>240</value>
+            <value>Distinguishing between maternally-mediated and directly embryotoxic modes-of-action for
+                postimplantation loss induced in rats by 2-amino-2-methylpropanol.
+            </value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>308</value>
+            <value>PMID25087944</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>2014</value>
+            <value>Jul</value>
+            <value>31</value>
+            <value>241</value>
+            <value>Ospemifene: A First-in-Class, Non-hormonal Selective Estrogen Receptor ModulatorApproved forthe
+                Treatment of Dyspareunia Associated with Vulvar and Vaginal Atrophy.
+            </value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>309</value>
+            <value>PMID25087046</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>2014</value>
+            <value>Jun</value>
+            <value>30</value>
+            <value>242</value>
+            <value>VEGF system expression by immunohistochemistry and real-time RT-PCR study on collared peccary
+                placenta.
+            </value>
+            <value>0</value>
+        </row>
+
+        <!-- To check author table and abstract table -->
+        <row>
+            <value>300</value>
+            <value>PMID25088681</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>2014</value>
+            <value>Aug</value>
+            <value>4</value>
+            <value>239</value>
+            <value>Blah! Blah! Blah!
+            </value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="article_authors">
+        <column>id</column>
+        <column>article_id</column>
+        <column>position</column>
+        <column>last_name</column>
+        <column>fore_name</column>
+        <column>initials</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <value>Salda</value>
+            <value>Zeus</value>
+            <value>Z</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>1</value>
+            <value>2</value>
+            <value>De la Cruz</value>
+            <value>Miguel A</value>
+            <value>MA</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>1</value>
+            <value>3</value>
+            <value>Carrillo-Casas</value>
+            <value>Erika Margarita</value>
+            <value>EM</value>
+        </row>
+        <row>
+            <value>4</value>
+            <value>1</value>
+            <value>4</value>
+            <value>Dur</value>
+            <value>Laura</value>
+            <value>L</value>
+        </row>
+        <row>
+            <value>5</value>
+            <value>1</value>
+            <value>5</value>
+            <value>Zhang</value>
+            <value>Yushan</value>
+            <value>Y</value>
+        </row>
+        <row>
+            <value>6</value>
+            <value>1</value>
+            <value>6</value>
+            <value>Hern&#x1BA4;ez-Castro</value>
+            <value>Rigoberto</value>
+            <value>R</value>
+        </row>
+        <row>
+            <value>7</value>
+            <value>1</value>
+            <value>7</value>
+            <value>Puente</value>
+            <value>Jos&#x980C;</value>
+            <value>JL</value>
+        </row>
+        <row>
+            <value>8</value>
+            <value>1</value>
+            <value>8</value>
+            <value>Daaka</value>
+            <value>Yehia</value>
+            <value>Y</value>
+        </row>
+        <row>
+            <value>9</value>
+            <value>1</value>
+            <value>9</value>
+            <value>Gir</value>
+            <value>Jorge A</value>
+            <value>JA</value>
+        </row>
+        <row>
+            <value>1576</value>
+            <value>243</value>
+            <value>1</value>
+            <value>Bhatnagar</value>
+            <value>Shishir Kumar</value>
+            <value>SK</value>
+        </row>
+        <row>
+            <value>1577</value>
+            <value>243</value>
+            <value>2</value>
+            <value>Chandra</value>
+            <value>Jagdish</value>
+            <value>J</value>
+        </row>
+        <row>
+            <value>1578</value>
+            <value>243</value>
+            <value>3</value>
+            <value>Narayan</value>
+            <value>Shashi</value>
+            <value>S</value>
+        </row>
+        <row>
+            <value>1579</value>
+            <value>243</value>
+            <value>4</value>
+            <value>Sharma</value>
+            <value>Sunita</value>
+            <value>S</value>
+        </row>
+        <row>
+            <value>1580</value>
+            <value>243</value>
+            <value>5</value>
+            <value>Singh</value>
+            <value>Varinder</value>
+            <value>V</value>
+        </row>
+        <row>
+            <value>1581</value>
+            <value>243</value>
+            <value>6</value>
+            <value>Dutta</value>
+            <value>Ashok Kumar</value>
+            <value>AK</value>
+        </row>
+        <row>
+            <value>1593</value>
+            <value>246</value>
+            <value>1</value>
+            <value>Memon</value>
+            <value>Shazia</value>
+            <value>S</value>
+        </row>
+        <row>
+            <value>1594</value>
+            <value>246</value>
+            <value>2</value>
+            <value>Shaikh</value>
+            <value>Salma</value>
+            <value>S</value>
+        </row>
+        <row>
+            <value>1595</value>
+            <value>246</value>
+            <value>3</value>
+            <value>Nizamani</value>
+            <value>M Akbar A</value>
+            <value>MA</value>
+        </row>
+        <row>
+            <value>1601</value>
+            <value>248</value>
+            <value>1</value>
+            <value>Garewal</value>
+            <value>G</value>
+            <value>G</value>
+        </row>
+        <row>
+            <value>1602</value>
+            <value>248</value>
+            <value>2</value>
+            <value>Marwaha</value>
+            <value>N</value>
+            <value>N</value>
+        </row>
+        <row>
+            <value>1603</value>
+            <value>248</value>
+            <value>3</value>
+            <value>Marwaha</value>
+            <value>R K</value>
+            <value>RK</value>
+        </row>
+        <row>
+            <value>1604</value>
+            <value>248</value>
+            <value>4</value>
+            <value>Das</value>
+            <value>K C</value>
+            <value>KC</value>
+        </row>
+        <row>
+            <value>1923</value>
+            <value>306</value>
+            <value>1</value>
+            <value>Hesselman</value>
+            <value>S</value>
+            <value>S</value>
+        </row>
+        <row>
+            <value>1924</value>
+            <value>306</value>
+            <value>2</value>
+            <value>H&#xF6;gberg</value>
+            <value>U</value>
+            <value>U</value>
+        </row>
+        <row>
+            <value>1925</value>
+            <value>306</value>
+            <value>3</value>
+            <value>Ekholm-Selling</value>
+            <value>K</value>
+            <value>K</value>
+        </row>
+        <row>
+            <value>1926</value>
+            <value>306</value>
+            <value>4</value>
+            <value>R&#xE5;ssj&#xF6;</value>
+            <value>E-B</value>
+            <value>EB</value>
+        </row>
+        <row>
+            <value>1927</value>
+            <value>306</value>
+            <value>5</value>
+            <value>Jonsson</value>
+            <value>M</value>
+            <value>M</value>
+        </row>
+        <row>
+            <value>1928</value>
+            <value>307</value>
+            <value>1</value>
+            <value>Ball</value>
+            <value>Nicholas</value>
+            <value>N</value>
+        </row>
+        <row>
+            <value>1929</value>
+            <value>307</value>
+            <value>2</value>
+            <value>Rasoulpour</value>
+            <value>Reza J</value>
+            <value>RJ</value>
+        </row>
+        <row>
+            <value>1930</value>
+            <value>307</value>
+            <value>3</value>
+            <value>Zablotny</value>
+            <value>Carol</value>
+            <value>C</value>
+        </row>
+        <row>
+            <value>1931</value>
+            <value>307</value>
+            <value>4</value>
+            <value>Ellis-Hutchings</value>
+            <value>Robert</value>
+            <value>R</value>
+        </row>
+        <row>
+            <value>1932</value>
+            <value>307</value>
+            <value>5</value>
+            <value>Andrus</value>
+            <value>Amanda</value>
+            <value>A</value>
+        </row>
+        <row>
+            <value>1933</value>
+            <value>307</value>
+            <value>6</value>
+            <value>Carney</value>
+            <value>Edward W</value>
+            <value>EW</value>
+        </row>
+        <row>
+            <value>1934</value>
+            <value>308</value>
+            <value>1</value>
+            <value>DeGregorio</value>
+            <value>Michael W</value>
+            <value>MW</value>
+        </row>
+        <row>
+            <value>1935</value>
+            <value>308</value>
+            <value>2</value>
+            <value>Zerbe</value>
+            <value>Robert L</value>
+            <value>RL</value>
+        </row>
+        <row>
+            <value>1936</value>
+            <value>308</value>
+            <value>3</value>
+            <value>Wurz</value>
+            <value>Gregory T</value>
+            <value>GT</value>
+        </row>
+        <row>
+            <value>1937</value>
+            <value>309</value>
+            <value>1</value>
+            <value>Santos</value>
+            <value>Tatiana C</value>
+            <value>TC</value>
+        </row>
+        <row>
+            <value>1938</value>
+            <value>309</value>
+            <value>2</value>
+            <value>Oliveira</value>
+            <value>Moacir F</value>
+            <value>MF</value>
+        </row>
+        <row>
+            <value>1939</value>
+            <value>309</value>
+            <value>3</value>
+            <value>Papa</value>
+            <value>Paula C</value>
+            <value>PC</value>
+        </row>
+        <row>
+            <value>1940</value>
+            <value>309</value>
+            <value>4</value>
+            <value>Dantzer</value>
+            <value>Vibeke</value>
+            <value>V</value>
+        </row>
+        <row>
+            <value>1941</value>
+            <value>309</value>
+            <value>5</value>
+            <value>Miglino</value>
+            <value>Maria A</value>
+            <value>MA</value>
+        </row>
+    </table>
+    <table name="article_abstract_paras">
+        <column>id</column>
+        <column>article_id</column>
+        <column>position</column>
+        <column>heading</column>
+        <column>nlm_category</column>
+        <column>para</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <value></value>
+            <value>Unlabelled</value>
+            <value></value>
+        </row>
+        <row>
+            <value>461</value>
+            <value>243</value>
+            <value>1</value>
+            <value></value>
+            <value></value>
+            <value>Pancytopenia is a common occurrence in pediatric patients. Though acute leukemias and bone marrow
+                failure syndromes are usual causes of pancytopenia, etiologies such as infections and megaloblastic
+                anemia also contribute. The aim of this study was to evaluate the clinico-hematological profile of
+                varying degrees of childhood cytopenias with special reference to the non-malignant presentations. This
+                is a retrospective study carried out in a tertiary care children's hospital. We retrospectively analyzed
+                109 pediatric patients who presented with pancytopenia for different etiologies. Acute leukemia
+                (including ALL, AML and myelodysplastic syndrome) and aplastic anemia accounted for 21 per cent and 20
+                per cent cases respectively. Megaloblastic anemia was found in 31 (28.4 per cent) patients and was
+                single most common etiological factor. Severe thrombocytopenia (platelet &lt; or = 20 x 10(9)/l)
+                occurred in 25.2 per cent of these patients. Various skin and mucosal bleeding occurred in 45.1 per cent
+                of patients with megaloblastic anemia. Infections accounted for 23 (21 per cent) patients who presented
+                with pancytopenia. Amongst infections, enteric fever occurred in 30 per cent patients. Malaria,
+                kala-azar and bacterial infections were other causes of pancytopenia at presentation. The study focuses
+                on identifying easily treatable causes such as megaloblastic anemia and infections presenting with
+                pancytopenia. These conditions though look ominous but respond rapidly to effective therapy.
+            </value>
+        </row>
+        <row>
+            <value>467</value>
+            <value>246</value>
+            <value>1</value>
+            <value>Objective</value>
+            <value>Objective</value>
+            <value>To determine the spectrum of pancytopenia with its frequency, common clinical presentation and
+                etiology on the basis of bone marrow examination in children from 2 months to 15 years.
+            </value>
+        </row>
+        <row>
+            <value>468</value>
+            <value>246</value>
+            <value>2</value>
+            <value>Design</value>
+            <value>Methods</value>
+            <value>Observational study.</value>
+        </row>
+        <row>
+            <value>469</value>
+            <value>246</value>
+            <value>3</value>
+            <value>Place and duration of study</value>
+            <value>Methods</value>
+            <value>Department of Paediatrics, Liaquat University of Medical and Health Sciences (LUMHS), Jamshoro, from
+                October 2005 to March 2007.
+            </value>
+        </row>
+        <row>
+            <value>470</value>
+            <value>246</value>
+            <value>4</value>
+            <value>Patients and methods</value>
+            <value>Methods</value>
+            <value>All patients aged 2 months to 15 years having pancytopenia were included. Patients beyond this age
+                limits, already diagnosed cases of aplastic anemia and leukemia, clinical suspicion of genetic or
+                constitutional pancytopenia, history of blood transfusion in recent past, and those not willing for
+                either admission or bone marrow examination were excluded. History, physical and systemic examination
+                and hematological parameters at presentation were recorded. Hematological profile included hemoglobin,
+                total and differential leucocyte count, platelet count, reticulocyte count, peripheral smear and bone
+                marrow aspiration/biopsy.
+            </value>
+        </row>
+        <row>
+            <value>471</value>
+            <value>246</value>
+            <value>5</value>
+            <value>Results</value>
+            <value>Results</value>
+            <value>During the study period, out of the 7000 admissions in paediatric ward, 250 patients had pancytopenia
+                on their peripheral blood smear (3.57%). Out of those, 230 patients were finally studied. Cause of
+                pancytopenia was identified in 220 cases on the basis of bone marrow and other supportive
+                investigations, while 10 cases remained undiagnosed. Most common was aplastic anemia (23.9%),
+                megaloblastic anemia (13.04%), leukemia (13.05%), enteric fever (10.8%), malaria (8.69%) and sepsis
+                (8.69%). Common clinical presentations were pallor, fever, petechial hemorrhages, visceromegaly and
+                bleeding from nose and gastrointestinal tract.
+            </value>
+        </row>
+        <row>
+            <value>472</value>
+            <value>246</value>
+            <value>6</value>
+            <value>Conclusion</value>
+            <value>Conclusions</value>
+            <value>Pancytopenia is a common occurrence in paediatric patients. Though acute leukemia and bone marrow
+                failure were the usual causes of pancytopenia, infections and megaloblastic anemia are easily treatable
+                and reversible.
+            </value>
+        </row>
+        <row>
+            <value>586</value>
+            <value>306</value>
+            <value>1</value>
+            <value>Objective</value>
+            <value>Objective</value>
+            <value>To compare single- with double-layer closure of the uterus for the risk of uterine rupture in women
+                attempting vaginal birth after one prior caesarean delivery.
+            </value>
+        </row>
+        <row>
+            <value>587</value>
+            <value>306</value>
+            <value>2</value>
+            <value>Design</value>
+            <value>Methods</value>
+            <value>Cohort study.</value>
+        </row>
+        <row>
+            <value>588</value>
+            <value>306</value>
+            <value>3</value>
+            <value>Setting</value>
+            <value>Methods</value>
+            <value>Sweden.</value>
+        </row>
+        <row>
+            <value>589</value>
+            <value>306</value>
+            <value>4</value>
+            <value>Population</value>
+            <value>Methods</value>
+            <value>From a total of 19&#xA0;604 nulliparous women delivered by caesarean section in the years 2001-2007,
+                7683 women attempting vaginal birth in their second delivery were analysed.
+            </value>
+        </row>
+        <row>
+            <value>590</value>
+            <value>306</value>
+            <value>5</value>
+            <value>Methods</value>
+            <value>Methods</value>
+            <value>Data from population-based registers were linked to hospital-based registers that held data from
+                maternity and delivery records. Logistic regression was used to estimate the risk of uterine rupture
+                after single- or double-layer closure of the uterus. Results are presented as odds ratios (ORs) with 95%
+                confidence intervals (95% CIs).
+            </value>
+        </row>
+        <row>
+            <value>591</value>
+            <value>306</value>
+            <value>6</value>
+            <value>Main outcome measure</value>
+            <value>Methods</value>
+            <value>Uterine rupture.</value>
+        </row>
+        <row>
+            <value>592</value>
+            <value>306</value>
+            <value>7</value>
+            <value>Results</value>
+            <value>Results</value>
+            <value>Uterine rupture during labour occurred in 103 (1.3%) women. There was no increased risk of uterine
+                rupture when single- was compared with double-layer closure of the uterus (OR&#xA0;1.17; 95% CI
+                0.78-1.76). Maternal factors associated with uterine rupture were: age &#x2265;35&#xA0;years and height
+                &#x2264;160&#xA0;cm. Factors from the first delivery associated with uterine rupture in a subsequent
+                delivery were: infection and giving birth to an infant large for gestational age. Risk factors from the
+                second delivery were induction of labour, use of epidural analgesia, and a birthweight of &#x2265;4500&#xA0;g.
+            </value>
+        </row>
+        <row>
+            <value>593</value>
+            <value>306</value>
+            <value>8</value>
+            <value>Conclusions</value>
+            <value>Conclusions</value>
+            <value>There was no significant difference in the rate of uterine rupture when single-layer closure was
+                compared with double -layer closure of the uterus.
+            </value>
+        </row>
+        <row>
+            <value>594</value>
+            <value>307</value>
+            <value>1</value>
+            <value></value>
+            <value>Unlabelled</value>
+            <value>In rats, 2-amino-2-methylpropanol (AMP) caused an increase in postimplantation loss in an oral
+                reproductive/developmental toxicity screening assay but not in a dermal developmental toxicity assay.
+                Studies were performed to characterize the mode of action and determine whether the postimplantation
+                loss was a result of direct embryotoxicity or a maternally mediated effect. The studies identified that
+                the postimplantation loss occurs shortly after implantation, has a steep dose response with a clear
+                threshold, requires exposure to AMP for a period of approximately 2-3 weeks prior to gestation and does
+                not involve direct embryo toxicity. The uterine histopathology and gene array analysis of decidual
+                swellings suggested AMP acts via a maternally mediated mechanism affecting the ability of the uterus to
+                support an implanted embryo. Since the postimplantation loss occurs only at maternally toxic doses, the
+                implications for human risk assessment are discussed.
+            </value>
+        </row>
+        <row>
+            <value>595</value>
+            <value>308</value>
+            <value>1</value>
+            <value></value>
+            <value>Unlabelled</value>
+            <value>Ospemifene is a selective estrogen receptor modulator (SERM) approved for the treatment of
+                dyspareunia associated with vulvar and vaginal atrophy (VVA) due to menopause. As the first non-hormonal
+                treatment for this indication, the approval of ospemifene represents a significant milestone in
+                postmenopausal women's health. Ospemifene is a triphenylethylene similar in chemical structure to
+                tamoxifen and toremifene. Consistent with other SERMs such as tamoxifen, toremifene, and raloxifene,
+                ospemifene possesses a distinctive mix of estrogenic and antiestrogenic tissue-specific effects in bone,
+                breast tissue, serum lipids, and the vagina. Among the approved SERMs, ospemifene is the only agent with
+                a nearly full estrogen agonist effect on the vaginal epithelium while having neutral to slight
+                estrogenic effects in the endometrium, making ospemifene uniquely suited for the treatment of
+                dyspareunia associated with VVA, also known as atrophic vaginitis, which affects up to 50% of
+                postmenopausal women. This review begins with a brief history of the discovery of ospemifene, its
+                mechanism of action, and its preclinical development, with an emphasis on its tissue-specific effects on
+                bone, breast, uterus and endometrium, serum lipids and vagina. Abrief discussion on the genotoxicity of
+                ospemifene compared to tamoxifen and toremifene is included. The focus then shifts to the clinical
+                development of ospemifene from Phase I through Phase III. We will close with the FDA approval of
+                ospemifene and a justificationof the future clinical evaluation of ospemifene as a potential breast
+                cancer chemopreventive agent, where several preclinical studies in different rodent breast cancer models
+                strongly suggest ospemifene is as effective as tamoxifen.
+            </value>
+        </row>
+        <row>
+            <value>596</value>
+            <value>309</value>
+            <value>1</value>
+            <value></value>
+            <value>Unlabelled</value>
+            <value>Vascular endothelial growth factor (VEGF) is known to induce endothelial cell proliferation, to
+                promote cell migration, and to inhibit apoptosis, thus playing a central role in angiogenesis and in the
+                regulation of vasculogenesis. The expression of the VEGF-ligand receptor system was studied in the
+                placenta and uterus of the collared peccary in nonpregnant females in the luteal phase and throughout
+                pregnancy (&gt;35, 75, 115, and 135&#xA0;days). The material was examined by immunohistochemistry and by
+                real-time reverse transcription polymerase chain reaction. Intense positive immunolabeling was observed
+                for VEGF and its receptors in the uterine epithelium, uterine glands, and trophoblast. The endothelial
+                cells and smooth muscle cells in the maternal and fetal vessels, as well as the connective tissue and
+                mesenchyme, had weak immunoreactivity during all periods of pregnancy. The regression analysis of the
+                real-time polymerase chain reaction results demonstrated cubic behavior, showing a specific
+                time-dependent profile during pregnancy, which increased over the last gestational period to VEGF and
+                VEGFR-1. The relative expression of VEGFR-2 decreased in the middle-third of the pregnancy and increased
+                in late pregnancy. In the collared peccary, the expression of the VEGF-ligand receptor system was
+                similar to that in porcine and ruminant placentas, suggesting that an epitheliochorial placenta has the
+                same physiological and interhemal barrier during vascular gestational development. The expression of
+                VEGF among cells not related to the vascular system, such as those of the uterine epithelium,
+                trophoblast, and uterine glands, suggests a distinct regulatory role for these cells in vasculogenesis
+                and also a different role of VEGF pathway.
+            </value>
+        </row>
+    </table>
+    <table name="roles">
+        <column>id</column>
+        <column>role</column>
+        <row>
+            <value>1</value>
+            <value>User</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>Moderator</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>Admin</value>
+        </row>
+    </table>
+    <table name="socials">
+        <column>id</column>
+        <column>name</column>
+        <row>
+            <value>1</value>
+            <value>Facebook</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>Google</value>
+        </row>
+    </table>
+    <table name="users">
+        <column>id</column>
+        <column>role</column>
+        <column>created_on</column>
+        <column>last_logged_in</column>
+        <row>
+            <value>1</value>
+            <value>3</value>
+            <value>2014-07-20 18:28:27</value>
+            <value>2014-07-24 19:42:03</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>2</value>
+            <value>2014-07-20 18:35:38</value>
+            <value>2014-07-24 18:54:32</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>1</value>
+            <value>2014-07-20 18:56:10</value>
+            <value>2014-07-21 03:21:26</value>
+        </row>
+        <row>
+            <value>4</value>
+            <value>1</value>
+            <value>2014-07-20 19:26:12</value>
+            <value>2014-07-20 19:26:12</value>
+        </row>
+        <row>
+            <value>5</value>
+            <value>1</value>
+            <value>2014-07-22 17:18:14</value>
+            <value>2014-07-22 17:18:14</value>
+        </row>
+        <row>
+            <value>6</value>
+            <value>1</value>
+            <value>2014-07-23 14:46:04</value>
+            <value>2014-07-24 18:54:18</value>
+        </row>
+    </table>
+    <table name="user_emails">
+        <column>email</column>
+        <column>user_id</column>
+        <row>
+            <value>vikramraj87@gmail.com</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>dr.vikramraj87@gmail.com</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>kirthiviswanath@gmail.com</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>kvartandcrafts@gmail.com</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>kirthika2203@gmail.com</value>
+            <value>3</value>
+        </row>
+        <row>
+            <value>ishuips6@gmail.com</value>
+            <value>4</value>
+        </row>
+        <row>
+            <value>gpkumaran@gmail.com</value>
+            <value>5</value>
+        </row>
+        <row>
+            <value>sumangalagopinathan@gmail.com</value>
+            <value>6</value>
+        </row>
+    </table>
+    <table name="user_socials">
+        <column>user_id</column>
+        <column>social_id</column>
+        <column>social</column>
+        <row>
+            <value>1</value>
+            <value>109671001037346774242</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>1</value>
+            <value>702348216485397</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>10201596577796234</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>102623028356905318282</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>116662090606954236795</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>4</value>
+            <value>109057272140035741568</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>5</value>
+            <value>702348216485378</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>6</value>
+            <value>106904554194481876715</value>
+            <value>2</value>
+        </row>
+    </table>
+    <table name="collections">
+        <column>id</column>
+        <column>user_id</column>
+        <column>name</column>
+        <column>created_on</column>
+        <column>updated_on</column>
+        <row>
+            <value>16</value>
+            <value>3</value>
+            <value>rwss abc</value>
+            <value>2014-07-20 19:14:27</value>
+            <value>2014-07-20 19:19:42</value>
+        </row>
+        <row>
+            <value>26</value>
+            <value>1</value>
+            <value>Pancytopenia in septicemia</value>
+            <value>2014-07-24 01:00:37</value>
+            <value>2014-07-24 01:07:57</value>
+        </row>
+        <row>
+            <value>28</value>
+            <value>2</value>
+            <value>Uterus</value>
+            <value>2014-08-06 07:17:06</value>
+            <null/>
+        </row>
+        <row>
+            <value>50</value>
+            <value>1</value>
+            <value>New Collection</value>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>53</value>
+            <value>1</value>
+            <value>New Collection 2</value>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>153</value>
+            <value>1</value>
+            <value>New Collection 3</value>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>155</value>
+            <value>1</value>
+            <value>New Collection 4</value>
+            <null/>
+            <null/>
+        </row>
+    </table>
+    <table name="collection_articles">
+        <column>collection_id</column>
+        <column>article_id</column>
+        <column>position</column>
+        <row>
+            <value>16</value>
+            <value>1</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>26</value>
+            <value>243</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>26</value>
+            <value>246</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>26</value>
+            <value>248</value>
+            <value>3</value>
+        </row>
+        <row>
+            <value>28</value>
+            <value>306</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>28</value>
+            <value>307</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>28</value>
+            <value>308</value>
+            <value>3</value>
+        </row>
+        <row>
+            <value>28</value>
+            <value>309</value>
+            <value>4</value>
+        </row>
+    </table>
+</dataset>

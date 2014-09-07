@@ -18,5 +18,8 @@ return array(
     ),
     'db' => array(
         'driver' => 'Pdo',
+        'driverOptions' => array(
+            \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
+        )
     )
 );

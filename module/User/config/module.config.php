@@ -2,8 +2,7 @@
 return array(
     'controllers' => array(
         'invokables' => array(
-            'User\Controller\User' => 'User\Controller\UserController',
-            'User\Controller\Auth' => 'User\Controller\AuthController'
+            'User\Controller\User' => 'User\Controller\UserController'
         )
     ),
     'router' => array(
@@ -22,9 +21,12 @@ return array(
     ),
     'service_manager' => array(
         'invokables' => array(
-            'User\Table\UserSocial' => 'User\Table\UserSocialTable'
+            'User\Table\Social'    => 'User\Table\SocialTable',
+            'User\Table\Role'      => 'User\Table\RoleTable',
+            'User\Table\UserEmail' => 'User\Table\UserEmailTable'
         ),
         'factories' => array(
+            'User\Table\UserSocial' => 'User\Table\UserSocialTableServiceFactory',
             'User\Table\User'       => 'User\Table\UserTableServiceFactory'
         )
     ),

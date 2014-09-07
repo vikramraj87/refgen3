@@ -25,6 +25,8 @@ class AbstractParaTable extends AbstractTableGateway implements AdapterAwareInte
     }
 
     /**
+     * Fetches the abstract paras of a particular article
+     *
      * @param int $articleId
      * @return AbstractPara[]
      */
@@ -44,6 +46,12 @@ class AbstractParaTable extends AbstractTableGateway implements AdapterAwareInte
         return $abstract;
     }
 
+    /**
+     * Fetches the abstract paras of multiple articles
+     *
+     * @param array $articleIds
+     * @return array
+     */
     public function fetchParasByAArticleIds(array $articleIds = array())
     {
         $where = new Where();
@@ -58,6 +66,13 @@ class AbstractParaTable extends AbstractTableGateway implements AdapterAwareInte
         return $paras;
     }
 
+    /**
+     * Create abstract para entries for a particular article
+     *
+     * @param array $paras
+     * @param int $articleId
+     * @return bool
+     */
     public function createAbstract(array $paras = array(), $articleId = 0)
     {
         $articleId = (int) $articleId;
@@ -74,6 +89,12 @@ class AbstractParaTable extends AbstractTableGateway implements AdapterAwareInte
         return true;
     }
 
+    /**
+     * Deletes abstract paras of a particular article
+     *
+     * @param int $articleId
+     * @return bool
+     */
     public function deleteParasByArticleId($articleId = 0)
     {
         $articleId = (int) $articleId;

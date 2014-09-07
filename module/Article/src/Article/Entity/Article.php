@@ -1,14 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vikramraj
- * Date: 25/05/14
- * Time: 5:07 PM
- */
-
 namespace Article\Entity;
+use Collection\Entity\Collection\ItemInterface;
 
-class Article
+class Article implements ItemInterface
 {
     /** @var int  */
     protected $id = 0;
@@ -26,7 +20,7 @@ class Article
     protected $title = '';
 
     /** @var AbstractPara[] */
-    protected $abstract;
+    protected $abstract = array();
 
     /** @var Author[] */
     protected $authors = array();
@@ -143,31 +137,13 @@ class Article
         return $this->title;
     }
 
-    public function toArray()
-    {
-        $journalData = array(
-            'journalTitle' => $this->journal->getTitle(),
-            'journalAbbr'  => $this->journal->getAbbr(),
-            'journalIssn'  => $this->journal->getIssn()
-        );
-        return array_merge(array(
-                'id'        => $this->id,
-                'indexerId' => $this->indexerId,
-                'title'     => $this->title,
-                'abstract'  => $this->abstract,
-                'authors'   => $this->authors
-            ),
-            $journalData,
-            $this->journalIssue->toArray()
-        );
-    }
-
     /**
-     * Helper function to populate the data from database
+     * Factory function to create article from data
      *
      * @param array $data
+     * @return Article
      */
-    public function populateFromArray(array $data = array())
+    public static function createFromArray(array $data = array())
     {
         $id        = isset($data['id'])         ? (int) $data['id']          : 0;
         $indexerId = isset($data['indexer_id']) ? $data['indexer_id']        : '';
@@ -192,53 +168,10 @@ class Article
         $journalIssue->setPubStatus($pubStatus);
         $journalIssue->setPubDate($pubDate);
 
-        $this->id           = $id;
-        $this->indexerId    = $indexerId;
-        $this->title        = $title;
-        $this->journalIssue = $journalIssue;
-    }
-
-    /**
-     * Creates Article object from data array
-     *
-     * @param array $data
-     * @return Article
-     */
-    public static function createArticleFromArray(array $data = array())
-    {
-        $pubDateData = $data['journal_issue']['pub_date'];
-        $pubDate = new PubDate();
-        $pubDate->setDay($pubDateData['day']);
-        $pubDate->setMonth($pubDateData['month']);
-        $pubDate->setYear($pubDateData['year']);
-
-        $journalIssueData = $data['journal_issue'];
-        $journalIssue = new JournalIssue();
-        $journalIssue->setIssue($journalIssueData['issue']);
-        $journalIssue->setVolume($journalIssueData['volume']);
-        $journalIssue->setPages($journalIssueData['pages']);
-        $journalIssue->setPubStatus($journalIssueData['pub_status']);
-        $journalIssue->setPubDate($pubDate);
-
-        $journalData = $data['journal'];
-        $journal = Journal::createFromArray($journalData);
-
-        $abstract = array();
-        foreach($data['abstract'] as $para) {
-            $abstract[] = AbstractPara::createFromArray($para);
-        }
-
-        $authors = array();
-        foreach($data['authors'] as $author) {
-            $authors[] = Author::createFromArray($author);
-        }
-
-        $article = new self();
-        $article->setTitle($data['title']);
-        $article->setIndexerId($data['indexer_id']);
-        $article->setAbstract($abstract);
-        $article->setAuthors($authors);
-        $article->setJournal($journal);
+        $article = new self;
+        $article->setId($id);
+        $article->setIndexerId($indexerId);
+        $article->setTitle($title);
         $article->setJournalIssue($journalIssue);
 
         return $article;

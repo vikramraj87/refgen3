@@ -102,14 +102,14 @@ class Journal
     }
 
     /**
-     * Static function to create Journal object from array of data
+     * Factory function to create Journal object from array of data
      *
      * @param array $data
      * @return Journal
      */
     static public function createFromArray(array $data = array())
     {
-        $id    = isset($data['id'])    ? (int) $data['id']    : '';
+        $id    = isset($data['id'])    ? (int) $data['id']    : 0;
         $issn  = isset($data['issn'])  ? $data['issn']        : '';
         $title = isset($data['title']) ? $data['title']       : '';
         $abbr  = isset($data['abbr'])  ? $data['abbr']        : '';

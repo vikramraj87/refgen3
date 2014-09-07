@@ -11,7 +11,7 @@ use Facebook\FacebookSession,
 use Zend\Authentication\Result;
 class FacebookAdapter extends AbstractAdapter
 {
-    protected $id = 1;
+    protected $id = 'Facebook';
 
     /** @var FacebookRedirectLoginHelper */
     private $helper;

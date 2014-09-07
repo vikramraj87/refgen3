@@ -1,296 +1,438 @@
 <?php
 namespace CollectionTest\CollectionTest\Service;
 
+use Zend\Session\Container;
+use DateTime;
 use Collection\Service\CollectionService,
-    Collection\Entity\Collection,
-    Collection\Table\CollectionTable;
-use CollectionTest\DbTestCase;
+    Collection\Entity\Collection;
 use Article\Entity\Article,
     Article\Table\ArticleTable;
 
-class CollectionServiceTest extends DbTestCase
+class CollectionServiceTest extends \PHPUnit_Framework_TestCase // extends DbTestCase
 {
-    /** @var \Article\Table\ArticleTable */
-    protected $articleTable;
+    /** @var CollectionService */
+    private $service = null;
 
-    /** @var CollectionTable */
-    protected $table;
+    /** @var ArticleTable */
+    private $articleTable = null;
+
+    /** @var Container */
+    private $container = null;
 
     protected function setUp()
     {
-        $conn = $this->getConnection();
-        $conn->getConnection()->query('set foreign_key_checks=0');
-        $adapter = $this->getAdapter();
-        $this->articleTable = new ArticleTable();
-        $this->articleTable->setDbAdapter($adapter);
-        $this->table = new CollectionTable();
-        $this->table->setDbAdapter($adapter);
-        parent::setUp();
-        $conn->getConnection()->query('set foreign_key_checks=1');
+        /** @var Container $container */
+        $container = $this->getMock('\Zend\Session\Container', array('offsetExists', 'offsetGet'));
+        $container->expects($this->once())
+            ->method('offsetExists')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue(true));
+        $data = [
+            'id'        => 13,
+            'name'      => 'Pancytopenia in HIV',
+            'createdOn' => new DateTime('2014-09-01 10:00:00'),
+            'updatedOn' => null,
+            'itemIds'   => '3,6,9,12,24,36',
+            'edited'    => true
+        ];
+        $container->expects($this->once())
+            ->method('offsetGet')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue($data));
+        /** $var ArticleTable $articleTable */
+        $articleTable = $this->getMock('\Article\Table\ArticleTable', array('fetchArticlesByIds'));
+        $articleTable->expects($this->once())
+            ->method('fetchArticlesByIds')
+            ->with($this->equalTo([3,6,9,12,24,36]))
+            ->will($this->returnCallback(array($this, 'fetchArticles')));
+
+        $this->service = new CollectionService($articleTable, $container);
+        $this->articleTable = $articleTable;
+        $this->container = $container;
     }
 
-    public function testDeserializeFromSession()
+    public function testDeserialize()
     {
-        $container = $this->getMock(
-            '\Zend\Session\Container',
-            array('offsetGet', 'offsetExists')
-        );
-        $container->expects($this->any())
-                  ->method('offsetExists')
-                  ->with('data')
-                  ->will($this->returnValue(true));
-        $data = array(
-            'id' => 0,
-            'name' => '',
-            'edited' => false,
-            'articleIds' => array(
-                2, 4, 8, 16, 32
-            )
-        );
-        $container->expects($this->any())
-                  ->method('offsetGet')
-                  ->with('data')
-                  ->will($this->returnValue($data));
-        $service = new CollectionService();
-        $service->setContainer($container);
-        $service->setArticleTable($this->articleTable);
-        $service->init();
-        /** @var \Collection\Entity\Collection $collection */
-        $collection = $service->getActiveCollection();
+        $service = $this->service;
 
-        $articles = array();
-        foreach($data['articleIds'] as $articleId) {
-            /** @var Article $article */
-            $article = $this->articleTable->fetchArticleById($articleId);
-            $articles[] = $article;
+        $this->assertEquals(13, $service->getId());
+        $this->assertEquals('Pancytopenia in HIV', $service->getName());
+        $this->assertEquals(new DateTime('2014-09-01 10:00:00'), $service->getCreatedOn());
+        $this->assertNull($service->getUpdatedOn());
+        $this->assertTrue($service->isEdited());
+        $this->assertCount(6, $service);
+
+        $expected = [3,6,9,12,24,36];
+        foreach($service->getItems() as $item) {
+            $expectedId = current($expected);
+            $this->assertEquals($expectedId, $item->getId());
+            next($expected);
         }
-        $expected = new Collection;
-        $expected->setId(0);
-        $expected->setName('');
-        $expected->setUpdatedOn(null);
-        $expected->setCreatedOn(null);
-        $expected->setArticles($articles);
-        $this->assertEquals($expected, $collection);
-        $this->assertFalse($service->isEdited());
     }
 
-    public function testDeserializeFromDb()
+    public function testAddItem()
     {
-        $container = $this->getMock(
-            '\Zend\Session\Container',
-            array('offsetGet', 'offsetExists')
-        );
-        $container->expects($this->any())
+        /** @var Container $container */
+        $container = $this->getMock('\Zend\Session\Container', array('offsetExists', 'offsetGet', 'offsetSet'));
+        $container->expects($this->once())
             ->method('offsetExists')
-            ->with('data')
+            ->with($this->equalTo('data'))
             ->will($this->returnValue(true));
-        $data = array(
-            'id' => 0,
-            'name' => '',
-            'edited' => false,
-            'articleIds' => array(
-                2, 4, 8, 16, 32
-            )
-        );
-        $container->expects($this->any())
+        $data = [
+            'id'        => 13,
+            'name'      => 'Pancytopenia in HIV',
+            'createdOn' => new DateTime('2014-09-01 10:00:00'),
+            'updatedOn' => null,
+            'itemIds'   => '3,6,9,12,24,36',
+            'edited'    => false
+        ];
+        $container->expects($this->once())
             ->method('offsetGet')
-            ->with('data')
+            ->with($this->equalTo('data'))
             ->will($this->returnValue($data));
-        $service = new CollectionService();
-        $service->setContainer($container);
-        $service->setArticleTable($this->articleTable);
-        $service->setTable($this->table);
-        $service->init();
+        /** $var ArticleTable $articleTable */
+        $articleTable = $this->getMock('\Article\Table\ArticleTable', array('fetchArticlesByIds', 'fetchArticleById'));
+        $articleTable->expects($this->once())
+            ->method('fetchArticlesByIds')
+            ->with($this->equalTo([3,6,9,12,24,36]))
+            ->will($this->returnCallback(array($this, 'fetchArticles')));
+
+        $service = new CollectionService($articleTable, $container);
         $this->assertFalse($service->isEdited());
-    }
 
-    public function testAddArticle()
-    {
-        $container = $this->getMock(
-            '\Zend\Session\Container',
-            array('offsetGet', 'offsetExists', 'offsetSet')
-        );
-        $container->expects($this->any())
-            ->method('offsetExists')
-            ->with('data')
-            ->will($this->returnValue(true));
-        $data = array(
-            'id' => 0,
-            'name' => '',
-            'edited' => false,
-            'articleIds' => array(
-                2, 4, 8, 16, 32
-            )
-        );
-        $container->expects($this->any())
-            ->method('offsetGet')
-            ->with('data')
-            ->will($this->returnValue($data));
+        $data['itemIds'] = '3,6,9,12,24,36,30';
+        $data['edited'] = true;
 
-        $expectedData = array(
-            'id' => 0,
-            'name' => '',
-            'edited' => true,
-            'articleIds' => array(
-                2, 4, 8, 16, 32, 1
-            )
-        );
+        $article = new Article();
+        $article->setId(30);
+        $articleTable->expects($this->once())
+                     ->method('fetchArticleById')
+                     ->with($this->equalTo(30))
+                     ->will($this->returnValue($article));
+
         $container->expects($this->once())
                   ->method('offsetSet')
-                  ->with('data', $expectedData);
-
-        $service = new CollectionService();
-        $service->setContainer($container);
-        $service->setArticleTable($this->articleTable);
-        $service->setTable($this->table);
-        $service->init();
-
-        $service->addArticle(1);
-        $this->assertTrue($service->isEdited());
+                  ->with($this->equalTo('data'), $this->equalTo($data));
+        $service->addArticle(30);
     }
 
-    public function testAddExistingArticle()
+    public function testRemoveItem()
     {
-        $container = $this->getMock(
-            '\Zend\Session\Container',
-            array('offsetGet', 'offsetExists', 'offsetSet')
-        );
-        $container->expects($this->any())
-            ->method('offsetExists')
-            ->with('data')
-            ->will($this->returnValue(true));
-        $data = array(
-            'id' => 0,
-            'name' => '',
-            'edited' => false,
-            'articleIds' => array(
-                2, 4, 8, 16, 32
-            )
-        );
-        $container->expects($this->any())
-            ->method('offsetGet')
-            ->with('data')
-            ->will($this->returnValue($data));
-
-        $expectedData = array(
-            'id' => 0,
-            'name' => '',
-            'edited' => false,
-            'articleIds' => array(
-                2, 4, 8, 16, 32
-            )
-        );
+        /** @var Container $container */
+        $container = $this->getMock('\Zend\Session\Container', array('offsetExists', 'offsetGet', 'offsetSet'));
         $container->expects($this->once())
-            ->method('offsetSet')
-            ->with('data', $expectedData);
+            ->method('offsetExists')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue(true));
+        $data = [
+            'id'        => 13,
+            'name'      => 'Pancytopenia in HIV',
+            'createdOn' => new DateTime('2014-09-01 10:00:00'),
+            'updatedOn' => null,
+            'itemIds'   => '3,6,9,12,24,36',
+            'edited'    => false
+        ];
+        $container->expects($this->once())
+            ->method('offsetGet')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue($data));
+        /** $var ArticleTable $articleTable */
+        $articleTable = $this->getMock('\Article\Table\ArticleTable', array('fetchArticlesByIds', 'fetchArticleById'));
+        $articleTable->expects($this->once())
+            ->method('fetchArticlesByIds')
+            ->with($this->equalTo([3,6,9,12,24,36]))
+            ->will($this->returnCallback(array($this, 'fetchArticles')));
 
-        $service = new CollectionService();
-        $service->setContainer($container);
-        $service->setArticleTable($this->articleTable);
-        $service->setTable($this->table);
-        $service->init();
-
-        $service->addArticle(4);
+        $service = new CollectionService($articleTable, $container);
         $this->assertFalse($service->isEdited());
-    }
 
-    public function testRemoveArticle()
-    {
-        $container = $this->getMock(
-            '\Zend\Session\Container',
-            array('offsetGet', 'offsetExists', 'offsetSet')
-        );
-        $container->expects($this->any())
-            ->method('offsetExists')
-            ->with('data')
-            ->will($this->returnValue(true));
-        $data = array(
-            'id' => 0,
-            'name' => '',
-            'edited' => false,
-            'articleIds' => array(
-                2, 4, 8, 16, 32
-            )
-        );
-        $container->expects($this->any())
-            ->method('offsetGet')
-            ->with('data')
-            ->will($this->returnValue($data));
+        $data['itemIds'] = '3,9,12,24,36';
+        $data['edited'] = true;
 
-        $expectedData = array(
-            'id' => 0,
-            'name' => '',
-            'edited' => true,
-            'articleIds' => array(
-                2, 4, 16, 32
-            )
-        );
         $container->expects($this->once())
             ->method('offsetSet')
-            ->with('data', $expectedData);
-
-        $service = new CollectionService();
-        $service->setContainer($container);
-        $service->setArticleTable($this->articleTable);
-        $service->setTable($this->table);
-        $service->init();
-
-        $service->removeArticle(8);
-        $this->assertTrue($service->isEdited());
+            ->with($this->equalTo('data'), $this->equalTo($data));
+        $service->removeArticle(6);
     }
 
-    public function testRemoveNonExistingArticle()
+    public function testRemoveItems()
     {
-        $container = $this->getMock(
-            '\Zend\Session\Container',
-            array('offsetGet', 'offsetExists', 'offsetSet')
-        );
-        $container->expects($this->any())
-            ->method('offsetExists')
-            ->with('data')
-            ->will($this->returnValue(true));
-        $data = array(
-            'id' => 0,
-            'name' => '',
-            'edited' => false,
-            'articleIds' => array(
-                2, 4, 8, 16, 32
-            )
-        );
-        $container->expects($this->any())
-            ->method('offsetGet')
-            ->with('data')
-            ->will($this->returnValue($data));
-
-        $expectedData = array(
-            'id' => 0,
-            'name' => '',
-            'edited' => false,
-            'articleIds' => array(
-                2, 4, 8, 16, 32
-            )
-        );
+        /** @var Container $container */
+        $container = $this->getMock('\Zend\Session\Container', array('offsetExists', 'offsetGet', 'offsetSet'));
         $container->expects($this->once())
-            ->method('offsetSet')
-            ->with('data', $expectedData);
+            ->method('offsetExists')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue(true));
+        $data = [
+            'id'        => 13,
+            'name'      => 'Pancytopenia in HIV',
+            'createdOn' => new DateTime('2014-09-01 10:00:00'),
+            'updatedOn' => null,
+            'itemIds'   => '3,6,9,12,24,36',
+            'edited'    => false
+        ];
+        $container->expects($this->once())
+            ->method('offsetGet')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue($data));
+        /** $var ArticleTable $articleTable */
+        $articleTable = $this->getMock('\Article\Table\ArticleTable', array('fetchArticlesByIds', 'fetchArticleById'));
+        $articleTable->expects($this->once())
+            ->method('fetchArticlesByIds')
+            ->with($this->equalTo([3,6,9,12,24,36]))
+            ->will($this->returnCallback(array($this, 'fetchArticles')));
 
-        $service = new CollectionService();
-        $service->setContainer($container);
-        $service->setArticleTable($this->articleTable);
-        $service->setTable($this->table);
-        $service->init();
-
-        $service->removeArticle(9);
+        $service = new CollectionService($articleTable, $container);
         $this->assertFalse($service->isEdited());
+
+        $data['itemIds'] = '3,24,36';
+        $data['edited'] = true;
+
+        $container->expects($this->once())
+            ->method('offsetSet')
+            ->with($this->equalTo('data'), $this->equalTo($data));
+        $service->removeArticles([6,9,12]);
     }
 
-    public function testSave()
+    public function testHasItems()
     {
+        $service = $this->service;
 
+        $this->assertTrue($service->hasItem(3));
+        $this->assertTrue($service->hasItem(6));
+        $this->assertTrue($service->hasItem(36));
+
+        $this->assertFalse($service->hasItem(2));
+        $this->assertFalse($service->hasItem(4));
+        $this->assertFalse($service->hasItem(8));
     }
 
-    public function testDelete()
+    public function testMoveUpItems()
     {
+        /** @var Container $container */
+        $container = $this->getMock('\Zend\Session\Container', array('offsetExists', 'offsetGet', 'offsetSet'));
+        $container->expects($this->once())
+            ->method('offsetExists')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue(true));
+        $data = [
+            'id'        => 13,
+            'name'      => 'Pancytopenia in HIV',
+            'createdOn' => new DateTime('2014-09-01 10:00:00'),
+            'updatedOn' => null,
+            'itemIds'   => '3,6,9,12,24,36',
+            'edited'    => false
+        ];
+        $container->expects($this->once())
+            ->method('offsetGet')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue($data));
+        /** $var ArticleTable $articleTable */
+        $articleTable = $this->getMock('\Article\Table\ArticleTable', array('fetchArticlesByIds', 'fetchArticleById'));
+        $articleTable->expects($this->once())
+            ->method('fetchArticlesByIds')
+            ->with($this->equalTo([3,6,9,12,24,36]))
+            ->will($this->returnCallback(array($this, 'fetchArticles')));
 
+        $service = new CollectionService($articleTable, $container);
+        $this->assertFalse($service->isEdited());
+
+        $data['itemIds'] = '3,6,9,24,36,12';
+        $data['edited'] = true;
+
+        $container->expects($this->once())
+            ->method('offsetSet')
+            ->with($this->equalTo('data'), $this->equalTo($data));
+        $service->moveUpItems([3,6,24,36]);
     }
+
+    public function testMoveDownItems()
+    {
+        /** @var Container $container */
+        $container = $this->getMock('\Zend\Session\Container', array('offsetExists', 'offsetGet', 'offsetSet'));
+        $container->expects($this->once())
+            ->method('offsetExists')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue(true));
+        $data = [
+            'id'        => 13,
+            'name'      => 'Pancytopenia in HIV',
+            'createdOn' => new DateTime('2014-09-01 10:00:00'),
+            'updatedOn' => null,
+            'itemIds'   => '3,6,9,12,24,36',
+            'edited'    => false
+        ];
+        $container->expects($this->once())
+            ->method('offsetGet')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue($data));
+        /** $var ArticleTable $articleTable */
+        $articleTable = $this->getMock('\Article\Table\ArticleTable', array('fetchArticlesByIds', 'fetchArticleById'));
+        $articleTable->expects($this->once())
+            ->method('fetchArticlesByIds')
+            ->with($this->equalTo([3,6,9,12,24,36]))
+            ->will($this->returnCallback(array($this, 'fetchArticles')));
+
+        $service = new CollectionService($articleTable, $container);
+        $this->assertFalse($service->isEdited());
+
+        $data['itemIds'] = '9,3,6,12,24,36';
+        $data['edited'] = true;
+
+        $container->expects($this->once())
+            ->method('offsetSet')
+            ->with($this->equalTo('data'), $this->equalTo($data));
+        $service->moveDownItems([3,6,24,36]);
+    }
+
+    public function testSortItems()
+    {
+        /** @var Container $container */
+        $container = $this->getMock('\Zend\Session\Container', array('offsetExists', 'offsetGet', 'offsetSet'));
+        $container->expects($this->once())
+            ->method('offsetExists')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue(true));
+        $data = [
+            'id'        => 13,
+            'name'      => 'Pancytopenia in HIV',
+            'createdOn' => new DateTime('2014-09-01 10:00:00'),
+            'updatedOn' => null,
+            'itemIds'   => '3,6,9,12,24,36',
+            'edited'    => false
+        ];
+        $container->expects($this->once())
+            ->method('offsetGet')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue($data));
+        /** $var ArticleTable $articleTable */
+        $articleTable = $this->getMock('\Article\Table\ArticleTable', array('fetchArticlesByIds', 'fetchArticleById'));
+        $articleTable->expects($this->once())
+            ->method('fetchArticlesByIds')
+            ->with($this->equalTo([3,6,9,12,24,36]))
+            ->will($this->returnCallback(array($this, 'fetchArticles')));
+
+        $service = new CollectionService($articleTable, $container);
+        $this->assertFalse($service->isEdited());
+
+        $data['itemIds'] = '36,24,12,9,6,3';
+        $data['edited'] = true;
+
+        $container->expects($this->once())
+            ->method('offsetSet')
+            ->with($this->equalTo('data'), $this->equalTo($data));
+        $service->sortItems([36,24,12,9,6,3]);
+    }
+
+    public function testSetCollectionWithNull()
+    {
+        $container = $this->getMock('\Zend\Session\Container', array('offsetExists', 'offsetGet', 'offsetSet'));
+        $container->expects($this->once())
+            ->method('offsetExists')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue(true));
+        $data = [
+            'id'        => 13,
+            'name'      => 'Pancytopenia in HIV',
+            'createdOn' => new DateTime('2014-09-01 10:00:00'),
+            'updatedOn' => null,
+            'itemIds'   => '3,6,9,12,24,36',
+            'edited'    => false
+        ];
+        $container->expects($this->once())
+            ->method('offsetGet')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue($data));
+        /** $var ArticleTable $articleTable */
+        $articleTable = $this->getMock('\Article\Table\ArticleTable', array('fetchArticlesByIds', 'fetchArticleById'));
+        $articleTable->expects($this->once())
+            ->method('fetchArticlesByIds')
+            ->with($this->equalTo([3,6,9,12,24,36]))
+            ->will($this->returnCallback(array($this, 'fetchArticles')));
+
+        $service = new CollectionService($articleTable, $container);
+        $this->assertFalse($service->isEdited());
+
+        $data = [
+            'id' => 0,
+            'name' => '',
+            'createdOn' => null,
+            'updatedOn' => null,
+            'itemIds' => '',
+            'edited' => false
+        ];
+
+        $container->expects($this->once())
+            ->method('offsetSet')
+            ->with($this->equalTo('data'), $this->equalTo($data));
+
+        $service->setCollection(null);
+    }
+
+    public function testSetCollection()
+    {
+        $container = $this->getMock('\Zend\Session\Container', array('offsetExists', 'offsetGet', 'offsetSet'));
+        $container->expects($this->once())
+            ->method('offsetExists')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue(true));
+        $data = [
+            'id'        => 13,
+            'name'      => 'Pancytopenia in HIV',
+            'createdOn' => new DateTime('2014-09-01 10:00:00'),
+            'updatedOn' => null,
+            'itemIds'   => '3,6,9,12,24,36',
+            'edited'    => false
+        ];
+        $container->expects($this->once())
+            ->method('offsetGet')
+            ->with($this->equalTo('data'))
+            ->will($this->returnValue($data));
+        /** $var ArticleTable $articleTable */
+        $articleTable = $this->getMock('\Article\Table\ArticleTable', array('fetchArticlesByIds'));
+        $articleTable->expects($this->once())
+            ->method('fetchArticlesByIds')
+            ->will($this->returnCallback(array($this, 'fetchArticles')));
+
+        $service = new CollectionService($articleTable, $container);
+        $this->assertFalse($service->isEdited());
+
+        $data = [
+            'id' => 32,
+            'name' => 'Gaucher disease',
+            'createdOn' => new DateTime('2014-09-03 10:00:00'),
+            'updatedOn' => new DateTime('2014-09-04 12:00:00'),
+            'itemIds' => '2,4,6,8,10,12',
+            'edited' => false
+        ];
+
+        $container->expects($this->once())
+            ->method('offsetSet')
+            ->with($this->equalTo('data'), $this->equalTo($data));
+
+        $collection = new Collection(
+            $this->fetchArticles([2,4,6,8,10,12]),
+            32,
+            'Gaucher disease',
+            $data['createdOn'],
+            $data['updatedOn']
+        );
+
+        $service->setCollection($collection);
+    }
+
+    public function fetchArticles($ids = array())
+    {
+        $articles = [];
+        $ids = array_unique($ids);
+        foreach($ids as $id) {
+            $article = new Article();
+            $article->setId($id);
+            $articles[] = $article;
+        }
+        return $articles;
+    }
+
+
+
 } 

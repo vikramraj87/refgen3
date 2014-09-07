@@ -1,9 +1,13 @@
 <?php
 namespace Collection\Controller;
 
+use Article\Entity\Article;
+use Zend\Config\Writer\Json;
 use Zend\Mvc\Controller\AbstractActionController;
 use Collection\Service\CollectionService;
 use Article\View\Helper\VancouverHelper;
+use Zend\View\Model\JsonModel;
+use Zend\View\Model\ViewModel;
 
 class ActiveCollectionController extends AbstractActionController
 {
@@ -16,61 +20,61 @@ class ActiveCollectionController extends AbstractActionController
         $redirect = urldecode($this->params()->fromQuery('redirect', '/'));
 
         $id = (int) $id;
-        $this->service->addArticle($id);
-        $this->redirect()->toUrl($redirect);
+        $addedArticle = $this->service->addArticle($id);
+        if(!$this->getRequest()->isXmlHttpRequest()) {
+           return $this->redirect()->toUrl($redirect);
+        }
+        if($addedArticle instanceof Article) {
+            return new JsonModel([
+                'id' => $addedArticle->getId(),
+                'title' => $addedArticle->getTitle()
+            ]);
+        }
+        return new JsonModel([]);
+    }
+
+    public function processMultipleAction()
+    {
+        $selected = $this->params()->fromPost('selected');
+        $action = $this->params()->fromPost('action');
+        $redirect = urldecode($this->params()->fromQuery('redirect', '/'));
+        if($selected) {
+            switch($action) {
+                case 'remove':
+                    $this->service->removeArticles($selected);
+                    break;
+                case 'up':
+                    $this->service->moveUpItems($selected);
+                    break;
+                case 'down':
+                    $this->service->moveDownItems($selected);
+                    break;
+            }
+        }
+        return $this->redirect()->toUrl($redirect);
     }
 
     public function removeAction()
     {
-        $id = $this->params()->fromRoute('id', 0);
-        $redirect = urldecode($this->params()->fromQuery('redirect', '/'));
-
-        $id = (int) $id;
-        $this->service->removeArticle($id);
-        $this->redirect()->toUrl($redirect);
+        $ids = explode(',', $this->params()->fromRoute('ids', ''));
+        $this->service->removeArticles($ids);
+        return new JsonModel([]);
     }
 
-    public function exportAction()
+    public function sortAction()
     {
-        require './vendor/PHPWord/PHPWord.php';
+        $ids = explode(',', $this->params()->fromRoute('ids', ''));
+        $this->service->sortItems($ids);
+        return new JsonModel([]);
+    }
 
-        $collection = $this->service->getActiveCollection();
-
-        $phpWord = new \PHPWord();
-        $phpWord->setDefaultFontName('Tahoma');
-        $phpWord->setDefaultFontSize(12);
-
-        $phpWord->getProperties()->setCreator('Kivi Refgen')
-                                 ->setCompany('Kivi Refgen')
-                                 ->setTitle('Collection ' . $this->service->getActiveCollection()->getName())
-                                 ->setCreated((new \DateTime())->getTimestamp());
-        $section = $phpWord->createSection();
-        $section->getSettings()->setPortrait();
-        $section->getSettings()->setMarginBottom(900);
-        $section->getSettings()->setMarginTop(900);
-        $section->getSettings()->setMarginRight(900);
-        $section->getSettings()->setMarginLeft(900);
-
-        $headingStyle = array(
-            'color' => 'faa900',
-            'size'  => 18
-        );
-
-        $section->addText('Collection - ' . $collection->getName(), $headingStyle);
-
-        $vh = new VancouverHelper();
-
-        foreach($collection->getArticles() as $article) {
-            $section->addListItem('citation', 0, null, 7 ,null);
-        }
-
-        header('Content-Type: application/vnd.ms-word');
-        header('Content-Disposition: attachment;filename="ref.docx"');
-        header('Cache-Control: max-age=0');
-        $writer = \PHPWord_IOFactory::createWriter($phpWord,"Word2007");
-        $writer->save("php://output");
-
-
+    public function renderAction()
+    {
+        $view = new ViewModel();
+        $view->setTemplate('partials/active-collection');
+        $view->setVariable('service', $this->service);
+        $view->setTerminal(true);
+        return $view;
     }
 
     /**

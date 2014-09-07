@@ -21,180 +21,375 @@ class AuthorTableTest extends DbTestCase
         $conn->getConnection()->query('set foreign_key_checks=1');
     }
 
-    public function testFetchByArticleId()
+    public function testFetchByExistingArticleId()
     {
-        $expected = array();
-        $data = array(
-            array(
-                'id'        => 1,
-                'last_name' => 'Zhu',
-                'fore_name' => 'Ming-Yue',
-                'initials'  => 'MY'
-            ),
-            array(
-                'id'        => 2,
-                'last_name' => 'Chen',
-                'fore_name' => 'Fan',
-                'initials'  => 'F'
-            ),
-            array(
-                'id'        => 3,
-                'last_name' => 'Niyazi',
-                'fore_name' => 'Mayinuer',
-                'initials'  => 'M'
-            ),
-            array(
-                'id'        => 4,
-                'last_name' => 'Sui',
-                'fore_name' => 'Shuang',
-                'initials'  => 'S'
-            ),
-            array(
-                'id'        => 5,
-                'last_name' => 'Gao',
-                'fore_name' => 'Dong-Mei',
-                'initials'  => 'DM'
-            )
-        );
-        $expected = $this->authorsFromArray($data);
-        $this->assertEquals($expected, $this->table->fetchAuthorsByArticleId(1));
-
-        $expected2 = array();
-        $data2 = array(
-            array(
-                'id'        => 6,
-                'last_name' => 'Mao',
-                'fore_name' => 'Lu',
-                'initials'  => 'L'
-            ),
-            array(
-                'id'        => 7,
-                'last_name' => 'Levin',
-                'fore_name' => 'Simon',
-                'initials'  => 'S'
-            ),
-            array(
-                'id'        => 8,
-                'last_name' => 'Faesen',
-                'fore_name' => 'Mark',
-                'initials'  => 'M'
-            ),
-            array(
-                'id'        => 9,
-                'last_name' => 'Lewis',
-                'fore_name' => 'David A',
-                'initials'  => 'DA'
-            ),
-            array(
-                'id'        => 10,
-                'last_name' => 'Goeieman',
-                'fore_name' => 'Bridgette J',
-                'initials'  => 'BJ'
-            ),
-            array(
-                'id'        => 11,
-                'last_name' => 'Swarts',
-                'fore_name' => 'Avril J',
-                'initials'  => 'AJ'
-            ),
-            array(
-                'id'        => 12,
-                'last_name' => 'Rakhombe',
-                'fore_name' => 'Ntombiyenkosi',
-                'initials'  => 'N'
-            ),
-            array(
-                'id'        => 13,
-                'last_name' => 'Michelow',
-                'fore_name' => 'Pam M',
-                'initials'  => 'PM'
-            ),
-            array(
-                'id'        => 14,
-                'last_name' => 'Williams',
-                'fore_name' => 'Sophie',
-                'initials'  => 'S'
-            ),
-            array(
-                'id'        => 15,
-                'last_name' => 'Smith',
-                'fore_name' => 'Jennifer S',
-                'initials'  => 'JS'
-            ),
-        );
-        $expected2 = $this->authorsFromArray($data2);
-        $this->assertEquals($expected2, $this->table->fetchAuthorsByArticleId(2));
+        $authors = $this->table->fetchAuthorsByArticleId(243);
+        $expected = [
+            [
+                'id' => 1576,
+                'lastName' => 'Bhatnagar',
+                'foreName' => 'Shishir Kumar',
+                'initials' => 'SK'
+            ], [
+                'id' => 1577,
+                'lastName' => 'Chandra',
+                'foreName' => 'Jagdish',
+                'initials' => 'J'
+            ], [
+                'id' => 1578,
+                'lastName' => 'Narayan',
+                'foreName' => 'Shashi',
+                'initials' => 'S'
+            ], [
+                'id' => 1579,
+                'lastName' => 'Sharma',
+                'foreName' => 'Sunita',
+                'initials' => 'S'
+            ], [
+                'id' => 1580,
+                'lastName' => 'Singh',
+                'foreName' => 'Varinder',
+                'initials' => 'V'
+            ], [
+                'id' => 1581,
+                'lastName' => 'Dutta',
+                'foreName' => 'Ashok Kumar',
+                'initials' => 'AK'
+            ]
+        ];
+        $this->assertEquals(6, count($authors));
+        foreach($authors as $author) {
+            $data = current($expected);
+            $this->assertEquals($data['id'], $author->getId());
+            $this->assertEquals($data['lastName'], $author->getLastName());
+            $this->assertEquals($data['foreName'], $author->getForeName());
+            $this->assertEquals($data['initials'], $author->getInitials());
+            next($expected);
+        }
     }
 
-    public function testFetchByNonExistentArticleId()
+    public function testFetchByNonExistingArticleId()
     {
-        $this->assertEquals(array(), $this->table->fetchAuthorsByArticleId(1001));
+        $authors = $this->table->fetchAuthorsByArticleId(2400);
+        $this->assertEmpty($authors);
     }
 
-    public function testCreateAuthor()
+    public function testFetchByExistingArticleIds()
     {
-        $author = new Author();
-        $author->setForeName('Vikram Raj');
-        $author->setLastName('Gopinathan');
-        $author->setInitials('VR');
-
-        $author2 = new Author();
-        $author2->setForeName('Kirthika');
-        $author2->setLastName('Vikram');
-        $author2->setInitials('K');
-
-        $authors = array($author, $author2);
-
-        $result = $this->table->createAuthors($authors, 4);
-
-        $this->assertEquals(true, $result);
-
-        $authors = $this->table->fetchAuthorsByArticleId(4);
-        // $a1 = $authors[0]; // already existing Thomas GM
-        $a2 = $authors[1];
-        $a3 = $authors[2];
-
-        $author->setId(20);
-        $author2->setId(21);
-
-        $this->assertEquals(3, count($authors));
-        $this->assertEquals($author, $a2);
-        $this->assertEquals($author2, $a3);
-
+        $authors = $this->table->fetchAuthorsByArticleIds([243, 246, 248]);
+        $expected = [
+            243 => [
+                [
+                    'id' => 1576,
+                    'lastName' => 'Bhatnagar',
+                    'foreName' => 'Shishir Kumar',
+                    'initials' => 'SK'
+                ], [
+                    'id' => 1577,
+                    'lastName' => 'Chandra',
+                    'foreName' => 'Jagdish',
+                    'initials' => 'J'
+                ], [
+                    'id' => 1578,
+                    'lastName' => 'Narayan',
+                    'foreName' => 'Shashi',
+                    'initials' => 'S'
+                ], [
+                    'id' => 1579,
+                    'lastName' => 'Sharma',
+                    'foreName' => 'Sunita',
+                    'initials' => 'S'
+                ], [
+                    'id' => 1580,
+                    'lastName' => 'Singh',
+                    'foreName' => 'Varinder',
+                    'initials' => 'V'
+                ], [
+                    'id' => 1581,
+                    'lastName' => 'Dutta',
+                    'foreName' => 'Ashok Kumar',
+                    'initials' => 'AK'
+                ]
+            ],
+            246 => [
+                [
+                    'id' => 1593,
+                    'lastName' => 'Memon',
+                    'foreName' => 'Shazia',
+                    'initials' => 'S'
+                ], [
+                    'id' => 1594,
+                    'lastName' => 'Shaikh',
+                    'foreName' => 'Salma',
+                    'initials' => 'S'
+                ], [
+                    'id' => 1595,
+                    'lastName' => 'Nizamani',
+                    'foreName' => 'M Akbar A',
+                    'initials' => 'MA'
+                ]
+            ],
+            248 => [
+                [
+                    'id' => 1601,
+                    'lastName' => 'Garewal',
+                    'foreName' => 'G',
+                    'initials' => 'G'
+                ], [
+                    'id' => 1602,
+                    'lastName' => 'Marwaha',
+                    'foreName' => 'N',
+                    'initials' => 'N'
+                ], [
+                    'id' => 1603,
+                    'lastName' => 'Marwaha',
+                    'foreName' => 'R K',
+                    'initials' => 'RK'
+                ], [
+                    'id' => 1604,
+                    'lastName' => 'Das',
+                    'foreName' => 'K C',
+                    'initials' => 'KC'
+                ]
+            ]
+        ];
+        foreach($authors as $articleId => $a) {
+            $expectedId = key($expected);
+            $expectedAuthors = current($expected);
+            $this->assertEquals($expectedId, $articleId);
+            foreach($a as $author) {
+                $expectedAuthor = current($expectedAuthors);
+                $this->assertEquals($expectedAuthor['id'], $author->getId());
+                $this->assertEquals($expectedAuthor['lastName'], $author->getLastName());
+                $this->assertEquals($expectedAuthor['foreName'], $author->getForeName());
+                $this->assertEquals($expectedAuthor['initials'], $author->getInitials());
+                next($expectedAuthors);
+            }
+            next($expected);
+        }
     }
 
-    public function testCreateAuthorWithEmptyArray()
+    public function testFetchByExistingAndNonExistingArticleIds()
     {
-        $result = $this->table->createAuthors(array(), 4);
-        $this->assertEquals(true, $result);
+        $authors = $this->table->fetchAuthorsByArticleIds([243, 246, 247, 248, 250]);
+        $expected = [
+            243 => [
+                [
+                    'id' => 1576,
+                    'lastName' => 'Bhatnagar',
+                    'foreName' => 'Shishir Kumar',
+                    'initials' => 'SK'
+                ], [
+                    'id' => 1577,
+                    'lastName' => 'Chandra',
+                    'foreName' => 'Jagdish',
+                    'initials' => 'J'
+                ], [
+                    'id' => 1578,
+                    'lastName' => 'Narayan',
+                    'foreName' => 'Shashi',
+                    'initials' => 'S'
+                ], [
+                    'id' => 1579,
+                    'lastName' => 'Sharma',
+                    'foreName' => 'Sunita',
+                    'initials' => 'S'
+                ], [
+                    'id' => 1580,
+                    'lastName' => 'Singh',
+                    'foreName' => 'Varinder',
+                    'initials' => 'V'
+                ], [
+                    'id' => 1581,
+                    'lastName' => 'Dutta',
+                    'foreName' => 'Ashok Kumar',
+                    'initials' => 'AK'
+                ]
+            ],
+            246 => [
+                [
+                    'id' => 1593,
+                    'lastName' => 'Memon',
+                    'foreName' => 'Shazia',
+                    'initials' => 'S'
+                ], [
+                    'id' => 1594,
+                    'lastName' => 'Shaikh',
+                    'foreName' => 'Salma',
+                    'initials' => 'S'
+                ], [
+                    'id' => 1595,
+                    'lastName' => 'Nizamani',
+                    'foreName' => 'M Akbar A',
+                    'initials' => 'MA'
+                ]
+            ],
+            247 => [],
+            248 => [
+                [
+                    'id' => 1601,
+                    'lastName' => 'Garewal',
+                    'foreName' => 'G',
+                    'initials' => 'G'
+                ], [
+                    'id' => 1602,
+                    'lastName' => 'Marwaha',
+                    'foreName' => 'N',
+                    'initials' => 'N'
+                ], [
+                    'id' => 1603,
+                    'lastName' => 'Marwaha',
+                    'foreName' => 'R K',
+                    'initials' => 'RK'
+                ], [
+                    'id' => 1604,
+                    'lastName' => 'Das',
+                    'foreName' => 'K C',
+                    'initials' => 'KC'
+                ]
+            ],
+            250 => []
+        ];
+        foreach($authors as $articleId => $a) {
+            $expectedId = key($expected);
+            $expectedAuthors = current($expected);
+            $this->assertEquals($expectedId, $articleId);
+            if(empty($a)) {
+                $this->assertEquals($expectedAuthors, $a);
+            } else {
+                foreach($a as $author) {
+                    $expectedAuthor = current($expectedAuthors);
+                    $this->assertEquals($expectedAuthor['id'], $author->getId());
+                    $this->assertEquals($expectedAuthor['lastName'], $author->getLastName());
+                    $this->assertEquals($expectedAuthor['foreName'], $author->getForeName());
+                    $this->assertEquals($expectedAuthor['initials'], $author->getInitials());
+                    next($expectedAuthors);
+                }
+            }
+            next($expected);
+        }
+    }
 
-        $authors = $this->table->fetchAuthorsByArticleId(4);
-        $this->assertEquals(1, count($authors));
+    public function testFetchByNonExistingArticleIds()
+    {
+        $authors = $this->table->fetchAuthorsByArticleIds([2, 3, 4]);
+        $expected = [
+            2 => [],
+            3 => [],
+            4 => []
+        ];
+        $this->assertEquals($expected, $authors);
+    }
 
-        $this->assertEquals(19, $authors[0]->getId());
-        $this->assertEquals('Gillian M', $authors[0]->getForeName());
+    public function testCreateAuthors()
+    {
+        $length = $this->getConnection()->getRowCount('article_authors');
+        $authorData = [
+            [
+                'lastName' => 'Gopinathan',
+                'firstName' => 'Vikram Raj',
+                'initials' => 'VR'
+            ], [
+                'lastName' => 'Vikram',
+                'firstName' => 'Kirthika',
+                'initials' => 'K'
+            ], [
+                'lastName' => 'Gopinathan',
+                'firstName' => 'Nirmal Raj',
+                'initials' => 'NR'
+            ]
+        ];
+        $authors = [];
+        foreach($authorData as $data) {
+            $author = new Author();
+            $author->setForeName($data['firstName']);
+            $author->setLastName($data['lastName']);
+            $author->setInitials($data['initials']);
+            $authors[] = $author;
+        }
+
+        $this->table->createAuthors($authors, 300);
+        $this->assertEquals($length + 3, $this->getConnection()->getRowCount('article_authors'));
+
+        $conn = $this->getConnection();
+        $statement = $conn->getConnection()->prepare('SELECT * FROM article_authors WHERE article_id = :id');
+        $statement->execute(array(':id' => 300));
+        $authors = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $this->assertCount(3, $authors);
+
+        $i = 0;
+        foreach($authors as $author) {
+            $expected = $authorData[$i];
+            $this->assertEquals($i + 1, $author['position']);
+            $this->assertEquals($expected['lastName'], $author['last_name']);
+            $this->assertEquals($expected['firstName'], $author['fore_name']);
+            $this->assertEquals($expected['initials'], $author['initials']);
+            $this->assertTrue($author['id'] > 0);
+            ++$i;
+        }
+    }
+
+    public function testCreatingAuthorsWithEmptyArray()
+    {
+        $length = $this->getConnection()->getRowCount('article_authors');
+        $authors = [];
+        $this->table->createAuthors($authors, 300);
+        $this->assertEquals($length, $this->getConnection()->getRowCount('article_authors'));
+        $actual = $this->table->fetchAuthorsByArticleId(300);
+        $this->assertEmpty($actual);
+    }
+
+    /**
+     * @expectedException \Zend\Db\Adapter\Exception\InvalidQueryException
+     */
+    public function testCreatingAuthorsWithInvalidConstraint()
+    {
+        $length = $this->getConnection()->getRowCount('article_authors');
+        $authorData = [
+            [
+                'lastName' => 'Gopinathan',
+                'firstName' => 'Vikram Raj',
+                'initials' => 'VR'
+            ], [
+                'lastName' => 'Vikram',
+                'firstName' => 'Kirthika',
+                'initials' => 'K'
+            ], [
+                'lastName' => 'Gopinathan',
+                'firstName' => 'Nirmal Raj',
+                'initials' => 'NR'
+            ]
+        ];
+        $authors = [];
+        foreach($authorData as $data) {
+            $author = new Author();
+            $author->setForeName($data['firstName']);
+            $author->setLastName($data['lastName']);
+            $author->setInitials($data['initials']);
+            $authors[] = $author;
+        }
+
+        $this->table->createAuthors($authors, 1000);
+        $this->assertEquals($length, $this->getConnection()->getRowCount('article_authors'));
+        $actual = $this->table->fetchAuthorsByArticleId(1000);
+        $this->assertEmpty($actual);
     }
 
     public function testDeleteAuthors()
     {
-        $result = $this->table->deleteAuthorsByArticleId(1);
-        $this->assertEquals(true, $result);
-
-        $authors = $this->table->fetchAuthorsByArticleId(1);
-        $this->assertEquals(array(), $authors);
+        $length = $this->getConnection()->getRowCount('article_authors');
+        $authors = $this->table->fetchAuthorsByArticleId(243);
+        $this->assertCount(6, $authors);
+        $this->table->deleteAuthorsByArticleId(243);
+        $authors = $this->table->fetchAuthorsByArticleId(243);
+        $this->assertEmpty($authors);
+        $this->assertEquals($length - 6, $this->getConnection()->getRowCount('article_authors'));
     }
 
-    /**
-     * @param array $data
-     * @return \Article\Entity\Author[]
-     */
-    private function authorsFromArray(array $data = array())
+    public function testDeleteAuthorsOfNonExistingArticleId()
     {
-        /** @var \Article\Entity\Author[] $authors */
-        $authors = array();
-        foreach($data as $authorData) {
-            $authors[] = Author::createFromArray($authorData);
-        }
-        return $authors;
+        $length = $this->getConnection()->getRowCount('article_authors');
+        $this->table->deleteAuthorsByArticleId(300);
+        $this->assertEquals($length, $this->getConnection()->getRowCount('article_authors'));
     }
 }

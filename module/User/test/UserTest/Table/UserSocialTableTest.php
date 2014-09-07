@@ -8,76 +8,83 @@
 
 namespace UserTest\Table;
 
+use User\table\SocialTable;
 use UserTest\DbTestCase;
 use User\Table\UserSocialTable;
 class UserSocialTableTest extends DbTestCase
 {
     /** @var UserSocialTable */
-    protected $table;
+    private $table;
+
+    private function table()
+    {
+        if(null === $this->table) {
+            $adapter = $this->getAdapter();
+            $socialTable = new SocialTable();
+            $socialTable->setDbAdapter($adapter);
+
+            $this->table = new UserSocialTable();
+            $this->table->setSocialTable($socialTable);
+            $this->table->setDbAdapter($adapter);
+        }
+        return $this->table;
+    }
 
     protected function setUp()
     {
         $conn = $this->getConnection();
         $conn->getConnection()->query('set foreign_key_checks=0');
-        $adapter = $this->getAdapter();
-        $this->table = new UserSocialTable();
-        $this->table->setDbAdapter($adapter);
         parent::setUp();
         $conn->getConnection()->query('set foreign_key_checks=1');
     }
 
     public function testFetchBySocialAndSocialId()
     {
-        $expected = array(
-            'userId'  => 1,
-            'socialId' => '109671001037346774242',
-            'picture' => 'https://lh6.googleusercontent.com/-huEFicSGyKU/AAAAAAAAAAI/AAAAAAAAA4I/m0PFsWD8QFg/photo.jpg'
-        );
-        $data = $this->table->fetchBySocialAndSocialId(2, '109671001037346774242');
-        $this->assertEquals($expected, $data);
+        $data = $this->table()->fetchBySocialAndSocialId('Facebook', '10201596577796234');
+        $this->assertEquals(2, $data['userId']);
+
+        $data = $this->table()->fetchBySocialAndSocialId('Google', '106904554194481876715');
+        $this->assertEquals(6, $data['userId']);
     }
 
-    public function testFetchBySocialAndInvalidSocialId()
+    public function testFetchBySocialAndNonExistingSocialId()
     {
-        $data = $this->table->fetchBySocialAndSocialId(2, '1000100010001000');
-        $this->assertNull($data);
+        $this->assertNull(
+            $this->table()->fetchBySocialAndSocialId('Google', '1234567887654321')
+        );
     }
 
     public function testFetchByUserIdAndSocial()
     {
-        $expected = array(
-            'userId'    => '1',
-            'socialId'  => '109671001037346774242',
-            'picture' => 'https://lh6.googleusercontent.com/-huEFicSGyKU/AAAAAAAAAAI/AAAAAAAAA4I/m0PFsWD8QFg/photo.jpg'
-        );
-        $data = $this->table->fetchByUserIdAndSocial(1,2);
-        $this->assertEquals($expected, $data);
+        $data = $this->table()->fetchByUserIdAndSocial(2,'Facebook');
+        $this->assertEquals('10201596577796234', $data['socialId']);
     }
 
-    public function testFetchByNonExistingUserIdOrSocial()
+    public function testFetchByUserIdAndNonExistingSocial()
     {
-        $this->assertNull($this->table->fetchByUserIdAndSocial(3,2));
-        $this->assertNull($this->table->fetchByUserIdAndSocial(1,1));
+        $this->assertNull($this->table()->fetchByUserIdAndSocial(3,'Facebook'));
     }
 
-    public function testInsertSocialAndSocialId()
+    public function testFetchByNonExistingUserAndSocial()
     {
-        $data = array(
-            'user_id'   => 1,
-            'social_id' => '684982804888605',
-            'social'    => 1,
-            'picture'   => 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xpa1/t1.0-1/c64.5.114.114/s50x50/1891165_635032089883677_31263367_n.jpg'
-        );
-
-        $rowsAffected = $this->table->insert($data);
-        $this->assertEquals(1, $rowsAffected);
-
-        $expected = array(
-            'userId' => 1,
-            'socialId' => '684982804888605',
-            'picture' => 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xpa1/t1.0-1/c64.5.114.114/s50x50/1891165_635032089883677_31263367_n.jpg'
-        );
-        $observed = $this->table->fetchBySocialAndSocialId(1, '684982804888605');
-        $this->assertEquals($expected, $observed);
+        $this->assertNull($this->table()->fetchByUserIdAndSocial(8,0));
     }
-} 
+
+    public function testCheckExistingUserIdAndSocial()
+    {
+        $rowCount = $this->getConnection()->getRowCount('user_socials');
+        $result = $this->table()->checkUserIdAndSocial(
+            4, 'Google', '109057272140035741568'
+        );
+        $this->assertEquals($rowCount, $this->getConnection()->getRowCount('user_socials'));
+        $this->assertTrue($result);
+    }
+
+    public function testCheckNewUserIdAndSocial()
+    {
+        $rowCount = $this->getConnection()->getRowCount('user_socials');
+        $result = $this->table()->checkUserIdAndSocial(4, 'Facebook', '1234567887654321');
+        $this->assertEquals($rowCount + 1, $this->getConnection()->getRowCount('user_socials'));
+        $this->assertTrue($result);
+    }
+}

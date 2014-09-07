@@ -1,87 +1,207 @@
 <?php
 namespace CollectionTest\CollectionTest\Table;
 
-use Collection\Table\CollectionTable;
 use CollectionTest\DbTestCase;
 
 use Collection\Table\CollectionArticleTable;
-use Article\Table\ArticleTable;
+use Article\Entity\Article;
 
 class CollectionArticleTableTest extends DbTestCase
 {
     /** @var CollectionArticleTable */
     protected $table;
 
-    /** @var ArticleTable */
-    protected $articleTable;
-
     protected function setUp()
     {
         $conn = $this->getConnection();
         $conn->getConnection()->query('set foreign_key_checks=0');
         $adapter = $this->getAdapter();
-
-        $this->articleTable = new ArticleTable();
-        $this->articleTable->setDbAdapter($adapter);
-
+        $articleTable = $this->getMock('\Article\Table\ArticleTable', array('fetchArticlesByIds'));
+        $articleTable->expects($this->any())
+                     ->method('fetchArticlesByIds')
+                     ->will($this->returnCallback(array($this, 'fetchArticles')));
         $this->table = new CollectionArticleTable();
         $this->table->setDbAdapter($adapter);
-
+        $this->table->setArticleTable($articleTable);
         parent::setUp();
         $conn->getConnection()->query('set foreign_key_checks=1');
     }
 
     public function testFetchArticlesByCollectionId()
     {
-        $ids = array(
-            1, 2, 4, 8, 16, 32
-        );
-        $expected = array();
-        foreach($ids as $id) {
-            $article = $this->articleTable->fetchArticleById($id);
-            $expected[$article->getIndexerId()] = $article;
+        $articles = $this->table->fetchArticlesByCollectionId(26);
+        $expected = [243,246,248];
+        foreach($articles as $id => $article)
+        {
+            $expectedId = current($expected);
+            $this->assertEquals($expectedId, $article->getId());
+            next($expected);
         }
-        $this->assertEquals($expected, $this->table->fetchArticlesByCollectionId(1));
-
-        $ids = array(
-            2, 4, 6, 8, 10, 12, 14, 16, 18
-        );
-        $expected = array();
-        foreach($ids as $id) {
-            $article = $this->articleTable->fetchArticleById($id);
-            $expected[$article->getIndexerId()] = $article;
-        }
-        $this->assertEquals($expected, $this->table->fetchArticlesByCollectionId(2));
-        $ids = array(
-            25, 27, 29, 31, 33, 35, 37, 39
-        );
-        $expected = array();
-        foreach($ids as $id) {
-            $article = $this->articleTable->fetchArticleById($id);
-            $expected[$article->getIndexerId()] = $article;
-        }
-        $this->assertEquals($expected, $this->table->fetchArticlesByCollectionId(3));
     }
 
     public function testSaveArticles()
     {
-        $ids = array(
-            4, 8, 12, 16, 20, 24, 28, 32, 36
-        );
-        $articles = array();
-        foreach($ids as $id) {
-            $articles[$id] = $this->articleTable->fetchArticleById($id);
-        }
-        $this->table->saveArticles($articles, 2);
-        $rowset = $this->table->select(array(
-                'collection_id' => 2
-            )
-        );
-        $pos = 0;
-        foreach($rowset as $row) {
-            $this->assertEquals($ids[$pos], $row['article_id']);
-            $this->assertEquals($pos + 1, $row['position']);
-            $pos++;
-        }
+        $articles = $this->fetchArticles([
+            306,307,308,309,300
+        ]);
+        $this->table->saveArticles($articles, 50);
+        $pdo = $this->getConnection()->getConnection();
+        $st = $pdo->prepare('SELECT * FROM collection_articles WHERE `collection_id` = :id');
+        $st->execute(array('id' => 50));
+        $rows = $st->fetchAll(\PDO::FETCH_ASSOC);
+        $expected = [
+            [
+                'collection_id' => '50',
+                'article_id'    => '306',
+                'position'      => '1'
+            ],
+            [
+                'collection_id' => '50',
+                'article_id'    => '307',
+                'position'      => '2'
+            ],
+            [
+                'collection_id' => '50',
+                'article_id'    => '308',
+                'position'      => '3'
+            ],
+            [
+                'collection_id' => '50',
+                'article_id'    => '309',
+                'position'      => '4'
+            ],
+            [
+                'collection_id' => '50',
+                'article_id'    => '300',
+                'position'      => '5'
+            ],
+        ];
+        $this->assertSame($expected, $rows);
     }
-} 
+
+    public function testSaveZeroArticles()
+    {
+        $this->table->saveArticles([], 50);
+        $pdo = $this->getConnection()->getConnection();
+        $st = $pdo->prepare('SELECT * FROM collection_articles WHERE `collection_id` = :id');
+        $st->execute(array('id' => 50));
+        $rows = $st->fetchAll(\PDO::FETCH_ASSOC);
+        $expected = [];
+        $this->assertSame($expected, $rows);
+    }
+
+    public function testUpdatingArticles()
+    {
+        $pdo = $this->getConnection()->getConnection();
+        $st = $pdo->prepare('SELECT * FROM collection_articles WHERE `collection_id` = :id');
+        $st->execute(array('id' => 28));
+        $rows = $st->fetchAll(\PDO::FETCH_ASSOC);
+        $expected = [
+            [
+                'collection_id' => '28',
+                'article_id'    => '306',
+                'position'      => '1'
+            ],
+            [
+                'collection_id' => '28',
+                'article_id'    => '307',
+                'position'      => '2'
+            ],
+            [
+                'collection_id' => '28',
+                'article_id'    => '308',
+                'position'      => '3'
+            ],
+            [
+                'collection_id' => '28',
+                'article_id'    => '309',
+                'position'      => '4'
+            ],
+        ];
+        $this->assertSame($expected, $rows);
+
+        $articles = $this->fetchArticles([
+            306,307,308,309,300
+        ]);
+        $this->table->saveArticles($articles, 28);
+        $expected = [
+            [
+                'collection_id' => '28',
+                'article_id'    => '306',
+                'position'      => '1'
+            ],
+            [
+                'collection_id' => '28',
+                'article_id'    => '307',
+                'position'      => '2'
+            ],
+            [
+                'collection_id' => '28',
+                'article_id'    => '308',
+                'position'      => '3'
+            ],
+            [
+                'collection_id' => '28',
+                'article_id'    => '309',
+                'position'      => '4'
+            ],
+            [
+                'collection_id' => '28',
+                'article_id'    => '300',
+                'position'      => '5'
+            ],
+        ];
+        $st->execute(array('id' => 28));
+        $rows = $st->fetchAll(\PDO::FETCH_ASSOC);
+        $this->assertSame($expected, $rows);
+    }
+
+    public function testUpdatingZeroArticles()
+    {
+        $pdo = $this->getConnection()->getConnection();
+        $st = $pdo->prepare('SELECT * FROM collection_articles WHERE `collection_id` = :id');
+        $st->execute(array('id' => 28));
+        $rows = $st->fetchAll(\PDO::FETCH_ASSOC);
+        $expected = [
+            [
+                'collection_id' => '28',
+                'article_id'    => '306',
+                'position'      => '1'
+            ],
+            [
+                'collection_id' => '28',
+                'article_id'    => '307',
+                'position'      => '2'
+            ],
+            [
+                'collection_id' => '28',
+                'article_id'    => '308',
+                'position'      => '3'
+            ],
+            [
+                'collection_id' => '28',
+                'article_id'    => '309',
+                'position'      => '4'
+            ],
+        ];
+        $this->assertSame($expected, $rows);
+
+        $this->table->saveArticles([], 28);
+        $expected = [];
+        $st->execute(array('id' => 28));
+        $rows = $st->fetchAll(\PDO::FETCH_ASSOC);
+        $this->assertSame($expected, $rows);
+    }
+
+    public function fetchArticles($ids = array())
+    {
+        $articles = [];
+        $ids = array_unique($ids);
+        foreach($ids as $id) {
+            $article = new Article();
+            $article->setId($id);
+            $articles[] = $article;
+        }
+        return $articles;
+    }
+}

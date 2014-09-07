@@ -23,6 +23,13 @@ class IndexController extends AbstractActionController
 
     public function indexAction()
     {
+        $service = $this->getServiceLocator()
+                        ->get('Collection\Service\Collection');
+        $viewModel = new ViewModel();
+        if(count($service)) {
+            $viewModel->setTemplate('application/index/index-twocol');
+        }
+        return $viewModel;
     }
 
     public function searchAction()

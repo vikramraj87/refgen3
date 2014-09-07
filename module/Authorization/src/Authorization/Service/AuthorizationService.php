@@ -20,10 +20,10 @@ class AuthorizationService {
         $this->acl = new Acl();
 
         /** Roles */
-        $this->acl->addRole(new GenericRole('guest'));
-        $this->acl->addRole(new GenericRole('user'));
-        $this->acl->addRole(new GenericRole('moderator'), 'user');
-        $this->acl->addRole(new GenericRole('admin'), 'moderator');
+        $this->acl->addRole(new GenericRole('Guest'));
+        $this->acl->addRole(new GenericRole('User'));
+        $this->acl->addRole(new GenericRole('Moderator'), 'User');
+        $this->acl->addRole(new GenericRole('Admin'), 'Moderator');
 
         /** Resources */
         $this->acl->addResource('Authentication\Controller\Authentication');
@@ -32,13 +32,13 @@ class AuthorizationService {
 
         /** Permissions */
         $this->acl->allow(
-            'guest',
+            'Guest',
             'Authentication\Controller\Authentication',
-            array('login', 'facebook', 'google')
+            array('login', 'facebook', 'google', 'new-google')
         );
-        $this->acl->allow('user', 'Authentication\Controller\Authentication', 'logout');
-        $this->acl->allow('user', 'Collection\Controller\Collection');
-        $this->acl->allow('moderator', 'Admin\Controller\Admin');
+        $this->acl->allow('User', 'Authentication\Controller\Authentication', 'logout');
+        $this->acl->allow('User', 'Collection\Controller\Collection');
+        $this->acl->allow('Moderator', 'Admin\Controller\Admin');
 
         $this->authService = $authService;
     }

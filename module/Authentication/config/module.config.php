@@ -73,6 +73,15 @@ return array(
                                 'action' => 'google'
                             )
                         )
+                    ),
+                    'new_google' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => array(
+                            'route' => '/new-google',
+                            'defaults' => array(
+                                'action' => 'new-google'
+                            )
+                        )
                     )
                 )
             )

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Citation generator form</title>
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            outline:none;
+        }
+
+        body{
+            background:#ffffff;
+            color:#222222;
+            font-family:"Open Sans" sans-serif;
+            font-size:15px;
+        }
+
+        ul, li{
+            list-style: none;
+        }
+
+        .citation-form{
+            width:500px;
+            margin:0 auto;
+        }
+
+        .citation-form .citation-tab{
+            margin:0;
+            padding:0;
+        }
+
+        .citation-form .citation-tab ul{
+            width:512px;
+        }
+
+        .citation-form .citation-tab li{
+            display:block;
+            background:#faa900;
+            border-right:1px solid #eee;
+            float:left;
+            width:19.9%;
+            height:50px;
+            line-height:50px;
+            text-align: center;
+        }
+
+        .citation-form .citation-tab li.last{
+            border:none;
+        }
+
+        .citation-form .citation-tab li a{
+            text-decoration: none;
+            color:#ffffff;
+        }
+
+        .panes{
+            background:#efefef;
+            clear:both;
+        }
+
+        .panes ul{
+            margin:0px;
+            padding:30px 0 17px 0;
+        }
+
+        .panes li{
+            display: block;
+            padding:0 0 0 29px;
+        }
+
+        .panes li label{
+            float:left;
+            width:185px;
+            margin:0;
+            padding:9px 8px 0 0;
+            color:#222;
+            text-align: right;
+
+        }
+
+        .panes li input[type="text"]{
+            float:left;
+            width:340px;
+            height:20px;
+            border:1px solid #ccc;
+            padding:8px;
+        }
+        .clearfix{
+            *zoom:1;
+        }
+        .clearfix:before,.clearfix:after{
+                     display:table;
+                     content:"";
+                     line-height:0;
+        }
+        .clearfix:after{
+            clear:both;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <div class="citation-form">
+        <ul class="citation-tab">
+            <li><a href="#">Website</a></li>
+            <li><a href="#">Book</a></li>
+            <li><a href="#">Newspaper</a></li>
+            <li><a href="#">Journal</a></li>
+            <li class="last"><a href="#">Magazine</a></li>
+        </ul>
+        <div class="panes">
+            <ul>
+                <li>
+                    <label>Article Title</label>
+                    <input type="text"value="">
+                </li>
+                <div class="clearfix"></div>
+
+                <li>
+                    <label>Website URL</label>
+                    <input type="text" value="">
+                </li>
+                <div class="clearfix"></div>
+
+                <li>
+                    <label>Author name</label>
+                    <input type="text" value="">
+                </li>
+                <div class="clearfix"></div>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>

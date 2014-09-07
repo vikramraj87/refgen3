@@ -1,7 +1,8 @@
 <?php
 namespace Authentication\Adapter;
 
-use Google_Client;
+use Google_Client,
+    Google_Service_Plus;
 use Zend\Authentication\Adapter\Exception\UnexpectedValueException,
     Zend\Authentication\Result;
 use Zend\Http\Client,
@@ -11,17 +12,17 @@ use Zend\Http\Client,
 
 class GoogleAdapter extends AbstractAdapter
 {
-    protected $id = 2;
+    protected $id = 'Google';
 
     /** @var Google_Client */
     private $client;
 
-    /** @var string|null */
-    private $code;
-
     public function setCode($code)
     {
-        $this->code = $code;
+        if(null === $code) {
+            throw new UnexpectedValueException;
+        }
+        $this->client->authenticate($code);
     }
 
     /**
@@ -32,34 +33,18 @@ class GoogleAdapter extends AbstractAdapter
      */
     public function authenticate()
     {
-        if(null === $this->code) {
-            throw new UnexpectedValueException;
-        }
-        $client = $this->client;
-        $tokenData = json_decode($client->authenticate($this->code), true);
-        $token = $tokenData['access_token'];
-
-        $request = new Request();
-        $request->setUri('https://www.googleapis.com/oauth2/v2/userinfo');
-        $request->getHeaders()->addHeader(new Authorization('Bearer ' . $token));
-
-        $httpClient = new Client();
-        $httpClient->setAdapter('Zend\Http\Client\Adapter\Curl');
-        $httpClient->setMethod(Request::METHOD_GET);
-        $httpClient->setRequest($request);
-
-        /** @var Response $response */
-        $response = $httpClient->send();
-        $userData = json_decode($response->getBody(), true);
+        $plus = new Google_Service_Plus($this->client);
+        $profile = $plus->people->get('me');
+        $emails = $profile->getEmails();
         $user = array(
-            'socialId'   => $userData['id'],
-            'email'      => $userData['email'],
-            'firstName'  => $userData['given_name'],
-            'middleName' => '',
-            'lastName'   => $userData['family_name'],
-            'name'       => $userData['name'],
+            'socialId'   => $profile->getId(),
+            'email'      => $emails[0]['value'],
+            'firstName'  => $profile->getName()->givenName,
+            'middleName' => $profile->getName()->middleName,
+            'lastName'   => $profile->getName()->familyName,
+            'name'       => $profile->getDisplayName(),
             'picture'    => array(
-                'link' => $userData['picture']
+                'link' => $profile->getImage()->url
             )
         );
 

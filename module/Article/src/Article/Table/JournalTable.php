@@ -44,6 +44,12 @@ Class JournalTable extends AbstractTableGateway implements AdapterAwareInterface
         return Journal::createFromArray($data);
     }
 
+    /**
+     * Fetches journal by issn
+     *
+     * @param string $issn
+     * @return Journal|null
+     */
     public function fetchJournalByIssn($issn = '')
     {
         $rowset = $this->select(array('issn' => $issn));
@@ -55,6 +61,13 @@ Class JournalTable extends AbstractTableGateway implements AdapterAwareInterface
         return Journal::createFromArray($data);
     }
 
+    /**
+     * Checks for the existence of the journal by issn. If exists, returns it.
+     * Else, creates a new one and returns it
+     *
+     * @param Journal $journal
+     * @return bool
+     */
     public function checkJournal(Journal &$journal)
     {
         $data = $this->fetchJournalByIssn($journal->getIssn());
@@ -62,10 +75,20 @@ Class JournalTable extends AbstractTableGateway implements AdapterAwareInterface
             $journal = $data;
             return true;
         }
+
         $this->insert($journal->toArray());
-        return $this->checkJournal($journal);
+        $id = $this->getLastInsertValue();
+        $journal->setId($id);
+
+        return $journal;
     }
 
+    /**
+     * Fetches multiple journals for array of journal ids
+     *
+     * @param array $ids
+     * @return array
+     */
     public function fetchJournalsByIds(array $ids = array())
     {
         $where = new Where();

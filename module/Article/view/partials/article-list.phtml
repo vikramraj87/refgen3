@@ -1,14 +1,2 @@
-                                    <?php
-                                        $removeUrl = $this->url(
-                                            'active-collection/remove',
-                                            array(
-                                                'id' => $article->getId()
-                                            )
-                                        );
-                                        $removeUrl .= '?redirect=' . urlencode($_SERVER['REQUEST_URI']);
-                                    ?>
-                                    <li><?php echo $article->getTitle(); ?>
-                                        <a class="remove" href="<?php echo $removeUrl; ?>">
-                                           Remove
-                                        </a>
+                                    <li data-id="<?php echo $article->getId(); ?>"><input type="checkbox" name="selected[]" value="<?php echo $article->getId(); ?>"/><?php echo $article->getTitle(); ?>
                                     </li>

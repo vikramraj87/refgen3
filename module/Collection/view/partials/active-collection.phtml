@@ -3,8 +3,15 @@
     $service = $this->service;
     $collection = $service->getActiveCollection();
 ?>
-            <aside id="active-collection" class="clearfix" data-edited="<?php echo $service->isEdited(); ?>">
-                <h3>Active Collection <?php if($service->isEdited()){ ?><span>*</span><?php } ?></h3>
+            <aside
+                id="active-collection"
+                class="clearfix"
+                data-edited="<?php echo $service->isEdited(); ?>"
+                data-name="<?php echo $collection->getName(); ?>"
+                data-id="<?php echo $collection->getId(); ?>"
+                data-guest="<?php echo !$this->authService()->hasIdentity(); ?>"
+                >
+                <h3>Active Collection<?php if($service->isEdited()){ ?><span> *</span><?php } ?></h3>
                 <?php if($this->authService()->hasIdentity()): ?>
                 <form method="post" action="<?php echo $this->url('collection/save') . '?redirect=' . urlencode($_SERVER['REQUEST_URI']); ?>">
                     <div class="row">
@@ -18,7 +25,7 @@
                         </div>
                     </div>
                 <?php endif; ?>
-                <?php if(!$this->authService()->hasIdentity() && $service->isEdited()): ?>
+                <?php if(!$this->authService()->hasIdentity() && $service->isEdited() && count($collection)): ?>
                     <div class="row">
                         <div class="alert-box info" data-alert>
                             Please login, if you wish to save this collection permanently
@@ -26,22 +33,47 @@
                         </div>
                     </div>
                 <?php endif; ?>
+                <form method="post" action="<?php echo $this->url('active-collection/processMultiple') . '?redirect=' . urlencode($_SERVER['REQUEST_URI']); ?>">
                 <?php if(!count($collection)): ?>
-                    <div data-alert class="alert-box info">
-                        Your active collection is empty.
-                        <a href="#" class="close">&times;</a>
+                    <div class="row">
+                        <div data-alert class="alert-box info">
+                            Your active collection is empty.
+                            <a href="#" class="close">&times;</a>
+                        </div>
                     </div>
                 <?php endif; ?>
-                    <div class="row"  style="margin-bottom:2em;">
+                    <div class="row">
                         <div class="large-12 columns">
                             <ol id="collection">
                                 <?php
                                 $this->partialLoop()->setObjectKey('article');
-                                echo $this->partialLoop('partials/article-list', $collection->getArticles());
+                                echo $this->partialLoop('partials/article-list', $collection->getItems());
                                 ?>
+                                <script id="template-item" type="text/x-handlebars-template">
+                                    <li data-id="{{id}}"><input type="checkbox" name="selected[]" value="{{id}}"/>{{title}}</li>
+                                </script>
                             </ol>
                         </div>
                     </div>
+                    <ul class="button-group">
+                        <li><button type="submit" name="action"
+                                    value="remove" class="multiple tiny button"
+                                    id="remove-items" data-action="remove">
+                            <i class="fa fa-minus-circle"></i>
+                        </button></li>
+                        <li><button type="submit" name="action"
+                                    value="up" class="multiple tiny button"
+                                    id="up-items" data-action="up">
+                                <i class="fa fa-arrow-up"></i>
+                            </button></li>
+                        <li><button type="submit" name="action"
+                                    value="down" class="multiple tiny button"
+                                    id="down-items" data-action="down">
+                                <i class="fa fa-arrow-down"></i>
+                            </button></li>
+                    </ul>
+                </form>
+
                     <div class="row">
                         <div class="large-12 columns">
                             <ul class="button-group right">
@@ -50,56 +82,23 @@
                                     !$this->activeCollection()->isOpen($this->activeCollection()->getId())):
                             ?>
                                 <?php $openUrl = $this->url('collection/open', array('id' => $this->activeCollection()->getId())); ?>
-                                <?php if($this->activeCollection()->isEdited()): ?>
-                                <li>
-                                    <a class="tiny button" href="<?php echo $openUrl; ?>"
-                                       data-reveal-id="modal-open-unedited">
-                                        <span class="fa fa-folder-open"></span> Open
-                                    </a>
-                                    <div id="modal-open-unedited" class="reveal-modal small" data-reveal>
-                                        <h2>Open collection</h2>
-                                        <p>The collection is not yet saved. The changes won't be reflected on opening the collection. Alternatively, you might save and continue.</p>
-                                        <a href="<?php echo $openUrl; ?>"
-                                           class="tiny button"><span class="fa fa-folder-open"></span> Open anyway</a>
-                                        <a class="close-reveal-modal">&#215;</a>
-                                    </div>
-                                </li>
-                                <?php else: ?>
                                 <li>
                                     <a class="tiny button" href="<?php echo $openUrl; ?>">
                                         <span class="fa fa-folder-open"></span> Open
                                     </a>
                                 </li>
-                                <?php endif; ?>
                             <?php endif; ?>
-                                <?php if($this->authService()->hasIdentity()): ?>
-                                <li><button type="submit" class="button tiny"><span class="fa fa-save"></span> Save</button></li>
-                                    <?php if($collection->getId()): ?>
+                            <?php if($this->authService()->hasIdentity()): ?>
                                 <li>
-                                    <?php
-                                        $deleteUrl = $this->url('collection/delete');
-                                        if($collection->getId() != $this->activeCollection()->getOpenCollectionId()) {
-                                            $deleteUrl .= '?redirect=' . urlencode($_SERVER['REQUEST_URI']);
-                                        }
-                                    ?>
-                                    <a class="button tiny"
-                                       data-reveal-id="modal-delete"
-                                       href="<?php echo $deleteUrl; ?>">
-                                        <span class="fa fa-trash-o"></span> Delete
-                                    </a>
-                                    <div id="modal-delete" class="reveal-modal small" data-reveal>
-                                        <h2>Delete collection</h2>
-                                        <p>Are you sure? Do you want to delete the collection <?php echo $collection->getName(); ?> permanently?</p>
-                                        <a href="<?php echo $deleteUrl; ?>"
-                                           class="tiny button"><span class="fa fa-trash-o"></span> Delete <?php echo $collection->getName(); ?></a>
-                                        <a class="close-reveal-modal">&#215;</a>
-                                    </div>
+                                    <button type="submit" class="button tiny">
+                                        <span class="fa fa-save"></span> Save
+                                    </button>
                                 </li>
-                                    <?php endif; ?>
-                                <?php endif; ?>
+                            <?php endif; ?>
                             </ul>
                         </div>
                     </div>
+
                 <?php if($this->authService()->hasIdentity()): ?>
                 </form>
                 <?php endif; ?>

@@ -1,15 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vikramraj
- * Date: 14/06/14
- * Time: 10:12 PM
- */
-
 namespace ArticleTest\Table;
 
 use ArticleTest\DbTestCase;
-use Article\Table\ArticleTable;
+
+use Article\Table\AbstractParaTable,
+    Article\Table\AuthorTable,
+    Article\Table\JournalTable,
+    Article\Table\ArticleTable;
+
 use Article\Entity\Article,
     Article\Entity\AbstractPara,
     Article\Entity\Author,
@@ -17,6 +15,13 @@ use Article\Entity\Article,
     Article\Entity\JournalIssue,
     Article\Entity\PubDate;
 
+/**
+ * Class ArticleTableTest.
+ * TODO: Use mocks to test the event of saving author
+ * and abstract data getting failed
+ *
+ * @package ArticleTest\Table
+ */
 class ArticleTableTest extends DbTestCase
 {
     /** @var \Article\Table\ArticleTable */
@@ -27,156 +32,138 @@ class ArticleTableTest extends DbTestCase
         $conn = $this->getConnection();
         $conn->getConnection()->query('set foreign_key_checks=0');
         $adapter = $this->getAdapter();
+
+        $journalTable = new JournalTable();
+        $journalTable->setDbAdapter($adapter);
+
+        $authorTable = new AuthorTable();
+        $authorTable->setDbAdapter($adapter);
+
+        $abstractTable = new AbstractParaTable();
+        $abstractTable->setDbAdapter($adapter);
+
         $this->table = new ArticleTable();
         $this->table->setDbAdapter($adapter);
+        $this->table->setAbstractParaTable($abstractTable);
+        $this->table->setAuthorTable($authorTable);
+        $this->table->setJournalTable($journalTable);
+
         parent::setUp();
         $conn->getConnection()->query('set foreign_key_checks=1');
     }
 
     public function testFetchById()
     {
-        $expected = new Article();
-        $expected->setId(1);
-        $expected->setIndexerId('PMID24914885');
+        $article = $this->table->fetchArticleById(243);
+
+        // Testing article table data
+        $this->assertEquals(243, $article->getId());
+        $this->assertEquals('PMID16014764', $article->getIndexerId());
+        $this->assertEquals('51', $article->getJournalIssue()->getVolume());
+        $this->assertEquals('4', $article->getJournalIssue()->getIssue());
+        $this->assertEquals('236-9', $article->getJournalIssue()->getPages());
+        $this->assertEquals('2005', $article->getJournalIssue()->getPubDate()->getYear());
+        $this->assertEquals('Aug', $article->getJournalIssue()->getPubDate()->getMonth());
+        $this->assertEquals('', $article->getJournalIssue()->getPubDate()->getDay());
+        $this->assertEquals('Pancytopenia in children: etiological profile.',
+            $article->getTitle());
+        $this->assertEquals(true, $article->getJournalIssue()->getPubStatus());
+
+        // Testing journal table data
+        $this->assertEquals(194, $article->getJournal()->getId());
+
+        // Testing author table data
+        $authors = [];
+        foreach($article->getAuthors() as $author) {
+            $authors[] = $author->getId();
+        }
+        $expected = [1576, 1577, 1578, 1579, 1580, 1581];
+        $this->assertEquals($expected, $authors);
+
+        // Testing abstract para table data
+        $paras = [];
+        foreach($article->getAbstract() as $para) {
+            $paras[] = $para->getId();
+        }
+        $expected = [461];
+        $this->assertEquals($expected, $paras);
+    }
+
+    public function testFetchByNonExistingId()
+    {
+        $this->assertNull($this->table->fetchArticleById(2000));
+    }
+
+    public function testCheckExistingArticle()
+    {
+        $journal = new Journal();
+        $journal->setTitle('Journal of tropical pediatrics');
+        $journal->setAbbr('J Trop Pediatr');
+        $journal->setIssn('0142-6338');
 
         $pubDate = new PubDate();
-        $pubDate->setDay('9');
-        $pubDate->setMonth('Jun');
-        $pubDate->setYear('2014');
+        $pubDate->setDay('');
+        $pubDate->setMonth('Aug');
+        $pubDate->setYear('2005');
+
         $journalIssue = new JournalIssue();
-        $journalIssue->setPubStatus(false);
-        $journalIssue->setVolume('');
-        $journalIssue->setIssue('');
-        $journalIssue->setPages('');
+        $journalIssue->setVolume('51');
+        $journalIssue->setIssue('4');
+        $journalIssue->setPages('236-9');
         $journalIssue->setPubDate($pubDate);
+        $journalIssue->setPubStatus(true);
 
-        $expected->setJournalIssue($journalIssue);
-        $expected->setTitle('Variation in Apoptotic Gene Expression in Cervical Cancer Through Oligonucleotide Microarray Profiling.');
+        $authorsData = [
+            [1576, 'Bhatnagar', 'Shishir Kumar', 'SK'],
+            [1577, 'Chandra', 'Jagdish', 'J'],
+            [1578, 'Narayan', 'Shashi', 'S'],
+            [1579, 'Sharma', 'Sunita', 'S'],
+            [1580, 'Singh', 'Varinder', 'V'],
+            [1581, 'Dutta', 'Ashok Kumar', 'AK']
+        ];
 
-        $journalData = array(
-            'id'    => 1,
-            'issn'  => '1526-0976',
-            'title' => 'Journal of lower genital tract disease',
-            'abbr'  => 'J Low Genit Tract Dis'
-        );
-        $journal = Journal::createFromArray($journalData);
-        $expected->setJournal($journal);
-
-        $authorsData = array(
-            array(
-                'id'        => 1,
-                'last_name' => 'Zhu',
-                'fore_name' => 'Ming-Yue',
-                'initials'  => 'MY'
-            ),
-            array(
-                'id'        => 2,
-                'last_name' => 'Chen',
-                'fore_name' => 'Fan',
-                'initials'  => 'F'
-            ),
-            array(
-                'id'        => 3,
-                'last_name' => 'Niyazi',
-                'fore_name' => 'Mayinuer',
-                'initials'  => 'M'
-            ),
-            array(
-                'id'        => 4,
-                'last_name' => 'Sui',
-                'fore_name' => 'Shuang',
-                'initials'  => 'S'
-            ),
-            array(
-                'id'        => 5,
-                'last_name' => 'Gao',
-                'fore_name' => 'Dong-Mei',
-                'initials'  => 'DM'
-            )
-        );
-        $authors = array();
+        $authors = [];
         foreach($authorsData as $authorData) {
-            $authors[] = Author::createFromArray($authorData);
+            $author = new Author();
+            $author->setLastName($authorData[1]);
+            $author->setForeName($authorData[2]);
+            $author->setInitials($authorData[3]);
+            $authors[] = $author;
         }
 
-        $abstractData = array(
-            array(
-                'id'           => 1,
-                'heading'      => 'Objective',
-                'nlm_category' => 'Objective',
-                'para'         => 'The current study aimed to investigate the molecular basis of cervical cancer development using a microarray to identify the differentially expressed genes. This study also aimed to detect apoptosis genes and proteins to find those genes most aberrantly expressed in cervical cancer and to explore the cause of Uighur cervical cancer.'
-            ),
-            array(
-                'id'           => 2,
-                'heading'      => 'Methods',
-                'nlm_category' => 'Methods',
-                'para'         => 'An analysis of gene expression profiles obtained from cervical cancer cases was performed. Total RNA was prepared from 10 samples of cervical carcinoma and normal cervix and was hybridized to Affymetrix oligonucleotide microarrays with probe sets complementary to more than 20,000 transcripts. Several genes of the apoptosis pathway, which were differentially regulated, included BCL2, BCLXL, and c-IAP1. These were validated by quantitative reverse transcription-polymerase chain reaction and immunohistochemical staining on an independent set of cancer and control specimens.'
-            ),
-            array(
-                'id'           => 3,
-                'heading'      => 'Results',
-                'nlm_category' => 'Results',
-                'para'         => 'Unsupervised hierarchical clustering of the expression data readily distinguished the normal cervix from cancer. Supervised analysis of gene expression data identified 1,326 and 1,432 genes that were upregulated and downregulated, respectively; a set of genes belonging to the apoptosis pathways were upregulated or downregulated in patients with cervical cancer. BCL2, BCLXL, and c-IAP1 were found to be upregulated in late-stage cancer compared to early-stage cancer.'
-            ),
-            array(
-                'id'           => 4,
-                'heading'      => 'Conclusions',
-                'nlm_category' => 'Conclusions',
-                'para'         => 'These findings provide a new understanding of the gene expression profile in cervical cancer. BCL2, BCLXL, and c-IAP1 might be involved in cancer progression. The pathway analysis of expression data showed that the BCL2, BCLXL, and c-IAP1 genes were coordinately differentially regulated between cancer and normal cases. Our results may serve as basis for further development of biomarkers for the diagnosis and treatment of cervical cancer.'
-            )
-        );
-        $abstract = array();
-        foreach($abstractData as $para) {
-            $abstract[] = AbstractPara::createFromArray($para);
+        $para = new AbstractPara();
+        $para->setHeading('');
+        $para->setNlmCategory('');
+        $para->setPara('Pancytopenia is a common occurrence in pediatric patients. Though acute leukemias and bone marrow failure syndromes are usual causes of pancytopenia, etiologies such as infections and megaloblastic anemia also contribute. The aim of this study was to evaluate the clinico-hematological profile of varying degrees of childhood cytopenias with special reference to the non-malignant presentations. This is a retrospective study carried out in a tertiary care children\'s hospital. We retrospectively analyzed 109 pediatric patients who presented with pancytopenia for different etiologies. Acute leukemia (including ALL, AML and myelodysplastic syndrome) and aplastic anemia accounted for 21 per cent and 20 per cent cases respectively. Megaloblastic anemia was found in 31 (28.4 per cent) patients and was single most common etiological factor. Severe thrombocytopenia (platelet < or = 20 x 10(9)/l) occurred in 25.2 per cent of these patients. Various skin and mucosal bleeding occurred in 45.1 per cent of patients with megaloblastic anemia. Infections accounted for 23 (21 per cent) patients who presented with pancytopenia. Amongst infections, enteric fever occurred in 30 per cent patients. Malaria, kala-azar and bacterial infections were other causes of pancytopenia at presentation. The study focuses on identifying easily treatable causes such as megaloblastic anemia and infections presenting with pancytopenia. These conditions though look ominous but respond rapidly to effective therapy.');
+        $abstracts = [$para];
+
+
+        $article = new Article();
+        $article->setIndexerId('PMID16014764');
+        $article->setJournalIssue($journalIssue);
+        $article->setJournal($journal);
+        $article->setAuthors($authors);
+        $article->setAbstract($abstracts);
+        $article->setTitle('Pancytopenia in children: etiological profile.');
+
+        $actual = $this->table->checkArticle($article);
+        $expected = $article;
+
+        // Setting the ids of various parts through reference
+        reset($authorsData);
+        foreach($authors as &$author) {
+            $author->setId(current($authorsData)[0]);
+            next($authorsData);
         }
+        unset($author);
+        $para->setId(461);
+        $journal->setId(194);
+        $article->setId(243);
 
-        $expected->setAuthors($authors);
-        $expected->setAbstract($abstract);
-        $this->assertEquals($expected, $this->table->fetchArticleById(1));
-
-
-        $expected2 = new Article();
-        $expected2->setId(4);
-        $expected2->setIndexerId('PMID24837888');
-        $expected2->setTitle('Better radiation therapy for cervix cancer would save lives.');
-
-        $pubDate2 = new PubDate();
-        $pubDate2->setYear('2014');
-        $pubDate2->setMonth('Jun');
-        $pubDate2->setDay('1');
-
-        $journalIssue2 = new JournalIssue();
-        $journalIssue2->setVolume('89');
-        $journalIssue2->setIssue('2');
-        $journalIssue2->setPages('257-9');
-        $journalIssue2->setPubDate($pubDate2);
-        $journalIssue2->setPubStatus(true);
-        $expected2->setJournalIssue($journalIssue2);
-
-        $journal2 = new Journal();
-        $journal2->setId(3);
-        $journal2->setIssn('1879-355X');
-        $journal2->setTitle('International journal of radiation oncology, biology, physics');
-        $journal2->setAbbr('Int J Radiat Oncol Biol Phys');
-        $expected2->setJournal($journal2);
-
-        $author = new Author();
-        $author->setId(19);
-        $author->setForeName('Gillian M');
-        $author->setLastName('Thomas');
-        $author->setInitials('GM');
-        $expected2->setAuthors(array($author));
-
-        $expected2->setAbstract(array());
-        $this->assertEquals($expected2, $this->table->fetchArticleById(4));
+        $this->assertEquals($expected, $actual);
     }
 
-    public function testFetchByNonExistentId()
-    {
-        $this->assertEquals(null, $this->table->fetchArticleById(1001));
-    }
-
-    public function testCheckNonExistingArticle()
+    public function testCheckingNonExistingArticle()
     {
         $expected = new Article();
 
@@ -239,269 +226,104 @@ class ArticleTableTest extends DbTestCase
 
         $result = $this->table->checkArticle($expected);
 
-        $expected->setId(5);
-        $expected->getJournal()->setId(4);
-        $author1->setId(20);
-        $author2->setId(21);
-        $author3->setId(22);
-        $author4->setId(23);
-        $author5->setId(24);
-        $expected->setAuthors(array($author1, $author2, $author3, $author4, $author5));
+        $expected->setId(310);
+        $expected->getJournal()->setId(243);
+        $author1->setId(1942);
+        $author2->setId(1943);
+        $author3->setId(1944);
+        $author4->setId(1945);
+        $author5->setId(1946);
 
-        $para->setId(10);
-        $expected->setAbstract(array($para));
+        $para->setId(597);
 
         $this->assertEquals($expected, $result);
     }
 
-    public function testCheckExistingArticle()
+    public function testFetchByNonExistingIndexerId()
     {
-        $expected = new Article();
-        $expected->setIndexerId('PMID24914885');
-
-        $pubDate = new PubDate();
-        $pubDate->setDay('9');
-        $pubDate->setMonth('Jun');
-        $pubDate->setYear('2014');
-        $journalIssue = new JournalIssue();
-        $journalIssue->setPubStatus(false);
-        $journalIssue->setVolume('');
-        $journalIssue->setIssue('');
-        $journalIssue->setPages('');
-        $journalIssue->setPubDate($pubDate);
-
-        $expected->setJournalIssue($journalIssue);
-        $expected->setTitle('Variation in Apoptotic Gene Expression in Cervical Cancer Through Oligonucleotide Microarray Profiling.');
-
-        $journalData = array(
-            'id'    => 1,
-            'issn'  => '1526-0976',
-            'title' => 'Journal of lower genital tract disease',
-            'abbr'  => 'J Low Genit Tract Dis'
-        );
-        $journal = Journal::createFromArray($journalData);
-        $expected->setJournal($journal);
-
-        $authorsData = array(
-            array(
-                'last_name' => 'Zhu',
-                'fore_name' => 'Ming-Yue',
-                'initials'  => 'MY'
-            ),
-            array(
-                'last_name' => 'Chen',
-                'fore_name' => 'Fan',
-                'initials'  => 'F'
-            ),
-            array(
-                'last_name' => 'Niyazi',
-                'fore_name' => 'Mayinuer',
-                'initials'  => 'M'
-            ),
-            array(
-                'last_name' => 'Sui',
-                'fore_name' => 'Shuang',
-                'initials'  => 'S'
-            ),
-            array(
-                'last_name' => 'Gao',
-                'fore_name' => 'Dong-Mei',
-                'initials'  => 'DM'
-            )
-        );
-        $authors = array();
-        foreach($authorsData as $authorData) {
-            $authors[] = Author::createFromArray($authorData);
-        }
-
-        $abstractData = array(
-            array(
-                'heading'      => 'Objective',
-                'nlm_category' => 'Objective',
-                'para'         => 'The current study aimed to investigate the molecular basis of cervical cancer development using a microarray to identify the differentially expressed genes. This study also aimed to detect apoptosis genes and proteins to find those genes most aberrantly expressed in cervical cancer and to explore the cause of Uighur cervical cancer.'
-            ),
-            array(
-                'heading'      => 'Methods',
-                'nlm_category' => 'Methods',
-                'para'         => 'An analysis of gene expression profiles obtained from cervical cancer cases was performed. Total RNA was prepared from 10 samples of cervical carcinoma and normal cervix and was hybridized to Affymetrix oligonucleotide microarrays with probe sets complementary to more than 20,000 transcripts. Several genes of the apoptosis pathway, which were differentially regulated, included BCL2, BCLXL, and c-IAP1. These were validated by quantitative reverse transcription-polymerase chain reaction and immunohistochemical staining on an independent set of cancer and control specimens.'
-            ),
-            array(
-                'heading'      => 'Results',
-                'nlm_category' => 'Results',
-                'para'         => 'Unsupervised hierarchical clustering of the expression data readily distinguished the normal cervix from cancer. Supervised analysis of gene expression data identified 1,326 and 1,432 genes that were upregulated and downregulated, respectively; a set of genes belonging to the apoptosis pathways were upregulated or downregulated in patients with cervical cancer. BCL2, BCLXL, and c-IAP1 were found to be upregulated in late-stage cancer compared to early-stage cancer.'
-            ),
-            array(
-                'heading'      => 'Conclusions',
-                'nlm_category' => 'Conclusions',
-                'para'         => 'These findings provide a new understanding of the gene expression profile in cervical cancer. BCL2, BCLXL, and c-IAP1 might be involved in cancer progression. The pathway analysis of expression data showed that the BCL2, BCLXL, and c-IAP1 genes were coordinately differentially regulated between cancer and normal cases. Our results may serve as basis for further development of biomarkers for the diagnosis and treatment of cervical cancer.'
-            )
-        );
-        $abstract = array();
-        foreach($abstractData as $para) {
-            $abstract[] = AbstractPara::createFromArray($para);
-        }
-
-        $expected->setAuthors($authors);
-        $expected->setAbstract($abstract);
-        $result = $this->table->checkArticle($expected);
-
-        $abstractData[0]['id'] = 1;
-        $abstractData[1]['id'] = 2;
-        $abstractData[2]['id'] = 3;
-        $abstractData[3]['id'] = 4;
-        $abstract = array();
-        foreach($abstractData as $para) {
-            $abstract[] = AbstractPara::createFromArray($para);
-        }
-
-        $authorsData[0]['id'] = 1;
-        $authorsData[1]['id'] = 2;
-        $authorsData[2]['id'] = 3;
-        $authorsData[3]['id'] = 4;
-        $authorsData[4]['id'] = 5;
-        $authors = array();
-        foreach($authorsData as $authorData) {
-            $authors[] = Author::createFromArray($authorData);
-        }
-
-        $expected->setId(1);
-        $expected->setAbstract($abstract);
-        $expected->setAuthors($authors);
-
-        $this->assertEquals($expected, $result);
-
+        $this->assertNull($this->table->fetchArticleByIndexerId('PMID98765432'));
     }
 
-    public function testFetchArticleByIndexerId()
+    public function testFetchByIndexerId()
     {
-        $expected = new Article();
-        $expected->setId(1);
-        $expected->setIndexerId('PMID24914885');
+        $article = $this->table->fetchArticleByIndexerId('PMID16014764');
 
-        $pubDate = new PubDate();
-        $pubDate->setDay('9');
-        $pubDate->setMonth('Jun');
-        $pubDate->setYear('2014');
-        $journalIssue = new JournalIssue();
-        $journalIssue->setPubStatus(false);
-        $journalIssue->setVolume('');
-        $journalIssue->setIssue('');
-        $journalIssue->setPages('');
-        $journalIssue->setPubDate($pubDate);
+        // Testing article table data
+        $this->assertEquals(243, $article->getId());
+        $this->assertEquals('PMID16014764', $article->getIndexerId());
+        $this->assertEquals('51', $article->getJournalIssue()->getVolume());
+        $this->assertEquals('4', $article->getJournalIssue()->getIssue());
+        $this->assertEquals('236-9', $article->getJournalIssue()->getPages());
+        $this->assertEquals('2005', $article->getJournalIssue()->getPubDate()->getYear());
+        $this->assertEquals('Aug', $article->getJournalIssue()->getPubDate()->getMonth());
+        $this->assertEquals('', $article->getJournalIssue()->getPubDate()->getDay());
+        $this->assertEquals('Pancytopenia in children: etiological profile.',
+            $article->getTitle());
+        $this->assertEquals(true, $article->getJournalIssue()->getPubStatus());
 
-        $expected->setJournalIssue($journalIssue);
-        $expected->setTitle('Variation in Apoptotic Gene Expression in Cervical Cancer Through Oligonucleotide Microarray Profiling.');
+        // Testing journal table data
+        $this->assertEquals(194, $article->getJournal()->getId());
 
-        $journalData = array(
-            'id'    => 1,
-            'issn'  => '1526-0976',
-            'title' => 'Journal of lower genital tract disease',
-            'abbr'  => 'J Low Genit Tract Dis'
-        );
-        $journal = Journal::createFromArray($journalData);
-        $expected->setJournal($journal);
-
-        $authorsData = array(
-            array(
-                'id'        => 1,
-                'last_name' => 'Zhu',
-                'fore_name' => 'Ming-Yue',
-                'initials'  => 'MY'
-            ),
-            array(
-                'id'        => 2,
-                'last_name' => 'Chen',
-                'fore_name' => 'Fan',
-                'initials'  => 'F'
-            ),
-            array(
-                'id'        => 3,
-                'last_name' => 'Niyazi',
-                'fore_name' => 'Mayinuer',
-                'initials'  => 'M'
-            ),
-            array(
-                'id'        => 4,
-                'last_name' => 'Sui',
-                'fore_name' => 'Shuang',
-                'initials'  => 'S'
-            ),
-            array(
-                'id'        => 5,
-                'last_name' => 'Gao',
-                'fore_name' => 'Dong-Mei',
-                'initials'  => 'DM'
-            )
-        );
-        $authors = array();
-        foreach($authorsData as $authorData) {
-            $authors[] = Author::createFromArray($authorData);
+        // Testing author table data
+        $authors = [];
+        foreach($article->getAuthors() as $author) {
+            $authors[] = $author->getId();
         }
+        $expected = [1576, 1577, 1578, 1579, 1580, 1581];
+        $this->assertEquals($expected, $authors);
 
-        $abstractData = array(
-            array(
-                'id'           => 1,
-                'heading'      => 'Objective',
-                'nlm_category' => 'Objective',
-                'para'         => 'The current study aimed to investigate the molecular basis of cervical cancer development using a microarray to identify the differentially expressed genes. This study also aimed to detect apoptosis genes and proteins to find those genes most aberrantly expressed in cervical cancer and to explore the cause of Uighur cervical cancer.'
-            ),
-            array(
-                'id'           => 2,
-                'heading'      => 'Methods',
-                'nlm_category' => 'Methods',
-                'para'         => 'An analysis of gene expression profiles obtained from cervical cancer cases was performed. Total RNA was prepared from 10 samples of cervical carcinoma and normal cervix and was hybridized to Affymetrix oligonucleotide microarrays with probe sets complementary to more than 20,000 transcripts. Several genes of the apoptosis pathway, which were differentially regulated, included BCL2, BCLXL, and c-IAP1. These were validated by quantitative reverse transcription-polymerase chain reaction and immunohistochemical staining on an independent set of cancer and control specimens.'
-            ),
-            array(
-                'id'           => 3,
-                'heading'      => 'Results',
-                'nlm_category' => 'Results',
-                'para'         => 'Unsupervised hierarchical clustering of the expression data readily distinguished the normal cervix from cancer. Supervised analysis of gene expression data identified 1,326 and 1,432 genes that were upregulated and downregulated, respectively; a set of genes belonging to the apoptosis pathways were upregulated or downregulated in patients with cervical cancer. BCL2, BCLXL, and c-IAP1 were found to be upregulated in late-stage cancer compared to early-stage cancer.'
-            ),
-            array(
-                'id'           => 4,
-                'heading'      => 'Conclusions',
-                'nlm_category' => 'Conclusions',
-                'para'         => 'These findings provide a new understanding of the gene expression profile in cervical cancer. BCL2, BCLXL, and c-IAP1 might be involved in cancer progression. The pathway analysis of expression data showed that the BCL2, BCLXL, and c-IAP1 genes were coordinately differentially regulated between cancer and normal cases. Our results may serve as basis for further development of biomarkers for the diagnosis and treatment of cervical cancer.'
-            )
-        );
-        $abstract = array();
-        foreach($abstractData as $para) {
-            $abstract[] = AbstractPara::createFromArray($para);
+        // Testing abstract para table data
+        $paras = [];
+        foreach($article->getAbstract() as $para) {
+            $paras[] = $para->getId();
         }
-
-        $expected->setAuthors($authors);
-        $expected->setAbstract($abstract);
-
-        $this->assertEquals($expected, $this->table->fetchArticleByIndexerId('PMID24914885'));
-    }
-
-    public function testFetchArticleByNonExistingIndexerId()
-    {
-        $this->assertEquals(null, $this->table->fetchArticleByIndexerId('PMID88776655'));
+        $expected = [461];
+        $this->assertEquals($expected, $paras);
     }
 
     public function testCheckingArticles()
     {
         $ids = array(
-            '24914885',
+            '16014764',
             '12348765',
             '12345678',
-            '24837888',
-            '24914887'
+            '25087944',
+            '25087046'
         );
         array_walk($ids, function(&$value, $key) {
             $value = 'PMID' . $value;
         });
         $articles = $this->table->checkArticles($ids);
         $expectedIds = array(
-            'PMID24914885',
-            'PMID24837888',
-            'PMID24914887'
+            'PMID16014764',
+            'PMID25087944',
+            'PMID25087046'
         );
         $expected = array();
         foreach($expectedIds as $id) {
             $expected[$id] = $this->table->fetchArticleByIndexerId($id);
         }
         $this->assertEquals($expected, $articles);
+    }
+
+    public function testFetchArticlesByIds()
+    {
+        $ids = [
+            1,2,3,246,244,245,243,247,248,300
+        ];
+        $articles = $this->table->fetchArticlesByIds($ids);
+        $this->assertEquals(5, count($articles));
+        $expected = [
+            'PMID25036370' => 1,
+            'PMID18460245' => 246,
+            'PMID16014764' => 243,
+            'PMID2055619'  => 248,
+            'PMID25088681' => 300
+        ];
+        foreach($articles as $indexerId => $article) {
+            $this->assertEquals(key($expected), $indexerId);
+            $this->assertEquals(current($expected), $article->getId());
+            next($expected);
+        }
     }
 } 

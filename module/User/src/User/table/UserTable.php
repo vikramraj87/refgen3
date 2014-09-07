@@ -6,7 +6,6 @@ use Zend\Db\TableGateway\AbstractTableGateway,
     Zend\Db\Adapter\AdapterAwareInterface,
     Zend\Db\Sql\Expression;
 use User\Entity\User;
-use DateTime;
 
 class UserTable extends AbstractTableGateway implements AdapterAwareInterface
 {
@@ -14,6 +13,12 @@ class UserTable extends AbstractTableGateway implements AdapterAwareInterface
 
     /** @var UserSocialTable */
     private $userSocialTable;
+
+    /** @var RoleTable */
+    private $roleTable;
+
+    /** @var UserEmailTable */
+    private $userEmailTable;
 
     /**
      * Set db adapter
@@ -27,11 +32,19 @@ class UserTable extends AbstractTableGateway implements AdapterAwareInterface
         $this->initialize();
     }
 
-    public function checkUser(User $user, $social = 0)
+    /**
+     * Checks for the existence of the user. If user exists, the user
+     * object is populated with the data from the database. If not found,
+     * new entry is created and the user is populated with that
+     *
+     * @param User $user
+     * @param string $social
+     * @return null|User
+     * @throws \RuntimeException
+     */
+    public function checkUser(User $user, $social = '')
     {
-        $social = (int) $social;
-
-        // 1. User Id is provided
+        //1. User Id is provided
         if($user->getId()) {
             $userData = $this->select(array(
                     'id' => $user->getId()
@@ -43,60 +56,74 @@ class UserTable extends AbstractTableGateway implements AdapterAwareInterface
             $socialData = $this->userSocialTable->checkUserIdAndSocial(
                 $userData['id'],
                 $social,
-                $user->getSocialId(),
-                $user->getPictureLink()
+                $user->getSocialId()
             );
-            $user = $this->userFromData($userData, $socialData);
-            $this->updateLastLoggedIn($user);
+            $role = $this->roleTable->fetchRoleById($userData['role']);
+            $user->setId($userData['id']);
+            $user->setRole($role);
             return $user;
         }
 
-        // 2. Social Id and User Id already there in the User Social Table
         $socialData = $this->userSocialTable->fetchBySocialAndSocialId($social, $user->getSocialId());
+        //2. Social Id exists
         if($socialData) {
             $userData = $this->select(array(
                     'id' => $socialData['userId']
                 )
             )->current();
-            $user = $this->userFromData($userData, $socialData);
+            $role = $this->roleTable->fetchRoleById($userData['role']);
+            $user->setId($userData['id']);
+            $user->setRole($role);
+
+            $this->userEmailTable->checkEmail($user->getEmail(), $user->getId());
             $this->updateLastLoggedIn($user);
             return $user;
         }
 
-        // 3. Email is already registered but the social data is new
-        $userData = $this->select(
-            array(
-                'email' => $user->getEmail()
+        $userId = $this->userEmailTable->fetchUserIdByEmail($user->getEmail());
+        //3. Email exists
+        if($userId) {
+            $userData = $this->select(array(
+                    'id' => $userId
+                )
+            )->current();
+            $role = $this->roleTable->fetchRoleById($userData['role']);
+            $user->setId($userData['id']);
+            $user->setRole($role);
+
+            $this->userSocialTable->checkUserIdAndSocial($user->getId(), $social, $user->getSocialId());
+            $this->updateLastLoggedIn($user);
+            return $user;
+        }
+
+        //4. None exists
+        $isAffected = (bool) $this->insert(array(
+                'created_on'  => date('Y-m-d H:i:s')
             )
-        )->current();
-        if($userData) {
-            $socialData = $this->userSocialTable->checkUserIdAndSocial(
-                $userData['id'],
-                $social,
-                $user->getSocialId(),
-                $user->getPictureLink()
-            );
-            $user = $this->userFromData($userData, $socialData);
-            $this->updateLastLoggedIn($user);
-            return $user;
-        }
-
-        // 4. None of the entries found. Create new user
-        $data  = array(
-            'email'       => $user->getEmail(),
-            'first_name'  => $user->getFirstName(),
-            'middle_name' => $user->getMiddleName(),
-            'last_name'   => $user->getLastName(),
-            'name'        => $user->getName(),
-            'created_on'  => date('Y-m-d H:i:s')
         );
-        $numRowsAffected = $this->insert($data);
-        if(!$numRowsAffected) {
+        if(!$isAffected) {
             throw new \RuntimeException('Failed insertion in "user" Table');
         }
-        return $this->checkUser($user, $social);
+        $userId = $this->getLastInsertValue();
+        $userData = $this->select(array(
+                'id' => $userId
+            )
+        )->current();
+        $role = $this->roleTable->fetchRoleById($userData['role']);
+        $user->setId($userData['id']);
+        $user->setRole($role);
+
+        $this->userEmailTable->checkEmail($user->getEmail(), $user->getId());
+        $this->userSocialTable->checkUserIdAndSocial($user->getId(), $social, $user->getSocialId());
+        $this->updateLastLoggedIn($user);
+        return $user;
     }
 
+    /**
+     * Fetches data of all users
+     *
+     * @return array
+     */
     public function fetchAllUsers()
     {
         $select = $this->getSql()
@@ -105,31 +132,35 @@ class UserTable extends AbstractTableGateway implements AdapterAwareInterface
         $rowset = $this->selectWith($select);
 
         $users = array();
+
         foreach($rowset as $row) {
             $users[$row['id']] = array(
-                'email' => $row['email'],
-                'name'  => $row['name'],
+                'role'  => $row['role'],
                 'createdOn' => $row['created_on'],
                 'lastLoggedIn' => $row['last_logged_in']
             );
-            $socialIds[] = $row['id'];
         }
 
-        $socialData = $this->userSocialTable->select(array(
-                'user_id' => array_keys($users)
-            )
-        );
+        $rowset = $this->userEmailTable->select();
 
-        foreach($socialData as $data) {
-            $users[$data['user_id']]['socials'][$data['social']] = array(
-                'socialId' => $data['social_id'],
-                'picture'  => $data['picture']
-            );
+        foreach($rowset as $row) {
+            $users[$row['user_id']]['emails'][] = $row['email'];
+        }
+
+        $rowset = $this->userSocialTable->select();
+
+        foreach($rowset as $row) {
+            $users[$row['user_id']]['socials'][$row['social']] = $row['social_id'];
         }
 
         return $users;
     }
 
+    /**
+     * Returns the total number of users stored in the database
+     *
+     * @return int
+     */
     public function getTotalCount()
     {
         $select = $this->getSql()
@@ -149,22 +180,19 @@ class UserTable extends AbstractTableGateway implements AdapterAwareInterface
         );
     }
 
-    private function userFromData($userData, $socialData)
+    private function updateUserFromData(User &$user, $userData, $socialData)
     {
-        $user = new User();
+        $role = $this->roleTable->fetchRoleById($userData['role']);
+        if(null === $role) {
+            throw new \RuntimeException('Invalid User role from the database for user with id: ' . $userData['id']);
+        }
         $user->setId($userData['id'])
-             ->setEmail($userData['email'])
-             ->setFirstName($userData['first_name'])
-             ->setMiddleName($userData['middle_name'])
-             ->setLastName($userData['last_name'])
-             ->setName($userData['name'])
-             ->setRole($userData['role'])
-             ->setSocialId($socialData['socialId'])
-             ->setPictureLink($socialData['picture']);
-        return $user;
+             ->setRole($role);
     }
 
     /**
+     * Setter for $this->userSocialTable
+     *
      * @param \User\table\UserSocialTable $userSocialTable
      */
     public function setUserSocialTable(UserSocialTable $userSocialTable)
@@ -172,5 +200,17 @@ class UserTable extends AbstractTableGateway implements AdapterAwareInterface
         $this->userSocialTable = $userSocialTable;
     }
 
+    /**
+     * @param RoleTable $roleTable
+     */
+    public function setRoleTable(RoleTable $roleTable)
+    {
+        $this->roleTable = $roleTable;
+    }
+
+    public function setUserEmailTable(UserEmailTable $userEmailTable)
+    {
+        $this->userEmailTable = $userEmailTable;
+    }
 
 }

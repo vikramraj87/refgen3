@@ -44,10 +44,14 @@ return array(
                         )
                     ),
                     'delete' => array(
-                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'type' => 'Zend\Mvc\Router\Http\Segment',
                         'options' => array(
-                            'route' => '/delete',
+                            'route' => '/delete/:id',
+                            'constraints' => array(
+                                'id' => '\d+'
+                            ),
                             'defaults' => array(
+                                'id' => 0,
                                 'action' => 'delete'
                             )
                         )
@@ -126,16 +130,45 @@ return array(
                             )
                         )
                     ),
+                    'render' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => array(
+                            'route' => '/render',
+                            'defaults' => array(
+                                'action' => 'render'
+                            )
+                        )
+                    ),
+                    'processMultiple' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => array(
+                            'route' => '/process-multiple',
+                            'defaults' => array(
+                                'action' => 'process-multiple'
+                            )
+                        )
+                    ),
                     'remove' => array(
                         'type' => 'Zend\Mvc\Router\Http\Segment',
                         'options' => array(
-                            'route' => '/remove/[:id]',
+                            'route' => '/remove/:ids',
                             'constraints' => array(
-                                'id' => '\d+'
+                                'ids' => '\d+[(,\d+)]*'
                             ),
                             'defaults' => array(
-                                'id' => 0,
                                 'action' => 'remove'
+                            )
+                        )
+                    ),
+                    'sort' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Segment',
+                        'options' => array(
+                            'route' => '/sort/:ids',
+                            'constraints' => array(
+                                'ids' => '\d+[(,\d+)]*'
+                            ),
+                            'defaults' => array(
+                                'action' => 'sort'
                             )
                         )
                     )

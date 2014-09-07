@@ -9,6 +9,7 @@
 namespace ArticleTest\Entity;
 
 use Article\Entity\JournalIssue;
+use Article\Entity\PubDate;
 use PHPUnit_Framework_TestCase;
 
 class JournalIssueTest extends PHPUnit_Framework_TestCase
@@ -30,5 +31,36 @@ class JournalIssueTest extends PHPUnit_Framework_TestCase
             $journalIssue->setPages($provided);
             $this->assertEquals($expected, $journalIssue->getPages());
         }
+    }
+
+    public function testToArray()
+    {
+        $pubDate = new PubDate();
+        $pubDate->setDay('10');
+        $pubDate->setMonth('Sep');
+        $pubDate->setYear('2014');
+
+        $journalIssue = new JournalIssue();
+        $journalIssue->setIssue('7');
+        $journalIssue->setVolume('9');
+        $journalIssue->setPages('123-127');
+        $journalIssue->setPubDate($pubDate);
+        $journalIssue->setPubStatus(true);
+
+        $expected = [
+            'volume' => '9',
+            'issue'  => '7',
+            'pages'  => '123-7',
+            'pub_status' => 1,
+            'day' => '10',
+            'month' => 'Sep',
+            'year' => '2014'
+        ];
+
+        $this->assertEquals($expected, $journalIssue->toArray());
+
+        $expected['pub_status'] = 0;
+        $journalIssue->setPubStatus(false);
+        $this->assertEquals($expected, $journalIssue->toArray());
     }
 } 

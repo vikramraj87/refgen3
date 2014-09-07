@@ -23,67 +23,75 @@ class JournalTableTest extends DbTestCase
 
     public function testFetchById()
     {
-        $expected = new Journal();
-        $expected->setId(1);
-        $expected->setIssn('1526-0976');
-        $expected->setAbbr('J Low Genit Tract Dis');
-        $expected->setTitle('Journal of lower genital tract disease');
-
-        $result = $this->table->fetchJournalById(1);
-        $this->assertEquals($expected, $result);
-
-        $expected2 = new Journal();
-        $expected2->setId(2);
-        $expected2->setIssn('1752-8062');
-        $expected2->setAbbr('Clin Transl Sci');
-        $expected2->setTitle('Clinical and translational science');
-
-        $result2 = $this->table->fetchJournalById(2);
-        $this->assertEquals($expected2, $result2);
+        $journal = $this->table->fetchJournalById(194);
+        $this->assertEquals(194, $journal->getId());
+        $this->assertEquals('J Trop Pediatr', $journal->getAbbr());
+        $this->assertEquals('Journal of tropical pediatrics', $journal->getTitle());
+        $this->assertEquals('0142-6338', $journal->getIssn());
     }
 
-    public function testFetchByIdWithNonExistentId()
+    public function testFetchByIds()
     {
-        $this->assertEquals(null, $this->table->fetchJournalById(1001));
+        $journals = $this->table->fetchJournalsByIds([1,2,197,198,199]);
+        $expected = [1,197,199];
+        foreach($journals as $id => $journal) {
+            $expectedId = current($expected);
+            $this->assertEquals($expectedId, $id);
+            $this->assertEquals($this->table->fetchJournalById($expectedId), $journal);
+            next($expected);
+        }
     }
 
-    public function testFetchByExistingIssn()
+    public function testFetchByNonExistingIds()
     {
-        $journal = new Journal();
-        $journal->setId(3);
-        $journal->setIssn('1879-355X');
-        $journal->setTitle('International journal of radiation oncology, biology, physics');
-        $journal->setAbbr('Int J Radiat Oncol Biol Phys');
+        $journals = $this->table->fetchJournalsByIds([2,3,4,5]);
+        $this->assertEmpty($journals);
+    }
 
-        $this->assertEquals($journal, $this->table->fetchJournalByIssn('1879-355X'));
+    public function testFetchByNonExistingId()
+    {
+        $this->assertNull($this->table->fetchJournalById(1234));
+    }
+
+    public function testFetchByIssn()
+    {
+        $journal = $this->table->fetchJournalByIssn('1022-386X');
+        $this->assertEquals(197, $journal->getId());
+        $this->assertEquals('1022-386X', $journal->getIssn());
+        $this->assertEquals('J Coll Physicians Surg Pak', $journal->getAbbr());
+        $this->assertEquals('Journal of the College of Physicians and Surgeons--Pakistan : JCPSP', $journal->getTitle());
     }
 
     public function testFetchByNonExistingIssn()
     {
-        $this->assertEquals(null, $this->table->fetchJournalByIssn('xxxx-yyyy'));
+        $this->assertNull($this->table->fetchJournalByIssn('1234-5678'));
     }
 
-    public function testCheckJournalWithExistingId()
-    {
-        $journal = new Journal();
-        $journal->setIssn('1879-355X');
-        $journal->setTitle('International journal of radiation oncology, biology, physics');
-        $journal->setAbbr('Int J Radiat Oncol Biol Phys');
-
-        $this->table->checkJournal($journal);
-        $this->assertEquals(3, $journal->getId());
-    }
-
-    public function testCheckJournalWithNonExistingId()
+    public function testCheckJournalWithExistingIssn()
     {
         $rowCount = $this->getConnection()->getRowCount('journals');
+
         $journal = new Journal();
-        $journal->setAbbr('J Biomed Nanotechnol');
-        $journal->setIssn('1550-7033');
-        $journal->setTitle('Journal of biomedical nanotechnology');
+        $journal->setIssn('0019-6061');
+        $journal->setTitle('Indian pediatrics');
+        $journal->setAbbr('Indian Pediatr');
 
         $this->table->checkJournal($journal);
-        $this->assertEquals($rowCount + 1, $journal->getId());
+        $this->assertEquals($rowCount, $this->getConnection()->getRowCount('journals'));
+        $this->assertEquals(199, $journal->getId());
     }
 
-} 
+    public function testCheckingJournalWithNonExistingIssn()
+    {
+        $rowCount = $this->getConnection()->getRowCount('journals');
+
+        $journal = new Journal();
+        $journal->setIssn('1234-5678');
+        $journal->setAbbr('Ind J Cyt');
+        $journal->setTitle('Indian Journal of Cytology');
+
+        $this->table->checkJournal($journal);
+        $this->assertEquals($rowCount + 1, $this->getConnection()->getRowCount('journals'));
+        $this->assertEquals(243, $journal->getId());
+    }
+}

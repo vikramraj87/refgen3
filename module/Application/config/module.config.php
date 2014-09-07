@@ -1,7 +1,7 @@
 <?php
 use Zend\Mvc\Controller\ControllerManager;
 
-return array(
+$config = array(
     'router' => array(
         'routes' => array(
             'home' => array(
@@ -72,6 +72,9 @@ return array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
         ),
+        'strategies' => array(
+            'ViewJsonStrategy'
+        )
     ),
     // Placeholder for console routes
     'console' => array(
@@ -86,3 +89,8 @@ return array(
         'cookie_httponly'     => true
     )
 );
+if('development' == getenv('APP_ENV')) {
+    $config['view_manager']['display_not_found_reason'] = true;
+    $config['view_manager']['display_exceptions']       = true;
+}
+return $config;

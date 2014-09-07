@@ -17,9 +17,7 @@ class CollectionServiceFactory implements FactoryInterface
         /** @var ArticleTable $articleTable */
         $articleTable = $serviceLocator->get('Article\Table\Article');
 
-        $service = new CollectionService();
-        $service->setArticleTable($articleTable);
-        $service->init();
+        $service = new CollectionService($articleTable);
         return $service;
     }
 

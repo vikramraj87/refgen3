@@ -27,15 +27,22 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
         $this->initialize();
     }
 
-    public function fetchCollectionById($id = 0, $userId = 0)
+    /**
+     * Fetches collection by id
+     *
+     * @param int $id
+     * @param int $userId
+     * @return Collection|null
+     */
+    public function fetchCollectionByIdAndUserId($id = 0, $userId = 0)
     {
         $id = (int) $id;
-        $rowset = $this->select(array(
+        $userId = (int) $userId;
+        $data = $this->select(array(
                 'id' => $id,
                 'user_id' => $userId
             )
-        );
-        $data = $rowset->current();
+        )->current();
         if(!$data) {
             return null;
         }
@@ -44,28 +51,35 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
         $updatedOn = null == $data['updated_on'] ?
             null : new \DateTime($data['updated_on']);
 
-        $collection = new Collection();
-        $collection->setId($data['id']);
-        $collection->setName($data['name']);
-        $collection->setCreatedOn($createdOn);
-        $collection->setUpdatedOn($updatedOn);
-
         $articles = $this->collectionArticleTable
-                         ->fetchArticlesByCollectionId($collection->getId());
-        $collection->setArticles($articles);
+                         ->fetchArticlesByCollectionId($id);
+        $collection = new Collection(
+            $articles,
+            (int) $data['id'],
+            $data['name'],
+            $createdOn,
+            $updatedOn,
+            false,
+            $userId
+        );
         return $collection;
     }
 
+    /**
+     * Returns recently modified collections
+     *
+     * @param int $userId
+     * @param int $current
+     * @return array
+     */
     public function fetchRecentByUserId($userId = 0, $current = 0)
     {
         $current = (int) $current;
-
         $where = array();
         $where['user_id'] = $userId;
         if(0 != $current) {
             $where['id != ?'] = $current;
         }
-
         $select = $this->getSql()
                        ->select()
                        ->where($where)
@@ -75,13 +89,19 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
         $collections = array();
         foreach($rowset as $row) {
             $collections[] = array(
-                'id'   => $row['id'],
+                'id'   => (int) $row['id'],
                 'name' => $row['name']
             );
         }
         return $collections;
     }
 
+    /**
+     * Returns all the collections belonging to the user
+     *
+     * @param int $userId
+     * @return array
+     */
     public function fetchEntireByUserId($userId = 0)
     {
         $select = $this->getSql()
@@ -92,7 +112,7 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
         $collections = array();
         foreach($rowset as $row) {
             $collections[] = array(
-                'id' => $row['id'],
+                'id'   => (int) $row['id'],
                 'name' => $row['name']
             );
         }
@@ -107,83 +127,76 @@ class CollectionTable extends AbstractTableGateway implements AdapterAwareInterf
         $this->collectionArticleTable = $collectionArticleTable;
     }
 
-    public function saveCollection(Collection $collection, $userId = 0)
+    /**
+     * Saves or updates the collection in the database
+     *
+     * @param Collection $collection
+     * @return bool
+     * @throws \InvalidArgumentException
+     */
+    public function saveCollection(Collection $collection)
     {
-        $userId = (int) $userId;
+        // Get the id and user id
+        $id = $collection->getId();
+        $userId = $collection->getUserId();
 
         if(0 == $userId) {
             throw new \InvalidArgumentException('User Id required to create a new collection');
         }
 
-        $data = array(
-            'name'     => $collection->getName(),
-            'user_id'  => $userId,
-            'created_on' => date('Y-m-d H:i:s')
-        );
-
-        $result = (bool) $this->insert($data);
-        if(!$result) {
-            return false;
+        if(0 != $id) { // Update the collection
+            $savedCollection = $this->select(array(
+                    'id' => $id
+                )
+            )->current();
+            if(!$savedCollection) {
+                throw new \InvalidArgumentException(
+                    'The collection to update identified by id: ' . $id . 'doesn\'t exist'
+                );
+            }
+            $updatedOn = new \DateTime();
+            $data = array(
+                'name' => $collection->getName(),
+                'updated_on' => $updatedOn->format('Y-m-d H:i:s')
+            );
+            $result = (bool) $this->update($data, array('id' => $id));
+            if(!$result) {
+                return false;
+            }
+            $collection->setUpdatedOn($updatedOn);
+        } else {    // Create new collection
+            $createdOn = new \DateTime();
+            $data = array(
+                'name'     => $collection->getName(),
+                'user_id'  => $collection->getUserId(),
+                'created_on' => $createdOn->format('Y-m-d H:i:s')
+            );
+            $result = (bool) $this->insert($data);
+            if(!$result) {
+                return false;
+            }
+            $id = $this->getLastInsertValue();
+            $collection->setId($id);
+            $collection->setCreatedOn($createdOn);
         }
-        $id = $this->getLastInsertValue();
-        $collection->setId($id);
 
-        $articles = $collection->getArticles();
+        $articles = $collection->getItems();
 
-        $result = $this->collectionArticleTable->saveArticles($articles, $id);
+        $result = $this->collectionArticleTable->saveArticles($articles, $collection->getId());
         if(!$result) {
-            /*
-             * Todo: Check deleting collection to check for integrity constraints.
-             * Todo: Potential problem. If not deleted properly, won't allow people to
-             * Todo: use the same name when they retry
-             */
             $this->delete(array('id' => $id));
             return false;
         }
-        return $this->fetchCollectionById($id, $userId);
+        // Reset the edit status
+        $collection->resetEdit();
+        return true;
     }
 
-    public function updateCollection(Collection $collection)
-    {
-        $id = $collection->getId();
-
-        $savedCollection = $this->select(array(
-                'id' => $id
-            )
-        )->current();
-        if(!$savedCollection) {
-            throw new \InvalidArgumentException(
-                'The collection to update identified by id: ' . $id . 'doesn\'t exist'
-            );
-        }
-
-        $data = array(
-            'name' => $collection->getName(),
-            'updated_on' => date('Y-m-d H:i:s')
-        );
-        $result = (bool) $this->update($data, array('id' => $id));
-        if(!$result) {
-            return false;
-        }
-
-        $result = $this->collectionArticleTable->saveArticles($collection->getArticles(), $id);
-        if(!$result) {
-            /*
-             * Todo: Potential problem. If not deleted properly, won't allow people to
-             * Todo: use the same name when they retry
-             */
-            // $this->delete(array('id' => $id));
-            return false;
-        }
-        return $this->fetchCollectionById($id, $savedCollection['user_id']);
-
-    }
-
-    public function deleteCollectionById($id = 0, $userId = 0)
+    public function deleteCollectionByIdAndUserId($id = 0, $userId = 0)
     {
         $id = (int) $id;
         $userId = (int) $userId;
-        $collection = $this->fetchCollectionById($id, $userId);
+        $collection = $this->fetchCollectionByIdAndUserId($id, $userId);
         if($collection) {
             $this->collectionArticleTable->delete(array('collection_id' => $collection->getId()));
             return (bool) $this->delete(array('id' => $collection->getId()));

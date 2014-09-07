@@ -98,6 +98,10 @@ ol#collection {
     &:hover {
       background-color: #eee;
     }
+    input {
+      margin-bottom: 0px;
+      margin-right: 1em;
+    }
   }
 }
 
@@ -121,4 +125,22 @@ ol#collection {
 
 #facebook-link {
   @include login-button('../img/FB-f-Logo__blue_58.png');
+}
+
+/* Citation generator form styles */
+
+.tabs-header{
+  background: #faa900;
+  color: #fff;
+  height: 56px;
+  text-align: center;
+  padding: 14px 10px 10px 10px;
+}
+
+input[type="text"]{
+  border-radius:10px;
+}
+
+select{
+  border-radius:10px;
 }

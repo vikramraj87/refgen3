@@ -11,23 +11,20 @@
     );
     $socials = $this->socials;
     ksort($socials);
-    $pictureLink = current($socials)['picture'];
     $collections = $this->collections ?: 0;
 
 ?>
 
             <tr>
-                <td><img width="40px" height="40px" src="<?php echo $pictureLink; ?>"/></td>
-                <!-- <td><?php // echo $this->email; ?></td> -->
-                <td><?php echo $this->name; ?></td>
+                <td><?php echo implode(' | ', $this->emails); ?></td>
                 <td><?php echo (new \DateTime($this->createdOn))->format('M j'); ?></td>
                 <td><?php echo (new \DateTime($this->lastLoggedIn))->format('M j'); ?></td>
                 <td>
                     <?php
                         $socialLinks = array();
-                        foreach($socials as $social => $data) {
+                        foreach($socials as $social => $id) {
                             $link = $socialParams[$social]['url'];
-                            $link .= $data['socialId'];
+                            $link .= $id;
                             $text = $socialParams[$social]['name'];
                             $socialLinks[] = sprintf(
                                 '<a href="%s" target="_blank">%s</a>',

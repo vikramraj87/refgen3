@@ -23,105 +23,249 @@ class AbstractParaTableTest extends DbTestCase
 
     public function testFetchByArticleId()
     {
-        $data     = array(
-            array(
-                'id'           => 5,
-                'heading'      => 'Objective',
-                'nlm_category' => 'Objective',
-                'para'         => 'To determine whether a quality assurance (QA) program using digital cervicography improved the performance of a visual inspection with acetic acid (VIA) to detect cervical intraepithelial neoplasia grade 2 or worse (CIN 2+) in HIV-infected women in Johannesburg, South Africa.'
-            ),
-            array(
-                'id'           => 6,
-                'heading'      => 'Materials and methods',
-                'nlm_category' => 'Methods',
-                'para'         => 'Visual inspection with acetic acid was performed among HIV-infected women, aged 18 to 65 years, in Johannesburg, South Africa. Nurses received 2 weeks of training on the VIA procedure. The VIA interpretation was performed in real time. The VIA results were then photographed using a retail available digital camera. A gynecologist and medical officer reviewed the VIA digital images within 2 weeks of the procedure. Colposcopic biopsy was performed on all women with positive VIA and 25% negative VIA results. Sensitivity and specificity of VIA for the detection of CIN 2+ were compared between the nurses and physicians at the beginning and at the end of the study.'
-            ),
-            array(
-                'id'           => 7,
-                'heading'      => 'Results',
-                'nlm_category' => 'Results',
-                'para'         => 'Positive VIA results were found in 541 (45%) of the 1,202 participating women. The sensitivity of VIA to predict CIN 2+ was improved from 65% to 75% (p = .001) with the addition of digital cervicography and specialist review. There was no statistical difference in the sensitivity of the VIA readings when comparing the first 600 participants to the final 593 participants between the nurses (p = .613) and physicians (p = .624).'
-            ),
-            array(
-                'id'           => 8,
-                'heading'      => 'Conclusions',
-                'nlm_category' => 'Conclusions',
-                'para'         => 'Quality assurance performed by specialists using digital cervicography improved the sensitivity of VIA. There was no difference in sensitivity in interpreting VIA between the beginning and the end of the study. Quality assurance should form a cornerstone of any VIA program to improve sensitivity in detecting CIN 2+ lesions.'
-            )
-        );
-        $expected = $this->abstractFromArray($data);
-        $this->assertEquals($expected, $this->table->fetchParasByArticleId(2));
+        $para = $this->table->fetchParasByArticleId(243)[0];
+        $this->assertEquals(461, $para->getId());
+        $this->assertEquals('', $para->getHeading());
+        $this->assertEquals('', $para->getNlmCategory());
+        $this->assertEquals('Pancytopenia is a common occurrence in pediatric patients. Though acute leukemias and bone marrow failure syndromes are usual causes of pancytopenia, etiologies such as infections and megaloblastic anemia also contribute. The aim of this study was to evaluate the clinico-hematological profile of varying degrees of childhood cytopenias with special reference to the non-malignant presentations. This is a retrospective study carried out in a tertiary care children\'s hospital. We retrospectively analyzed 109 pediatric patients who presented with pancytopenia for different etiologies. Acute leukemia (including ALL, AML and myelodysplastic syndrome) and aplastic anemia accounted for 21 per cent and 20 per cent cases respectively. Megaloblastic anemia was found in 31 (28.4 per cent) patients and was single most common etiological factor. Severe thrombocytopenia (platelet < or = 20 x 10(9)/l) occurred in 25.2 per cent of these patients. Various skin and mucosal bleeding occurred in 45.1 per cent of patients with megaloblastic anemia. Infections accounted for 23 (21 per cent) patients who presented with pancytopenia. Amongst infections, enteric fever occurred in 30 per cent patients. Malaria, kala-azar and bacterial infections were other causes of pancytopenia at presentation. The study focuses on identifying easily treatable causes such as megaloblastic anemia and infections presenting with pancytopenia. These conditions though look ominous but respond rapidly to effective therapy.', $para->getPara());
 
-        $data2     = array(
-            array(
-                'id'           => 9,
-                'heading'      => '',
-                'nlm_category' => 'Unlabelled',
-                'para'         => 'Each year 610,000 cases of anogenital and oropharyngeal cancers caused by human papillomavirus (HPV) occur worldwide. HPV vaccination represents a promising opportunity to prevent cancer on a global scale. The vaccine\'s story dates back to discoveries in chickens at the beginning of the 20th century with evidence that a cell-free filtrate could transmit the propensity to grow cancers. Later, studies with similarly derived filtrates from mammalian tumors showed that hosts could develop immunity to subsequent exposures. Epidemiologic studies linked cervical cancer to members of a family of viruses that cause papillomatosis and common warts. This led to work with DNA hybridization demonstrating a causal relationship. The formation of virus-like particles from viral capsid proteins led to the development of models for safe and effective vaccines. While much work remains with the acceptance of universal vaccination, the HPV vaccines Gardasil and Cervarix thus represent a century of successful translational research.'
-            )
-        );
-        $expected2 = $this->abstractFromArray($data2);
-        $this->assertEquals($expected2, $this->table->fetchParasByArticleId(3));
+        $expectedParas = [
+            [
+                'id' => 467,
+                'heading' => 'Objective',
+                'nlmCategory' => 'Objective',
+                'para' => 'To determine the spectrum of pancytopenia with its frequency, common clinical presentation and etiology on the basis of bone marrow examination in children from 2 months to 15 years.'
+            ], [
+                'id' => 468,
+                'heading' => 'Design',
+                'nlmCategory' => 'Methods',
+                'para' => 'Observational study.'
+            ], [
+                'id' => 469,
+                'heading' => 'Place and duration of study',
+                'nlmCategory' => 'Methods',
+                'para' => 'Department of Paediatrics, Liaquat University of Medical and Health Sciences (LUMHS), Jamshoro, from October 2005 to March 2007.'
+            ], [
+                'id' => 470,
+                'heading' => 'Patients and methods',
+                'nlmCategory' => 'Methods',
+                'para' => 'All patients aged 2 months to 15 years having pancytopenia were included. Patients beyond this age limits, already diagnosed cases of aplastic anemia and leukemia, clinical suspicion of genetic or constitutional pancytopenia, history of blood transfusion in recent past, and those not willing for either admission or bone marrow examination were excluded. History, physical and systemic examination and hematological parameters at presentation were recorded. Hematological profile included hemoglobin, total and differential leucocyte count, platelet count, reticulocyte count, peripheral smear and bone marrow aspiration/biopsy.'
+            ], [
+                'id' => 471,
+                'heading' => 'Results',
+                'nlmCategory' => 'Results',
+                'para' => 'During the study period, out of the 7000 admissions in paediatric ward, 250 patients had pancytopenia on their peripheral blood smear (3.57%). Out of those, 230 patients were finally studied. Cause of pancytopenia was identified in 220 cases on the basis of bone marrow and other supportive investigations, while 10 cases remained undiagnosed. Most common was aplastic anemia (23.9%), megaloblastic anemia (13.04%), leukemia (13.05%), enteric fever (10.8%), malaria (8.69%) and sepsis (8.69%). Common clinical presentations were pallor, fever, petechial hemorrhages, visceromegaly and bleeding from nose and gastrointestinal tract.'
+            ], [
+                'id' => 472,
+                'heading' => 'Conclusion',
+                'nlmCategory' => 'Conclusions',
+                'para' => 'Pancytopenia is a common occurrence in paediatric patients. Though acute leukemia and bone marrow failure were the usual causes of pancytopenia, infections and megaloblastic anemia are easily treatable and reversible.'
+            ]
+        ];
+        $paras = $this->table->fetchParasByArticleId(246);
+        $this->assertCount(6, $paras);
+        reset($expectedParas);
+        foreach($paras as $p) {
+            $expected = current($expectedParas);
+            $this->assertEquals($expected['id'], $p->getId());
+            $this->assertEquals($expected['heading'], $p->getHeading());
+            $this->assertEquals($expected['nlmCategory'], $p->getNlmCategory());
+            $this->assertEquals($expected['para'], $p->getPara());
+            next($expectedParas);
+        }
     }
 
-    public function testFetchByNonExistentArticleId()
+    public function testFetchByArticleIds()
     {
-        $this->assertEquals(array(), $this->table->fetchParasByArticleId(1001));
+        $expectedParasList = [
+            243 => [[
+                'id' => 461,
+                'heading' => '',
+                'nlmCategory' => '',
+                'para' => 'Pancytopenia is a common occurrence in pediatric patients. Though acute leukemias and bone marrow failure syndromes are usual causes of pancytopenia, etiologies such as infections and megaloblastic anemia also contribute. The aim of this study was to evaluate the clinico-hematological profile of varying degrees of childhood cytopenias with special reference to the non-malignant presentations. This is a retrospective study carried out in a tertiary care children\'s hospital. We retrospectively analyzed 109 pediatric patients who presented with pancytopenia for different etiologies. Acute leukemia (including ALL, AML and myelodysplastic syndrome) and aplastic anemia accounted for 21 per cent and 20 per cent cases respectively. Megaloblastic anemia was found in 31 (28.4 per cent) patients and was single most common etiological factor. Severe thrombocytopenia (platelet < or = 20 x 10(9)/l) occurred in 25.2 per cent of these patients. Various skin and mucosal bleeding occurred in 45.1 per cent of patients with megaloblastic anemia. Infections accounted for 23 (21 per cent) patients who presented with pancytopenia. Amongst infections, enteric fever occurred in 30 per cent patients. Malaria, kala-azar and bacterial infections were other causes of pancytopenia at presentation. The study focuses on identifying easily treatable causes such as megaloblastic anemia and infections presenting with pancytopenia. These conditions though look ominous but respond rapidly to effective therapy.'
+            ]],
+            246 => [
+                [
+                    'id' => 467,
+                    'heading' => 'Objective',
+                    'nlmCategory' => 'Objective',
+                    'para' => 'To determine the spectrum of pancytopenia with its frequency, common clinical presentation and etiology on the basis of bone marrow examination in children from 2 months to 15 years.'
+                ], [
+                    'id' => 468,
+                    'heading' => 'Design',
+                    'nlmCategory' => 'Methods',
+                    'para' => 'Observational study.'
+                ], [
+                    'id' => 469,
+                    'heading' => 'Place and duration of study',
+                    'nlmCategory' => 'Methods',
+                    'para' => 'Department of Paediatrics, Liaquat University of Medical and Health Sciences (LUMHS), Jamshoro, from October 2005 to March 2007.'
+                ], [
+                    'id' => 470,
+                    'heading' => 'Patients and methods',
+                    'nlmCategory' => 'Methods',
+                    'para' => 'All patients aged 2 months to 15 years having pancytopenia were included. Patients beyond this age limits, already diagnosed cases of aplastic anemia and leukemia, clinical suspicion of genetic or constitutional pancytopenia, history of blood transfusion in recent past, and those not willing for either admission or bone marrow examination were excluded. History, physical and systemic examination and hematological parameters at presentation were recorded. Hematological profile included hemoglobin, total and differential leucocyte count, platelet count, reticulocyte count, peripheral smear and bone marrow aspiration/biopsy.'
+                ], [
+                    'id' => 471,
+                    'heading' => 'Results',
+                    'nlmCategory' => 'Results',
+                    'para' => 'During the study period, out of the 7000 admissions in paediatric ward, 250 patients had pancytopenia on their peripheral blood smear (3.57%). Out of those, 230 patients were finally studied. Cause of pancytopenia was identified in 220 cases on the basis of bone marrow and other supportive investigations, while 10 cases remained undiagnosed. Most common was aplastic anemia (23.9%), megaloblastic anemia (13.04%), leukemia (13.05%), enteric fever (10.8%), malaria (8.69%) and sepsis (8.69%). Common clinical presentations were pallor, fever, petechial hemorrhages, visceromegaly and bleeding from nose and gastrointestinal tract.'
+                ], [
+                    'id' => 472,
+                    'heading' => 'Conclusion',
+                    'nlmCategory' => 'Conclusions',
+                    'para' => 'Pancytopenia is a common occurrence in paediatric patients. Though acute leukemia and bone marrow failure were the usual causes of pancytopenia, infections and megaloblastic anemia are easily treatable and reversible.'
+                ]
+            ]
+        ];
+        $paraList = $this->table->fetchParasByAArticleIds([243, 246]);
+        $this->assertCount(2, $paraList);
+
+        $paras = $paraList[243];
+        $this->assertCount(1, $paras);
+        $expectedParas = $expectedParasList[243];
+        reset($expectedParas);
+        foreach($paras as $p) {
+            $expected = current($expectedParas);
+            $this->assertEquals($expected['id'], $p->getId());
+            $this->assertEquals($expected['heading'], $p->getHeading());
+            $this->assertEquals($expected['nlmCategory'], $p->getNlmCategory());
+            $this->assertEquals($expected['para'], $p->getPara());
+            next($expectedParas);
+        }
+
+        $paras = $paraList[246];
+        $this->assertCount(6, $paras);
+        $expectedParas = $expectedParasList[246];
+        reset($expectedParas);
+        foreach($paras as $p) {
+            /** @var $p AbstractPara */
+
+            $expected = current($expectedParas);
+            $this->assertEquals($expected['id'], $p->getId());
+            $this->assertEquals($expected['heading'], $p->getHeading());
+            $this->assertEquals($expected['nlmCategory'], $p->getNlmCategory());
+            $this->assertEquals($expected['para'], $p->getPara());
+            next($expectedParas);
+        }
+    }
+
+    public function testFetchByNonExistentArticleIds()
+    {
+        $paras = $this->table->fetchParasByArticleId(300);
+        $this->assertEmpty($paras);
     }
 
     public function testCreateAbstract()
     {
-        $para1 = new AbstractPara();
-        $para1->setHeading('Lorem');
-        $para1->setNlmCategory('Lorem');
-        $para1->setPara('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas leo nibh, tempus ullamcorper sagittis eu, elementum at nulla. In venenatis iaculis volutpat. Aliquam dignissim venenatis lectus, id varius odio posuere nec. Quisque rhoncus vestibulum erat id molestie. Etiam dictum dolor nulla, non tincidunt ligula dignissim in. Proin malesuada, augue quis posuere pellentesque, metus sem elementum magna, a molestie leo erat id felis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec lectus mauris, facilisis vitae quam nec, suscipit luctus velit. Etiam mollis justo non orci dictum, vel rutrum metus condimentum. Pellentesque sed euismod neque. Nam.');
+        $length = $this->getConnection()->getRowCount('article_abstract_paras');
+        $parasData = [
+            [
+                'heading' => 'Place and duration of study',
+                'nlmCategory' => 'Methods',
+                'para' => 'Department of Paediatrics, Liaquat University of Medical and Health Sciences (LUMHS), Jamshoro, from October 2005 to March 2007.'
+            ], [
+                'heading' => 'Patients and methods',
+                'nlmCategory' => 'Methods',
+                'para' => 'All patients aged 2 months to 15 years having pancytopenia were included. Patients beyond this age limits, already diagnosed cases of aplastic anemia and leukemia, clinical suspicion of genetic or constitutional pancytopenia, history of blood transfusion in recent past, and those not willing for either admission or bone marrow examination were excluded. History, physical and systemic examination and hematological parameters at presentation were recorded. Hematological profile included hemoglobin, total and differential leucocyte count, platelet count, reticulocyte count, peripheral smear and bone marrow aspiration/biopsy.'
+            ], [
+                'heading' => 'Results',
+                'nlmCategory' => 'Results',
+                'para' => 'During the study period, out of the 7000 admissions in paediatric ward, 250 patients had pancytopenia on their peripheral blood smear (3.57%). Out of those, 230 patients were finally studied. Cause of pancytopenia was identified in 220 cases on the basis of bone marrow and other supportive investigations, while 10 cases remained undiagnosed. Most common was aplastic anemia (23.9%), megaloblastic anemia (13.04%), leukemia (13.05%), enteric fever (10.8%), malaria (8.69%) and sepsis (8.69%). Common clinical presentations were pallor, fever, petechial hemorrhages, visceromegaly and bleeding from nose and gastrointestinal tract.'
+            ], [
+                'heading' => 'Conclusion',
+                'nlmCategory' => 'Conclusions',
+                'para' => 'Pancytopenia is a common occurrence in paediatric patients. Though acute leukemia and bone marrow failure were the usual causes of pancytopenia, infections and megaloblastic anemia are easily treatable and reversible.'
+            ]
+        ];
 
-        $para2 = new AbstractPara();
-        $para2->setHeading('Suspendisse');
-        $para2->setNlmCategory('Suspend');
-        $para2->setPara('Suspendisse interdum mauris sit amet sapien ultricies fringilla. Quisque enim augue, ultrices in lectus non, pulvinar tempus dui. Quisque eu diam eu sapien vehicula lobortis ac et ante. Duis congue sed urna vel vulputate. Cras augue lacus, molestie eu faucibus vitae, pharetra id orci. Mauris sit amet eros vitae nisi elementum volutpat. Nulla malesuada molestie ante vel ultrices. Proin ac varius tortor. Fusce ornare ornare est ac hendrerit. In nec justo ut dui semper aliquet ut et felis.');
-
-        $result = $this->table->createAbstract(array($para1, $para2), 4);
-        $para1->setId(10);
-        $para2->setId(11);
-
-        $this->assertEquals(true, $result);
-        $abstract = $this->table->fetchParasByArticleId(4);
-        $this->assertEquals(2, count($abstract));
-        $this->assertEquals($para1, $abstract[0]);
-        $this->assertEquals($para2, $abstract[1]);
+        $paras = [];
+        foreach($parasData as $paraData) {
+            $p = new AbstractPara();
+            $p->setHeading($paraData['heading']);
+            $p->setNlmCategory($paraData['nlmCategory']);
+            $p->setPara($paraData['para']);
+            $paras[] = $p;
+        }
+        $this->table->createAbstract($paras, 300);
+        $this->assertEquals($length + 4, $this->getConnection()->getRowCount('article_abstract_paras'));
+        $pdo = $this->getConnection()->getConnection();
+        $st = $pdo->prepare('SELECT * FROM article_abstract_paras WHERE article_id = 300');
+        $st->execute();
+        $data = $st->fetchAll(\PDO::FETCH_ASSOC);
+        $this->assertCount(4, $data);
+        $i = 0;
+        foreach($data as $p) {
+            $expected = $parasData[$i];
+            $this->assertTrue($p['id'] > 0);
+            $this->assertEquals($i + 1, $p['position']);
+            $this->assertEquals($expected['heading'], $p['heading']);
+            $this->assertEquals($expected['nlmCategory'], $p['nlm_category']);
+            $this->assertEquals($expected['para'], $p['para']);
+            $i++;
+        }
     }
 
-    public function testCreateAbstractFromEmptyArray()
+    public function testCreateAbstractWithEmptyArray()
     {
-        $result = $this->table->createAbstract(array(), 4);
-        $this->assertEquals(true, $result);
+        $length = $this->getConnection()->getRowCount('article_abstract_paras');
+        $this->table->createAbstract([], 300);
+        $this->assertEquals($length, $this->getConnection()->getRowCount('article_abstract_paras'));
+    }
 
-        $abstract = $this->table->fetchParasByArticleId(4);
-        $this->assertEquals(0, count($abstract));
+    /**
+     * @expectedException \Zend\Db\Adapter\Exception\InvalidQueryException
+     */
+    public function testCreateAbstractWithInvalidConstraints()
+    {
+        $length = $this->getConnection()->getRowCount('article_abstract_paras');
+        $parasData = [
+            [
+                'heading' => 'Place and duration of study',
+                'nlmCategory' => 'Methods',
+                'para' => 'Department of Paediatrics, Liaquat University of Medical and Health Sciences (LUMHS), Jamshoro, from October 2005 to March 2007.'
+            ], [
+                'heading' => 'Patients and methods',
+                'nlmCategory' => 'Methods',
+                'para' => 'All patients aged 2 months to 15 years having pancytopenia were included. Patients beyond this age limits, already diagnosed cases of aplastic anemia and leukemia, clinical suspicion of genetic or constitutional pancytopenia, history of blood transfusion in recent past, and those not willing for either admission or bone marrow examination were excluded. History, physical and systemic examination and hematological parameters at presentation were recorded. Hematological profile included hemoglobin, total and differential leucocyte count, platelet count, reticulocyte count, peripheral smear and bone marrow aspiration/biopsy.'
+            ], [
+                'heading' => 'Results',
+                'nlmCategory' => 'Results',
+                'para' => 'During the study period, out of the 7000 admissions in paediatric ward, 250 patients had pancytopenia on their peripheral blood smear (3.57%). Out of those, 230 patients were finally studied. Cause of pancytopenia was identified in 220 cases on the basis of bone marrow and other supportive investigations, while 10 cases remained undiagnosed. Most common was aplastic anemia (23.9%), megaloblastic anemia (13.04%), leukemia (13.05%), enteric fever (10.8%), malaria (8.69%) and sepsis (8.69%). Common clinical presentations were pallor, fever, petechial hemorrhages, visceromegaly and bleeding from nose and gastrointestinal tract.'
+            ], [
+                'heading' => 'Conclusion',
+                'nlmCategory' => 'Conclusions',
+                'para' => 'Pancytopenia is a common occurrence in paediatric patients. Though acute leukemia and bone marrow failure were the usual causes of pancytopenia, infections and megaloblastic anemia are easily treatable and reversible.'
+            ]
+        ];
+        $paras = [];
+        foreach($parasData as $paraData) {
+            $p = new AbstractPara();
+            $p->setHeading($paraData['heading']);
+            $p->setNlmCategory($paraData['nlmCategory']);
+            $p->setPara($paraData['para']);
+            $paras[] = $p;
+        }
+        $this->table->createAbstract($paras, 1000);
+        $this->assertEquals($length, $this->getConnection()->getRowCount('article_abstract_paras'));
     }
 
     public function testDeleteAbstract()
     {
-        $result = $this->table->deleteParasByArticleId(1);
-        $this->assertEquals(true, $result);
-
-        $abstract = $this->table->fetchParasByArticleId(1);
-        $this->assertEquals(array(), $abstract);
+        $length = $this->getConnection()->getRowCount('article_abstract_paras');
+        $this->table->deleteParasByArticleId(246);
+        $this->assertEquals($length - 6, $this->getConnection()->getRowCount('article_abstract_paras'));
+        $pdo = $this->getConnection()->getConnection();
+        $st = $pdo->prepare('SELECT * FROM article_abstract_paras WHERE article_id = 246');
+        $st->execute();
+        $data = $st->fetchAll(\PDO::FETCH_ASSOC);
+        $this->assertEmpty($data);
     }
 
-    public function testDeleteAbstractOfNonExistingArticle()
+    public function testDeleteAbstractForNonexistentArticleId()
     {
-        $result = $this->table->deleteParasByArticleId(1001);
-        $this->assertEquals(true, $result);
+        $length = $this->getConnection()->getRowCount('article_abstract_paras');
+        $this->table->deleteParasByArticleId(300);
+        $this->assertEquals($length, $this->getConnection()->getRowCount('article_abstract_paras'));
     }
-
-    private function abstractFromArray(array $data = array())
-    {
-        $abstract = array();
-        foreach($data as $paraData) {
-            $abstract[] = AbstractPara::createFromArray($paraData);
-        }
-        return $abstract;
-    }
-} 
+}

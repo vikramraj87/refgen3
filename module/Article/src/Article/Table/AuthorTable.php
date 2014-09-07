@@ -46,13 +46,23 @@ class AuthorTable extends AbstractTableGateway implements AdapterAwareInterface
         return $authors;
     }
 
+    /**
+     * Returns authors of multiple articles as an associative array
+     *
+     * @param array $articleIds
+     * @return array
+     */
     public function fetchAuthorsByArticleIds(array $articleIds = array())
     {
         $where = new Where();
         $where->in('article_id', $articleIds);
-
         $rowset = $this->select($where);
+
         $authors = array();
+        foreach($articleIds as $id) {
+            $authors[$id] = [];
+        }
+
         foreach($rowset as $row) {
             $author = Author::createFromArray($row->getArrayCopy());
             $authors[$row['article_id']][$row['position'] - 1] = $author;
@@ -61,6 +71,8 @@ class AuthorTable extends AbstractTableGateway implements AdapterAwareInterface
     }
 
     /**
+     * Create authors
+     *
      * @param Author[] $authors
      * @param int $articleId
      * @return bool
@@ -75,24 +87,17 @@ class AuthorTable extends AbstractTableGateway implements AdapterAwareInterface
             $data = $author->toArray();
             $data['position'] = $position;
             $data['article_id'] = $articleId;
-            try {
-                $this->insert($data);
-            } catch(InvalidQueryException $e) {
-                /**
-                 * todo: raise an event for integrity constraint and log the error
-                 */
-                return false;
-            } catch(\Exception $e) {
-                /**
-                 * todo: raise an event and log the unknown error
-                 */
-                return false;
-            }
+            $this->insert($data);
             $position++;
         }
-        return true;
     }
 
+    /**
+     * Deletes authors belonging to an article
+     *
+     * @param int $articleId
+     * @return bool
+     */
     public function deleteAuthorsByArticleId($articleId = 0)
     {
         $articleId = (int) $articleId;

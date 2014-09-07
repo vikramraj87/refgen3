@@ -1,5 +1,9 @@
-    <?php $article = $this->article; ?>
-    <article>
+
+    <?php
+        /** @var \Article\Entity\Article $article */
+        $article = $this->article;
+    ?>
+    <article data-id="<?php echo $article->getId(); ?>">
         <header>
             <h3><?php echo $article->getTitle(); ?></h3>
             <h4><?php echo $this->authors($article->getAuthors())->render(); ?></h4>
@@ -20,7 +24,7 @@
                 <li><a class="button tiny" target="_blank"
                        href="http://www.ncbi.nlm.nih.gov/pubmed/<?php echo $pmid; ?>"><i class="fa fa-external-link"></i>&nbsp; View in Pubmed</a></li>
                 <?php if(!$this->activeCollection()->hasArticle($article->getId())): ?>
-                <li><a class="button tiny" href="<?php echo $this->url('active-collection/add', array('id' => $article->getId())) . '?redirect=' . urlencode($_SERVER['REQUEST_URI']); ?>"><i class="fa fa-plus"></i>&nbsp; Add to collection</a></li>
+                <li><a title="Add this article to active collection" class="button tiny collection-add" href="<?php echo $this->url('active-collection/add', array('id' => $article->getId())) . '?redirect=' . urlencode($_SERVER['REQUEST_URI']); ?>"><span class="fa fa-plus"></span> Add to collection</a></li>
                 <?php endif; ?>
 
             </ul>

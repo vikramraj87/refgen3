@@ -1,7 +1,7 @@
 <?php echo $this->doctype(); ?>
 <html class="no-js" lang="en">
     <head>
-        <meta charset="utf-8">
+        <meta charset="UTF-8">
         <?php echo $this->headTitle('Kivi '. $this->translate('Refgen'))->setSeparator(' - ')->setAutoEscape(false) ?>
         <?php echo $this->headMeta()
             ->appendName('viewport', 'width=device-width, initial-scale=1.0')
@@ -43,7 +43,8 @@
                     <?php //variables
                         $newCollectionUrl = $this->url('collection/new') . $standardRedirectUrl;
                         $openCollectionUrl = $this->url('collection/list') . $standardRedirectUrl;
-                        $recents = $this->collections()->recents($this->activeCollection()->getOpenCollectionId());
+                        $openCollectionId = isset($this->openCollectionId) ? $this->openCollectionId : 0;
+                        $recents = $this->collections()->recents($openCollectionId);
                     ?>
                     <li class="divider"></li>
                     <li class="has-dropdown"><a href="#"><span class="fa fa-list"></span> Collections</a>
@@ -138,7 +139,7 @@
                         </form>
                     </li>
 
-                </ul>
+                </ul><!-- ul.right -->
             </section>
         </nav>
         <div id="content">
@@ -161,15 +162,35 @@
         <footer id="page-footer">
             <div class="row">
                 <div class="small-8 columns">
-                    <p>&copy; 2013 - <?php echo date('Y') ?> by Kivi Designers</p>
+                    <p>&copy; <span class="visible-for-large">2013 - <?php echo date('Y') ?> by </span>Kivi Designers</p>
                 </div>
                 <div class="small-4 columns">
                     <p><span class="hidden-for-medium-down">Follow us on </span><a href="https://plus.google.com/111116372537356525801" rel="publisher" target="_blank"><i class="fa fa-google-plus-square"></i></a> <a href="https://www.facebook.com/pages/Kivi-Refgen/266507806889448" target="_blank"><i class="fa fa-facebook-square"></i></a></p>
                 </div>
             </div>
         </footer>
+        <script id="confirm-modal-template" type="text/x-handlebars-template">
+            <div id="{{id}}" class="reveal-modal small" data-reveal>
+                <h3>{{heading}}</h2>
+                <p class="lead">{{para}}</p>
+                <a class="tiny button" title="{{button.title}}" href="{{button.url}}"><span class="fa fa-{{button.icon}}"></span> {{button.text}}</a>
+                <a class="close-reveal-modal">×</a>
+            </div>
+        </script>
+        <script id="template-add-button" type="text/x-handlebars-template">
+            <li>
+                <a title="Add this article to active collection"
+                   class="button tiny collection-add"
+                   href="/active-collection/add/{{id}}">
+                    <span class="fa fa-plus"></span> Add to collection
+                </a>
+            </li>
+        </script>
         <?php
-            echo $this->inlineScript()->prependFile($this->basePath() . '/js/app.js')
+            echo $this->inlineScript()->prependFile($this->basePath() . '/js/activeCollection.js')
+                                      ->prependFile($this->basePath() . '/js/modal.js')
+                                      ->prependFile($this->basePath() . '/js/app.js')
+                                      ->prependFile($this->basePath() . '/js/handlebars.js')
                                       ->prependFile($this->basePath() . '/bower_components/foundation/js/foundation.min.js')
                                       ->prependFile($this->basePath() . '/bower_components/jquery/dist/jquery.min.js');
         ?>

@@ -26,7 +26,7 @@ class User
     private $name = '';
 
     /** @var int */
-    private $role = 1; // 1 - user 2 - moderator 3 - admin
+    private $role = '';
 
     /** @var string */
     private $pictureLink = '';
@@ -176,12 +176,12 @@ class User
     }
 
     /**
-     * @param int $role
-     * return $this
+     * @param string $role
+     * @return $this
      */
     public function setRole($role)
     {
-        $this->role = (int) $role;
+        $this->role = $role;
         return $this;
     }
 

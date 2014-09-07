@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vikramraj
- * Date: 13/07/14
- * Time: 1:15 PM
- */
-
 namespace User\table;
 
 use Zend\Db\Adapter\Adapter,
@@ -14,6 +7,9 @@ use Zend\Db\Adapter\Adapter,
 class UserSocialTable extends AbstractTableGateway implements AdapterAwareInterface
 {
     protected $table = 'user_socials';
+
+    /** @var SocialTable */
+    private $socialTable;
 
     /**
      * Set db adapter
@@ -27,8 +23,21 @@ class UserSocialTable extends AbstractTableGateway implements AdapterAwareInterf
         $this->initialize();
     }
 
-    public function fetchBySocialAndSocialId($social = 0, $socialId = '')
+    /**
+     * Fetches social data by social and social_id. Social indicates the
+     * social network the user is currently logged in
+     *
+     * @param string $social
+     * @param string $socialId
+     * @return array|null
+     */
+    public function fetchBySocialAndSocialId($social = '', $socialId = '')
     {
+        $social = $this->socialTable->fetchIdByName($social);
+        if(null === $social) {
+            return null;
+        }
+
         $rowset = $this->select(array(
                 'social'    => $social,
                 'social_id' => $socialId
@@ -40,15 +49,26 @@ class UserSocialTable extends AbstractTableGateway implements AdapterAwareInterf
         }
         return array(
             'userId'   => $data['user_id'],
-            'socialId' => $data['social_id'],
-            'picture'  => $data['picture']
+            'socialId' => $data['social_id']
         );
     }
 
-    public function fetchByUserIdAndSocial($userId = 0, $social = 0)
+    /**
+     * Fetches social data by user_id and social. Social indicates which social
+     * network the user has currently logged in
+     *
+     * @param int $userId
+     * @param string $social
+     * @return array|null
+     */
+    public function fetchByUserIdAndSocial($userId = 0, $social = '')
     {
         $userId = (int) $userId;
-        $social = (int) $social;
+        $social = $this->socialTable->fetchIdByName($social);
+        if(null === $social) {
+            return null;
+        }
+
         $rowset = $this->select(array(
                 'user_id' => $userId,
                 'social' => $social
@@ -60,29 +80,55 @@ class UserSocialTable extends AbstractTableGateway implements AdapterAwareInterf
         }
         return array(
             'userId'   => $data['user_id'],
-            'socialId' => $data['social_id'],
-            'picture'  => $data['picture']
+            'socialId' => $data['social_id']
         );
     }
 
-    public function checkUserIdAndSocial($userId, $social, $socialId, $picture)
+    /**
+     * Fetches social data by user_id and social. If none exists, creates one
+     *
+     * @param int $userId
+     * @param string $social
+     * @param string $socialId
+     * @return bool
+     * @throws \RuntimeException
+     */
+    public function checkUserIdAndSocial($userId = 0, $social = '', $socialId = '')
     {
-        $data = $this->fetchByUserIdAndSocial($userId, $social);
-        if(false != $data) {
-            return $data;
-        }
         $userId = (int) $userId;
-        $social = (int) $social;
-        $data = array(
-            'user_id'   => $userId,
-            'social'    => $social,
-            'social_id' => $socialId,
-            'picture'   => $picture
-        );
-        $numRowsAffected = $this->insert($data);
-        if(!$numRowsAffected) {
-            throw new \RuntimeException('Failed insertion in  "user_socials" table');
+        $social = $this->socialTable->fetchIdByName($social);
+        $data = $this->select(array(
+                'user_id' => $userId,
+                'social'  => $social
+            )
+        )->current();
+
+        if(false === $data) {
+            $result = (bool) $this->insert(array(
+                    'user_id'   => $userId,
+                    'social'    => $social,
+                    'social_id' => $socialId
+                )
+            );
+            if(false === $result) {
+                throw new \RuntimeException(sprintf('Insertion failed for user'));
+            }
+            return true;
         }
-        return $this->checkUserIdAndSocial($userId, $social, $socialId, $picture);
+
+        if($socialId != $data['social_id']) {
+            throw new \RuntimeException('Integrity constraint problem in user social table');
+        }
+        return true;
+    }
+
+    /**
+     * Setter for socialTable
+     *
+     * @param SocialTable $socialTable
+     */
+    public function setSocialTable(SocialTable $socialTable)
+    {
+        $this->socialTable = $socialTable;
     }
 } 

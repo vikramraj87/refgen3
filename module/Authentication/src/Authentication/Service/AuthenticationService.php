@@ -50,14 +50,26 @@ class AuthenticationService extends ZendAuthenticationService
 
     public function getRoleId()
     {
-        $roleId = 'guest';
+        $roleId = 'Guest';
         if($this->hasIdentity()) {
-            $roles = array(
-                1 => 'user',
-                2 => 'moderator',
-                3 => 'admin'
-            );
-            $roleId = $roles[$this->getIdentity()->getRole()];
+            $id = $this->getIdentity()->getRole();
+            switch($id) {
+                case '1':
+                case 'user':
+                case 'User':
+                    $roleId = 'User';
+                    break;
+                case '2':
+                case 'moderator':
+                case 'Moderator':
+                    $roleId = 'Moderator';
+                    break;
+                case '3':
+                case 'admin':
+                case 'Admin':
+                    $roleId = 'Admin';
+                    break;
+            }
         }
         return $roleId;
     }

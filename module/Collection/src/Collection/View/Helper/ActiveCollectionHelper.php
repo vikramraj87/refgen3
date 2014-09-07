@@ -23,39 +23,4 @@ class ActiveCollectionHelper extends AbstractHelper
     {
         return $this->getView()->partial('partials/active-collection', array('service' => $this->service));
     }
-
-    public function isEdited()
-    {
-        return $this->service->isEdited();
-    }
-
-    public function getName()
-    {
-        return $this->service->getActiveCollection()->getName();
-    }
-
-    public function getId()
-    {
-        return $this->service->getActiveCollection()->getId();
-    }
-
-    public function hasArticle($id)
-    {
-        return $this->service->getActiveCollection()->hasArticle($id);
-    }
-
-    public function isEmpty()
-    {
-        return !count($this->service->getActiveCollection());
-    }
-
-    public function getOpenCollectionId()
-    {
-        return $this->service->getOpenCollectionId();
-    }
-
-    public function isOpen($collectionId = 0)
-    {
-        return $collectionId == $this->service->getOpenCollectionId();
-    }
 }

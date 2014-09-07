@@ -34,38 +34,47 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
         $this->initialize();
     }
 
+    /**
+     * Fetch article by id
+     *
+     * @param int $articleId
+     * @return Article|null
+     */
     public function fetchArticleById($articleId = 0)
     {
-        $articleId = (int) $articleId;
-        $rowset = $this->select(array('id' => $articleId));
-
-        $row = $rowset->current();
+        $row = $this->select(array('id' => (int) $articleId))->current();
         if($row === false) {
             return null;
         }
-
-        $data = $row->getArrayCopy();
-        return $this->getArticleFromData($data);
+        return $this->getArticleFromData($row->getArrayCopy());
     }
 
+    /**
+     * Fetch article by indexer id
+     *
+     * @param string $indexerId
+     * @return Article|null
+     */
     public function fetchArticleByIndexerId($indexerId = '')
     {
         $row = $this->select(array('indexer_id' => $indexerId))->current();
         if($row === false) {
             return null;
         }
-        $data = $row->getArrayCopy();
-        return $this->getArticleFromData($data);
+        return $this->getArticleFromData($row->getArrayCopy());
     }
 
     /**
+     * Fetches the article if exists else creates a new
+     * entry
+     *
      * @param Article $article
      * @return Article|null
      */
     public function checkArticle(Article $article)
     {
         $savedArticle = $this->fetchArticleByIndexerId($article->getIndexerId());
-        if(null != $savedArticle) {
+        if(null !== $savedArticle) {
             return $savedArticle;
         }
         $result = $this->saveArticle($article);
@@ -77,6 +86,7 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
 
     /**
      * Returns the articles with ids provided in the array
+     * if exists
      *
      * @param array $indexerIds
      * @return array
@@ -93,6 +103,10 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
         return $this->articlesFromRowset($rowset);
     }
 
+    /**
+     * @param array $ids
+     * @return array
+     */
     public function fetchArticlesByIds($ids = array())
     {
         if(empty($ids)) {
@@ -134,8 +148,7 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
      */
     private function getArticleFromData(array $data = array())
     {
-        $article = new Article();
-        $article->populateFromArray($data);
+        $article = Article::createFromArray($data);
 
         $journalTable = $this->journalTable;
         $journal = $journalTable->fetchJournalById($data['journal_id']);
@@ -157,7 +170,7 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
     }
 
     /**
-     * Saves the article to the database. todo: Raise an event in case of failure
+     * Saves the article to the database.
      *
      * @param Article $article
      * @return bool
@@ -189,28 +202,20 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
         $authors = $article->getAuthors();
         $result = $this->authorTable->createAuthors($authors, $articleId);
         if($result === false) {
-            /**
-             * todo: raise an event
-             */
             $this->deleteArticle($articleId);
             return false;
         }
-
         $abstract = $article->getAbstract();
         $result = $this->abstractParaTable->createAbstract($abstract, $articleId);
         if($result === false) {
-            /**
-             * todo: raise an event
-             */
             $this->deleteArticle($articleId);
             return false;
         }
-
         return true;
     }
 
     /**
-     * Delete an article and all the dependent data. [Tested]
+     * Delete an article and all the dependent data.
      *
      * @param int $id
      * @return bool
@@ -224,6 +229,12 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
         return true;
     }
 
+    /**
+     * Generates article from rowset data
+     *
+     * @param ResultSet $rowset
+     * @return array
+     */
     private function articlesFromRowset(ResultSet $rowset)
     {
         if(count($rowset) === 0) {
@@ -234,14 +245,16 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
         $journalIds = array();
         $articleIds = array();
 
-        $map = array();
+        /** @var array() $journalMap associative array to map article id to journal id */
+        $journalMap = array();
         foreach($rowset as $row) {
-            $article = new Article();
-            $article->populateFromArray($row->getArrayCopy());
+            /** @var \ArrayObject $row */
+
+            $article = Article::createFromArray($row->getArrayCopy());
             $articles[$article->getIndexerId()] = $article;
             $journalIds[] = $row['journal_id'];
             $articleIds[] = $row['id'];
-            $map[$row['id']] = $row['journal_id'];
+            $journalMap[$row['id']] = $row['journal_id'];
         }
         $journalIds = array_unique($journalIds);
         $journals   = $this->journalTable->fetchJournalsByIds($journalIds);
@@ -250,16 +263,14 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
 
         foreach($articles as &$article) {
             /** @var Article $article */
-            $article->setJournal($journals[$map[$article->getId()]]);
+            $article->setJournal($journals[$journalMap[$article->getId()]]);
+
             if(isset($authors[$article->getId()])) {
                 $article->setAuthors(array_values($authors[$article->getId()]));
-            } else {
-                $article->setAuthors(array());
             }
+
             if(isset($abstracts[$article->getId()])) {
                 $article->setAbstract(array_values($abstracts[$article->getId()]));
-            } else {
-                $article->setAbstract(array());
             }
         }
         return $articles;
@@ -288,6 +299,4 @@ class ArticleTable extends AbstractTableGateway implements AdapterAwareInterface
     {
         $this->journalTable = $journalTable;
     }
-
-
-} 
+}

@@ -1,11 +1,12 @@
 <?php
 namespace Collection\Service;
 
+use DateTime;
 use Zend\Session\Container;
 use Collection\Entity\Collection;
 use Article\Table\ArticleTable,
     Article\Entity\Article;
-class CollectionService
+class CollectionService implements \Countable
 {
     /** @var Collection */
     private $activeCollection;
@@ -16,148 +17,224 @@ class CollectionService
     /** @var ArticleTable */
     private $articleTable;
 
-    /** @var bool */
-    private $edited = false;
-
-    /** @var int used in open collection page to make the recents list and redirect url in delete collection */
-    private $openCollectionId = 0;
-
-    public function addArticle($articleId = 0)
+    public function __construct(ArticleTable $articleTable, Container $container = null)
     {
-        $articleId = (int) $articleId;
-
-        if(!$articleId) {
-            return false;
-        }
-
-        $article = $this->articleTable->fetchArticleById($articleId);
-        if(null == $article) {
-            return false;
-        }
-
-        $preCount = count($this->activeCollection);
-        $this->activeCollection->addArticle($article);
-        $postCount = count($this->activeCollection);
-
-        if($postCount > $preCount) {
-            $this->edited = true;
-        }
-        $this->serialize();
-        return true;
-    }
-
-    public function removeArticle($articleId = 0)
-    {
-        $articleId = (int) $articleId;
-
-        if(!$articleId) {
-            return false;
-        }
-
-        $preCount = count($this->activeCollection);
-        $this->activeCollection->removeArticle($articleId);
-        $postCount = count($this->activeCollection);
-
-        if($preCount > $postCount) {
-            $this->edited = true;
-        }
-        $this->serialize();
-        return true;
-    }
-
-
-    public function init()
-    {
-        $container = $this->container();
-        if(!$container->offsetExists('data')) {
+        $this->articleTable = $articleTable;
+        $this->container = $container ?: new Container('collection');
+        if(!$this->container->offsetExists('data')) {
             $this->activeCollection = new Collection();
-            $this->edited = false;
-            return;
+        } else {
+            $data = $container->offsetGet('data');
+            $this->deSerialize($data);
         }
-        $data = $container->offsetGet('data');
-        $this->deSerialize($data);
     }
 
-    public function setContainer(Container $container)
-    {
-        $this->container = $container;
-    }
-
-    public function setArticleTable(ArticleTable $table) {
-        $this->articleTable = $table;
-    }
-
-    private function container()
-    {
-        if(null === $this->container) {
-            $this->container = new Container('collection');
-        }
-        return $this->container;
-    }
-
+    /**
+     * De-serializes the array to object
+     *
+     * @param array $data
+     */
     private function deSerialize(array $data = array())
     {
-        $articles = $this->articleTable->fetchArticlesByIds($data['articleIds']);
-        $collection = new Collection();
-        $collection->setId($data['id']);
-        $collection->setName($data['name']);
-        $collection->setArticles($articles);
-        $this->edited = $data['edited'];
+        $articles = $this->articleTable->fetchArticlesByIds(explode(',',$data['itemIds']));
+
+        $collection = new Collection(
+            $articles,
+            $data['id'],
+            $data['name'],
+            $data['createdOn'],
+            $data['updatedOn'],
+            $data['edited']
+        );
+
         $this->activeCollection = $collection;
     }
 
+    /**
+     * Serializes the object to array and stores it in
+     * session container
+     */
     private function serialize()
     {
-        $collection = $this->activeCollection;
-        $articleIds = array();
-        foreach($this->activeCollection->getArticles() as $article) {
-            /** @var Article $article */
-            $articleIds[] = $article->getId();
-        }
-        $data = array(
-            'id'         => $collection->getId(),
-            'name'       => $collection->getName(),
-            'articleIds' => $articleIds,
-            'edited'     => $this->edited
-        );
-        $this->container()->offsetSet('data', $data);
+        $this->container->offsetSet('data', $this->activeCollection->serialize());
     }
 
-    public function getActiveCollection()
+    /**
+     * Adds an article identified by id to the collection
+     *
+     * @param int $articleId
+     * @return Article|null
+     */
+    public function addArticle($articleId = 0)
     {
-        return $this->activeCollection;
+        $articleId = (int) $articleId;
+        if(!$articleId) {
+            return null;
+        }
+
+        $article = $this->articleTable->fetchArticleById($articleId);
+        if($article) {
+            $this->activeCollection->addItem($article);
+            $this->serialize();
+        }
+        return $article;
     }
 
+    /**
+     * Removes multiple articles from the collection
+     *
+     * @param array $articleIds
+     */
+    public function removeArticles(array $articleIds = array())
+    {
+        $this->activeCollection->removeItems($articleIds);
+        $this->serialize();
+    }
+
+    /**
+     * Removes single article from the collection
+     *
+     * @param int $articleId
+     */
+    public function removeArticle($articleId = 0)
+    {
+        $articleId = (int) $articleId;
+        if(!$articleId) {
+            return;
+        }
+        $this->activeCollection->removeItem($articleId);
+        $this->serialize();
+    }
+
+    /**
+     * Moves up the selected items in the collection
+     *
+     * @param array $items
+     */
+    public function moveUpItems($items = array())
+    {
+        $this->activeCollection->moveUpItems($items);
+        $this->serialize();
+    }
+
+    /**
+     * Moves down the selected items in the collection
+     *
+     * @param array $items
+     */
+    public function moveDownItems($items = array())
+    {
+        $this->activeCollection->moveDownItems($items);
+        $this->serialize();
+    }
+
+    /**
+     * Sorts the items in the order mentioned
+     *
+     * @param array $ids
+     */
+    public function sortItems($ids = array())
+    {
+        $this->activeCollection->sort($ids);
+        $this->serialize();
+    }
+
+    /**
+     * Returns whether the item exists in the collection
+     *
+     * @param int $itemId
+     * @return bool
+     */
+    public function hasItem($itemId = 0)
+    {
+        return $this->activeCollection->hasItem($itemId);
+    }
+
+    /**
+     * Returns whether the active collection is edited
+     *
+     * @return bool
+     */
+    public function isEdited()
+    {
+        return $this->activeCollection->isEdited();
+    }
+
+    /**
+     * Returns the items of the collection
+     *
+     * @return Collection\ItemInterface[]
+     */
+    public function getItems()
+    {
+        return $this->activeCollection->getItems();
+    }
+
+    /**
+     * Returns the created on date
+     *
+     * @return DateTime
+     */
+    public function getCreatedOn()
+    {
+        return $this->activeCollection->getCreatedOn();
+    }
+
+    /**
+     * Returns the updated on date
+     *
+     * @return DateTime
+     */
+    public function getUpdatedOn()
+    {
+        return $this->activeCollection->getUpdatedOn();
+    }
+
+    /**
+     * Returns the id of the active collection
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->activeCollection->getId();
+    }
+
+    /**
+     * Returns the name of the active collection
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->activeCollection->getName();
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Count elements of an object
+     * @link http://php.net/manual/en/countable.count.php
+     * @return int The custom count as an integer.
+     * </p>
+     * <p>
+     * The return value is cast to an integer.
+     */
+    public function count()
+    {
+        return count($this->activeCollection);
+    }
+
+    /**
+     * Sets the passed collection as active collection
+     *
+     * @param Collection $collection
+     */
     public function setCollection(Collection $collection = null)
     {
         if(null == $collection) {
             $collection = new Collection();
         }
         $this->activeCollection = $collection;
-        $this->edited = false;
         $this->serialize();
     }
-
-    public function isEdited()
-    {
-        return $this->edited;
-    }
-
-    /**
-     * @param int $openCollectionId
-     */
-    public function setOpenCollectionId($openCollectionId)
-    {
-        $this->openCollectionId = (int) $openCollectionId;
-    }
-
-    /**
-     * @return int
-     */
-    public function getOpenCollectionId()
-    {
-        return $this->openCollectionId;
-    }
-
-
-} 
+}

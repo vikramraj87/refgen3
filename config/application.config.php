@@ -11,7 +11,8 @@ return array(
         'Authentication',
         'Authorization',
         'Troubleshooting',
-        'Admin'
+        'Admin',
+        'Navigation'
     ),
 
     // These are various options for the listeners attached to the ModuleManager

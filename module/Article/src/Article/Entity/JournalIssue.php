@@ -129,12 +129,18 @@ class JournalIssue
         return $this->pages;
     }
 
+    /**
+     * Serializes the object to array
+     *
+     * @return array
+     */
     public function toArray()
     {
         return array_merge(array(
-            'volume' => $this->volume,
-            'issue'  => $this->issue,
-            'pages'  => $this->pages
+            'volume'     => $this->volume,
+            'issue'      => $this->issue,
+            'pages'      => $this->pages,
+            'pub_status' => (int) $this->pubStatus,
             ), $this->pubDate->toArray()
         );
 

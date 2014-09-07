@@ -81,17 +81,17 @@ class AbstractPara {
     }
 
     /**
-     * Static function to create AbstractPara object from array of data
+     * Factory function to create AbstractPara object from array of data
      *
      * @param array $data
      * @return AbstractPara
      */
     static public function createFromArray(array $data = array())
     {
-        $id          = isset($data['id'])           ?(int) $data['id']      : 0;
-        $heading     = isset($data['heading'])      ? $data['heading']      : '';
-        $nlmCategory = isset($data['nlm_category']) ? $data['nlm_category'] : '';
-        $para        = isset($data['para'])         ? $data['para']         : '';
+        $id          = isset($data['id'])           ?(int) $data['id']                                : 0;
+        $heading     = isset($data['heading'])      ? $data['heading']                                : '';
+        $nlmCategory = isset($data['nlm_category']) ? $data['nlm_category']                           : '';
+        $para        = isset($data['para'])         ? trim(preg_replace('/\s+/', ' ', $data['para'])) : '';
 
         $abstractPara = new self();
         $abstractPara->setId($id);
@@ -101,6 +101,11 @@ class AbstractPara {
         return $abstractPara;
     }
 
+    /**
+     * Serializes object to array
+     *
+     * @return array
+     */
     public function toArray()
     {
         return array(

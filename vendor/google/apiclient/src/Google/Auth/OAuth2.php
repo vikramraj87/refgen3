@@ -118,6 +118,7 @@ class Google_Auth_OAuth2 extends Google_Auth_Abstract
       return $this->getAccessToken();
     } else {
       $decodedResponse = json_decode($response->getResponseBody(), true);
+
       if ($decodedResponse != null && $decodedResponse['error']) {
         $decodedResponse = $decodedResponse['error'];
       }

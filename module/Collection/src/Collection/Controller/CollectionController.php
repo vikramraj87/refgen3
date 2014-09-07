@@ -15,6 +15,7 @@ use Collection\Table\CollectionTable,
     Article\View\Helper\VancouverHelper;
 use PhpOffice\PhpWord\PhpWord,
     PhpOffice\PhpWord\IOFactory;
+use Zend\Config\Reader\Json;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\InputFilter\InputFilter,
     Zend\InputFilter\Input,
@@ -23,6 +24,7 @@ use Zend\InputFilter\InputFilter,
     Zend\Filter\StringTrim,
     Zend\Filter\StripTags,
     Zend\Validator\NotEmpty;
+use Zend\View\Model\JsonModel;
 
 
 class CollectionController extends AbstractActionController
@@ -77,8 +79,9 @@ class CollectionController extends AbstractActionController
 
     public function setActiveAction()
     {
-        $redirect = urldecode($this->params()->fromQuery('redirect', '/'));
+
         $id = $this->params()->fromRoute('id', 0);
+
         if($id) {
             $collection = $this->collectionTable->fetchCollectionById(
                 $id,
@@ -87,7 +90,15 @@ class CollectionController extends AbstractActionController
             if($collection instanceof Collection) {
                 $this->collectionService->setCollection($collection);
             }
+            if($this->getRequest()->isXmlHttpRequest()) {
+                $response = array(
+                    'success' => true
+                );
+                return new JsonModel($response);
+            }
+
         }
+        $redirect = urldecode($this->params()->fromQuery('redirect', '/'));
         return $this->redirect()->toUrl($redirect);
     }
 
@@ -174,13 +185,12 @@ class CollectionController extends AbstractActionController
 
     public function deleteAction()
     {
-        $redirect = urldecode($this->params()->fromQuery('redirect', '/'));
+        $id = $this->params()->fromRoute('id', 0);
         $this->collectionTable->deleteCollectionById(
-            $this->collectionService->getActiveCollection()->getId(),
-            $this->authService->getIdentity()->getId()
+            $id, $this->authService->getIdentity()->getId()
         );
         $this->collectionService->setCollection(null);
-        return $this->redirect()->toUrl($redirect);
+        return $this->redirect()->toRoute('home');
     }
 
     public function exportAction()
@@ -236,7 +246,7 @@ class CollectionController extends AbstractActionController
 
         $vh = new VancouverHelper();
 
-        foreach($collection->getArticles() as $article) {
+        foreach($collection->getItems() as $article) {
             $section->addListItem($vh($article), 0, null, \PhpOffice\PhpWord\Style\ListItem::TYPE_NUMBER);
         }
 

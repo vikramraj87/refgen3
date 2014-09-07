@@ -1,0 +1,100 @@
+<ul class="left">
+<?php if($this->hasAccess('Collection\Controller\Collection', 'new')): ?>
+    <?php //variables
+    $newCollectionUrl = $this->url('collection/new') . $standardRedirectUrl;
+    $openCollectionUrl = $this->url('collection/list') . $standardRedirectUrl;
+    $recents = $this->collections()->recents($this->activeCollection()->getOpenCollectionId());
+    ?>
+    <li class="divider"></li>
+    <li class="has-dropdown"><a href="#"><span class="fa fa-list"></span> Collections</a>
+        <ul class="dropdown">
+            <li>
+                <a href="<?php echo $newCollectionUrl; ?>" id="collection-new">
+                    <span class="fa fa-file"></span> New
+                </a>
+            </li>
+            <?php if(count($recents)): ?>
+                <li>
+                    <a href="<?php echo $openCollectionUrl; ?>">
+                        <span class="fa fa-folder-open"></span> Open
+                    </a>
+                </li> <!-- Open -->
+                <li><label>Recents</label></li>
+                <?php foreach($recents as $collection): ?>
+                    <?php $url = $this->url('collection/open', array('id' => $collection['id'])); ?>
+                    <li>
+                        <a href="<?php echo $url; ?>">
+                            <span class="fa fa-list-alt"></span> <?php echo $collection['name']; ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?> <!-- Recents -->
+            <?php endif; ?> <!-- Open and Recents -->
+        </ul> <!-- ul.dropdown for collection -->
+    </li> <!-- li.has-dropdown for Collection Menu -->
+<?php endif; ?>
+<?php if($this->hasAccess('Admin\Controller\Admin')): ?>
+    <li class="divider"></li>
+    <li class="has-dropdown">
+        <a href="<?php echo $this->url('admin'); ?>">
+            <span class="fa fa-user"></span> Admin
+        </a>
+        <ul class="dropdown">
+            <li>
+                <a href="<?php echo $this->url('admin/users'); ?>">
+                    <span class="fa fa-users"></span> Users
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('admin/exceptions'); ?>">
+                    <span class="fa fa-warning"></span> Exceptions
+                </a>
+            </li>
+        </ul>
+    </li><!-- li.has-dropdown -->
+<?php endif; ?>
+</ul> <!-- ul.left -->
+<ul class="right">
+    <?php if($this->authService()->hasIdentity()): ?>
+        <?php
+        /** @var \User\Entity\User $identity */
+        $identity = $this->authService()->getIdentity();
+        $logoutUrl = $this->url('auth/logout');
+        ?>
+        <li class="has-dropdown">
+            <a href="#">
+                <img id="profile-picture" src="<?php echo $identity->getPictureLink(); ?>"/>
+                <span><?php echo $identity->getFirstName(); ?></span>
+            </a>
+            <ul class="dropdown">
+                <li>
+                    <a href="<?php echo $logoutUrl; ?>" id="logout">
+                        <span class="fa fa-sign-out"></span> Log out
+                    </a>
+                </li>
+            </ul> <!-- ul.dropdown of profile -->
+        </li>
+    <?php else: ?>
+        <?php $loginUrl = $this->url('auth/login'); ?>
+        <li>
+            <a href="<?php echo $loginUrl; ?>">
+                <span class="fa fa-sign-in"></span> Log in
+            </a>
+        </li>
+    <?php endif; ?>
+    <li class="divider"></li>
+    <li class="has-form">
+        <form method="get" action="<?php echo $this->url('search'); ?>">
+            <div class="row collapse">
+                <div class="small-10 columns">
+                    <?php $term = isset($this->term) ? $this->term : ''; ?>
+                    <input type="search" name="term" id="txt-search"
+                           placeholder="Search via pubmed" value="<?php echo $term; ?>"/>
+                </div>
+                <div class="small-2 columns">
+                    <button type="submit" class="tiny button"><i class="fa fa-search"></i></button>
+                </div>
+            </div>
+
+        </form>
+    </li>
+</ul><!-- ul.right -->

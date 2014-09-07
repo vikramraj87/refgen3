@@ -35,7 +35,7 @@ class AbstractTextHelperTest extends \PHPUnit_Framework_TestCase
     {
         $helper = $this->getHelper();
         $data = $this->getData();
-        foreach($data as &$para) {
+        foreach($data as $para) {
             /** @var AbstractPara $para */
             $para->setNlmCategory('');
             $para->setHeading('');

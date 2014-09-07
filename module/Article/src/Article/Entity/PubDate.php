@@ -68,6 +68,11 @@ class PubDate
         return $this->year;
     }
 
+    /**
+     * Serializes object to array
+     *
+     * @return array
+     */
     public function toArray()
     {
         return array(

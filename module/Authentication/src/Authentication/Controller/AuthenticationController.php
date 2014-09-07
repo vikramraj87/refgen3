@@ -7,6 +7,8 @@ use Authentication\Adapter\FacebookAdapter,
     Authentication\Service\AuthenticationService,
     Collection\Service\CollectionService;
 use Zend\Authentication\Result;
+use Google_Client,
+    Google_Service_Plus;
 class AuthenticationController extends AbstractActionController
 {
     /** @var FacebookAdapter */
@@ -52,7 +54,7 @@ class AuthenticationController extends AbstractActionController
         switch($error) {
             case 'access_denied':
                 $this->flashMessenger()->addErrorMessage('Access denied by the user');
-                $this->redirect()->toRoute('auth/login', array('reason' => 'access-denied'));
+                return $this->redirect()->toRoute('auth/login', array('reason' => 'access-denied'));
                 break;
         }
 
@@ -67,12 +69,12 @@ class AuthenticationController extends AbstractActionController
 
         switch($result->getCode()) {
             case Result::FAILURE_IDENTITY_AMBIGUOUS:
-                $this->redirect()->toRoute('auth/login', array('reason' => 'email-required'));
+                return $this->redirect()->toRoute('auth/login', array('reason' => 'email-required'));
                 break;
         }
 
         if($result->isValid()) {
-            $this->redirect()->toRoute('home');
+            return $this->redirect()->toRoute('home');
         }
     }
 
@@ -82,21 +84,17 @@ class AuthenticationController extends AbstractActionController
         switch($error) {
             case 'access_denied':
                 $this->flashMessenger()->addErrorMessage('Access denied by the user');
-                $this->redirect()->toRoute('auth/login',array('reason' => 'access-denied'));
+                return $this->redirect()->toRoute('auth/login',array('reason' => 'access-denied'));
                 break;
         }
 
-        /** @var GoogleAdapter $adapter */
-        $adapter = $this->getServiceLocator()->get('Authentication\Adapter\Google');
-        $adapter->setCode($this->params()->fromQuery('code', null));
-
-        /** @var AuthenticationService $authService */
-        $authService = $this->getServiceLocator()->get('Authentication\Service\Authentication');
+        $this->googleAdapter->setCode($this->params()->fromQuery('code', null));
 
         /** @var Result $result */
-        $result = $authService->authenticate($adapter);
+        $result = $this->authService->authenticate($this->googleAdapter);
+
         if($result->isValid()) {
-            $this->redirect()->toRoute('home');
+            return $this->redirect()->toRoute('home');
         }
     }
 

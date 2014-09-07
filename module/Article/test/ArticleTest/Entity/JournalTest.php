@@ -22,9 +22,9 @@ class JournalTest extends PHPUnit_Framework_TestCase
         );
 
         $journal = new Journal();
-        $journal->setIssn($expected['issn']);
-        $journal->setTitle($expected['title']);
-        $journal->setAbbr($expected['abbr']);
+        $journal->setIssn('1234-5678');
+        $journal->setTitle('Indian Journal of Cytology');
+        $journal->setAbbr('Ind. J. Cyt.');
 
         $this->assertEquals($expected, $journal->toArray());
     }
@@ -33,6 +33,29 @@ class JournalTest extends PHPUnit_Framework_TestCase
     {
         $journal = new Journal();
         $journal->setAbbr('Ind. J. Cyt.');
+        $this->assertEquals('Ind J Cyt', $journal->getAbbr());
+    }
+
+    public function testCreateFromArray()
+    {
+        $data = [
+            'issn'  => '1234-5678',
+            'title' => 'Indian Journal of Cytology',
+            'abbr'  => 'Ind. J. Cyt.'
+        ];
+
+        $journal = Journal::createFromArray($data);
+        $this->assertSame(0, $journal->getId());
+        $this->assertEquals('1234-5678', $journal->getIssn());
+        $this->assertEquals('Indian Journal of Cytology', $journal->getTitle());
+        $this->assertEquals('Ind J Cyt', $journal->getAbbr());
+
+        $data['id'] = 10;
+
+        $journal = Journal::createFromArray($data);
+        $this->assertSame(10, $journal->getId());
+        $this->assertEquals('1234-5678', $journal->getIssn());
+        $this->assertEquals('Indian Journal of Cytology', $journal->getTitle());
         $this->assertEquals('Ind J Cyt', $journal->getAbbr());
     }
 } 

@@ -20,113 +20,71 @@ use PHPUnit_Framework_TestCase;
 
 class ArticleTest extends PHPUnit_Framework_TestCase
 {
-    /** @var Article */
-    protected $article;
-
-    protected $data = array();
-
-    /**
-     * @return Article
-     */
-    protected function getArticle()
+    public function testCreateFromArray()
     {
-        if($this->article == null) {
+        $data = [
+            'indexer_id' => 'PMID12345678',
+            'volume'     => '9',
+            'issue'      => '7',
+            'pages'      => '237-241',
+            'year'       => '2013',
+            'month'      => 'Sep',
+            'day'        => '10',
+            'title'      => 'How to test the article object?',
+            'pub_status' => 1
+        ];
 
-        }
-        return $this->article;
-    }
+        $article = Article::createFromArray($data);
 
-    protected function getData()
-    {
-        if(empty($this->data)) {
-            $this->data = array(
-                'id' => 0,
-                'indexer_id' => 'PMID24837888',
-                'journal_issue' => array(
-                    'pub_status' => true,
-                    'volume' => '89',
-                    'issue'  => '2',
-                    'pages'  => '257-9',
-                    'pub_date' => array(
-                        'year'  => '2014',
-                        'month' => 'Jun',
-                        'day'   => '1'
-                    )
-                ),
-                'journal' => array(
-                    'id'    => 0,
-                    'issn'  => '1879-355X',
-                    'title' => 'International journal of radiation oncology, biology, physics',
-                    'abbr'  => 'Int J Radiat Oncol Biol Phys'
-                ),
-                'title' => 'Better radiation therapy for cervix cancer would save lives.',
-                'abstract' => array(),
-                'authors'  => array(
-                    array(
-                        'id' => 0,
-                        'last_name' => 'Thomas',
-                        'fore_name' => 'Gillian M',
-                        'initials'  => 'GM'
-                    )
-                ),
-                'keywords' => array()
-            );
-        }
-        return $this->data;
-    }
+        $this->assertEquals(0, $article->getId());
+        $this->assertEquals('PMID12345678', $article->getIndexerId());
+        $this->assertEquals('9', $article->getJournalIssue()->getVolume());
+        $this->assertEquals('7', $article->getJournalIssue()->getIssue());
+        $this->assertEquals('237-41', $article->getJournalIssue()->getPages());
+        $this->assertEquals(true, $article->getJournalIssue()->getPubStatus());
+        $this->assertEquals('2013', $article->getJournalIssue()->getPubDate()->getYear());
+        $this->assertEquals('Sep', $article->getJournalIssue()->getPubDate()->getMonth());
+        $this->assertEquals('10', $article->getJournalIssue()->getPubDate()->getDay());
+        $this->assertEquals('How to test the article object?', $article->getTitle());
 
-    public function testArticleWithUnpublishedArticle()
-    {
-        $data = array(
-            'id' => 0,
-            'indexer_id' => 'PMID24841923',
-            'journal_issue' => array(
-                'pub_status' => false,
-                'volume' => '',
-                'issue'  => '',
-                'pages'  => '',
-                'pub_date' => array(
-                    'year'  => '2014',
-                    'month' => 'May',
-                    'day'   => '19'
-                )
-            ),
-            'journal' => array(
-                'id' => 0,
-                'issn' => '1752-8062',
-                'title' => 'Clinical and translational science',
-                'abbr' => 'Clin Transl Sci'
-            ),
-            'title' => 'Human Papillomavirus Vaccination: A Case Study in Translational Science.',
-            'abstract' => array(
-                array(
-                    'heading' => '',
-                    'para'    => 'Each year 610,000 cases of anogenital and oropharyngeal cancers caused by human papillomavirus (HPV) occur worldwide. HPV vaccination represents a promising opportunity to prevent cancer on a global scale. The vaccine\'s story dates back to discoveries in chickens at the beginning of the 20th century with evidence that a cell-free filtrate could transmit the propensity to grow cancers. Later, studies with similarly derived filtrates from mammalian tumors showed that hosts could develop immunity to subsequent exposures. Epidemiologic studies linked cervical cancer to members of a family of viruses that cause papillomatosis and common warts. This led to work with DNA hybridization demonstrating a causal relationship. The formation of virus-like particles from viral capsid proteins led to the development of models for safe and effective vaccines. While much work remains with the acceptance of universal vaccination, the HPV vaccines Gardasil and Cervarix thus represent a century of successful translational research.'
-                )
-            ),
-            'authors' => array(
-                array(
-                    'id' => 0,
-                    'last_name' => 'Palmer',
-                    'fore_name' => 'Allyson K',
-                    'initials'  => 'AK'
-                ),
-                array(
-                    'id' => 0,
-                    'last_name' => 'Harris',
-                    'fore_name' => 'Antoneicka L',
-                    'initials'  => 'AL'
-                ),
-                array(
-                    'id' => 0,
-                    'last_name' => 'Jacobson',
-                    'fore_name' => 'Robert M',
-                    'initials'  => 'RM'
-                )
-            )
-        );
+        $this->assertEquals([], $article->getAuthors());
+        $this->assertEquals([], $article->getAbstract());
+        $this->assertEquals(null, $article->getJournal());
 
-        $article = Article::createArticleFromArray($data);
+        $data = [
+            'id'         => 13,
+            'indexer_id' => 'PMID12345678',
+            'volume'     => '',
+            'issue'      => '',
+            'pages'      => '',
+            'year'       => '2013',
+            'month'      => 'Sep',
+            'day'        => '10',
+            'title'      => 'How to test the article object?',
+            'pub_status' => 0
+        ];
+
+        $article = Article::createFromArray($data);
+
+        $this->assertEquals(13, $article->getId());
+        $this->assertEquals('PMID12345678', $article->getIndexerId());
+        $this->assertEquals('', $article->getJournalIssue()->getVolume());
+        $this->assertEquals('', $article->getJournalIssue()->getIssue());
+        $this->assertEquals('', $article->getJournalIssue()->getPages());
         $this->assertEquals(false, $article->getJournalIssue()->getPubStatus());
+        $this->assertEquals('2013', $article->getJournalIssue()->getPubDate()->getYear());
+        $this->assertEquals('Sep', $article->getJournalIssue()->getPubDate()->getMonth());
+        $this->assertEquals('10', $article->getJournalIssue()->getPubDate()->getDay());
+        $this->assertEquals('How to test the article object?', $article->getTitle());
+
+        $this->assertEquals([], $article->getAuthors());
+        $this->assertEquals([], $article->getAbstract());
+        $this->assertEquals(null, $article->getJournal());
+
+    }
+
+    public function testToArray()
+    {
+
     }
 }

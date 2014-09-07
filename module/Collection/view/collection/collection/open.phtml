@@ -2,7 +2,7 @@
                 $this->headTitle()->prepend($this->collection->getName());
             ?>
                 <div class="large-8 columns">
-                    <section id="articles">
+                    <section id="articles" data-collection-name = "<?php echo $this->collection->getName(); ?>">
                         <header>
                             <h2>Collection - <?php echo $this->collection->getName(); ?> </h2>
                             <ul class="button-group">
@@ -16,27 +16,11 @@
                                 );
                                 $setActiveUrl .= '?redirect=' . urlencode($_SERVER['REQUEST_URI']);
                                 ?>
-                                <?php if($this->activeCollection()->isEdited()): ?>
-                            <li>
-                                <a class="tiny button" title="Set <?php echo $this->collection->getName(); ?> as active collection"
-                                   href="<?php echo $setActiveUrl; ?>" data-reveal-id="modal-active">
-                                    <span class="fa fa-paperclip"></span> Set as active
-                                </a>
-                            <div id="modal-active" class="reveal-modal small" data-reveal>
-                                <h2>Set active collection</h2>
-                                <p class="lead">Your existing active collection is edited . If you wish to continue, all unsaved changes will be lost</p>
-                                <a class="tiny button" href="<?php echo $setActiveUrl; ?>">
-                                    <span class="fa fa-folder-open"></span> Set <?php echo $this->collection->getName(); ?> as active collection
-                                </a>
-                                <a class="close-reveal-modal">&#215;</a>
-                            </div>
-                            </li>
-                                <?php else: ?>
-                            <li><a class="tiny button" title="Set <?php echo $this->collection->getName(); ?> as active collection"
+                            <li><a class="tiny button"
+                                   title="Set <?php echo $this->collection->getName(); ?> as active collection"
                                    href="<?php echo $setActiveUrl; ?>">
                                 <span class="fa fa-paperclip"></span> Set as active
                             </a></li>
-                                <?php endif; ?>
                             <?php endif; ?>
                             <?php $articles = $this->collection->getArticles(); ?>
                             <?php if(count($articles)): ?>
@@ -48,6 +32,13 @@
                                 </a>
                             </li>
                             <?php endif; ?>
+                                <li>
+                                    <?php $deleteUrl = $this->url('collection/delete', array('id' => $this->collection->getId())); ?>
+                                    <a class="tiny button" href="<?php echo $deleteUrl; ?>"
+                                       title="Delete collection">
+                                        <span class="fa fa-trash-o"></span> Delete
+                                       </a>
+                                </li>
                             </ul>
                         </header>
                         <?php

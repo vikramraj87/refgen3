@@ -98,17 +98,17 @@ class Author
     }
 
     /**
-     * Static function to create an author object from array of data
+     * Factory function to create an author object from array of data
      *
      * @param array $data
      * @return Author
      */
     static public function createFromArray(array $data = array())
     {
-        $id       = isset($data['id'])        ? (int) $data['id']        : 0;
-        $lastName = isset($data['last_name']) ? $data['last_name']       : '';
-        $foreName = isset($data['fore_name']) ? $data['fore_name']       : '';
-        $initials = isset($data['initials'])  ? $data['initials']        : '';
+        $id       = isset($data['id'])        ? (int) $data['id']  : 0;
+        $lastName = isset($data['last_name']) ? $data['last_name'] : '';
+        $foreName = isset($data['fore_name']) ? $data['fore_name'] : '';
+        $initials = isset($data['initials'])  ? $data['initials']  : '';
 
         $author = new self();
         $author->setId($id);
@@ -118,6 +118,11 @@ class Author
         return $author;
     }
 
+    /**
+     * Serializes the object to array
+     *
+     * @return array
+     */
     public function toArray()
     {
         return array(

@@ -8,11 +8,9 @@
 
 namespace Collection\Table;
 
-use Zend\Db\Sql\Sql;
 use Zend\Db\TableGateway\AbstractTableGateway,
     Zend\Db\Adapter\Adapter,
-    Zend\Db\Adapter\AdapterAwareInterface,
-    Zend\Db\Adapter\Exception\InvalidQueryException;
+    Zend\Db\Adapter\AdapterAwareInterface;
 use Article\Table\ArticleTable,
     Article\Entity\Article;
 
@@ -35,6 +33,13 @@ class CollectionArticleTable extends AbstractTableGateway implements AdapterAwar
         $this->initialize();
     }
 
+    /**
+     * Fetches articles belonging to a collection
+     * identified by the collection id
+     *
+     * @param int $collectionId
+     * @return array
+     */
     public function fetchArticlesByCollectionId($collectionId = 0)
     {
         $collectionId = (int) $collectionId;
@@ -46,17 +51,16 @@ class CollectionArticleTable extends AbstractTableGateway implements AdapterAwar
         foreach($rowset as $row) {
             $articleIds[] = $row['article_id'];
         }
-        return $this->articleTable()->fetchArticlesByIds($articleIds);
+        return $this->articleTable->fetchArticlesByIds($articleIds);
     }
 
     /**
-     * @param \Article\Table\ArticleTable $articleTable
+     * Saves articles belonging to the collection
+     *
+     * @param array $articles
+     * @param $collectionId
+     * @return bool
      */
-    public function setArticleTable($articleTable)
-    {
-        $this->articleTable = $articleTable;
-    }
-
     public function saveArticles(array $articles = array(), $collectionId)
     {
         $collectionId = (int) $collectionId;
@@ -76,35 +80,17 @@ class CollectionArticleTable extends AbstractTableGateway implements AdapterAwar
                 'article_id'    => $article->getId(),
                 'position'      => $pos
             );
-           // try {
-                $this->insert($data);
-            //} catch(InvalidQueryException $e) {
-                /**
-                 * todo: raise an event for integrity constraint and log the error
-                 */
-              //  return false;
-            //} catch(\Exception $e) {
-                /**
-                 * todo: raise an event and log the unknown error
-                 */
-              //  return false;
-            //}
+            $this->insert($data);
             $pos++;
         }
         return true;
     }
 
     /**
-     * Lazy loading of article table
-     *
-     * @return ArticleTable
+     * @param \Article\Table\ArticleTable $articleTable
      */
-    private function articleTable()
+    public function setArticleTable(ArticleTable $articleTable)
     {
-        if(null === $this->articleTable) {
-            $this->articleTable = new ArticleTable();
-            $this->articleTable->setDbAdapter($this->adapter);
-        }
-        return $this->articleTable;
+        $this->articleTable = $articleTable;
     }
-} 
+}
